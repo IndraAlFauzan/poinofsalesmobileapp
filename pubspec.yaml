@@ -46,6 +46,7 @@ dependencies:
   currency_text_input_formatter: ^2.3.0
   animated_custom_dropdown: ^3.1.1
   syncfusion_flutter_datagrid: ^30.2.4
+  google_fonts: ^6.3.0
 
 dev_dependencies:
   flutter_test:

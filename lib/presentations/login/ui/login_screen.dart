@@ -1,22 +1,14 @@
-// main.dart atau app.dart
-// Pastikan Flushbar dipanggil di tempat yang benar, di mana Scaffold ada.
-// Contoh di sini akan menggunakan kode untuk Flushbar dari package lain.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:posmobile/core/config/app_colors.dart';
+import 'package:posmobile/presentations/dashboard/main_page.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/data/model/request/login_model_request.dart';
 import 'widgets/login_header.dart';
 import 'widgets/email_field.dart';
 import 'widgets/password_field.dart';
 import 'widgets/login_button.dart';
-
-// Definisi file widgets/login_form.dart
-// class LoginForm extends StatelessWidget { ... }
-
-// Definisi file widgets/login_button.dart
-// class LoginButton extends StatelessWidget { ... }
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -80,10 +72,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.green.shade400,
                 );
                 // TODO: navigate after a short delay or replace with route logic
-                // Future.microtask(() {
-                //   if (!context.mounted) return;
-                //   Navigator.pushReplacementNamed(context, '/main');
-                // });
+                Future.delayed(const Duration(milliseconds: 2000), () {
+                  if (context.mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const MainPage()),
+                    );
+                    _emailController.clear();
+                    _passwordController.clear();
+                  }
+                });
               },
               failure: (message) {
                 _showFlushbar(

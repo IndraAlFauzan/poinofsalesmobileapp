@@ -12,7 +12,12 @@ class AppColors {
   static const Color accentLight = Color(0xFF5DDEF4);
 
   // Neutrals
-  static const Color background = Color(0xFFF5F7FA); // Light bg
+  static const Color background = Color.fromARGB(
+    255,
+    238,
+    242,
+    248,
+  ); // Light bg
   static const Color surface = Colors.white;
   static const Color surfaceDark = Color(0xFF1E1E1E); // Dark surface
   static const Color backgroundDark = Color(0xFF121212); // Dark bg

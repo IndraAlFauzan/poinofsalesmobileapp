@@ -9,13 +9,13 @@ class CategoryRepository {
 
   CategoryRepository(this._serviceHttpClient);
 
-  Future<Either<String, CategoryResponse>> fetchCategories() async {
+  Future<Either<String, CategoryModelResponse>> fetchCategories() async {
     try {
       final response = await _serviceHttpClient.get('categories');
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final categoryResponse = CategoryResponse.fromJson(jsonResponse);
+        final categoryResponse = CategoryModelResponse.fromJson(jsonResponse);
         return Right(categoryResponse);
       } else {
         final jsonResponse = json.decode(response.body);

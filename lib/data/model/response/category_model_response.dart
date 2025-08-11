@@ -1,24 +1,24 @@
 import 'dart:convert';
 
-CategoryResponse categoryResponeFromJson(String str) =>
-    CategoryResponse.fromJson(json.decode(str));
+CategoryModelResponse categoryResponeFromJson(String str) =>
+    CategoryModelResponse.fromJson(json.decode(str));
 
-String categoryResponeToJson(CategoryResponse data) =>
+String categoryResponeToJson(CategoryModelResponse data) =>
     json.encode(data.toJson());
 
-class CategoryResponse {
+class CategoryModelResponse {
   bool success;
   String message;
   List<Category> data;
 
-  CategoryResponse({
+  CategoryModelResponse({
     required this.success,
     required this.message,
     required this.data,
   });
 
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
-      CategoryResponse(
+  factory CategoryModelResponse.fromJson(Map<String, dynamic> json) =>
+      CategoryModelResponse(
         success: json["success"],
         message: json["message"],
         data: List<Category>.from(

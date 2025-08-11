@@ -11,7 +11,7 @@ class AppThemes {
         ).copyWith(
           primary: AppColors.primary,
           secondary: AppColors.accent,
-          surface: AppColors.surface,
+          surface: AppColors.background,
           onSurface: AppColors.textPrimary,
           onPrimary: AppColors.textOnPrimary,
           onSecondary: const Color.fromARGB(255, 227, 30, 30),

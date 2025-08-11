@@ -3,8 +3,8 @@ import 'dart:developer' as console;
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:posmobile/model/request/login_model_request.dart';
-import 'package:posmobile/model/response/login_model_response.dart';
+import 'package:posmobile/data/model/request/login_model_request.dart';
+import 'package:posmobile/data/model/response/login_model_response.dart';
 import 'package:posmobile/service/service.dart';
 
 class AuthRepository {

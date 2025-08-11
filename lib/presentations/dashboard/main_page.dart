@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/widgets/custom_alert_dialog.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -160,14 +161,13 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _buildLogo() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.only(top: 10),
       child: Column(
         children: [
-          Icon(
-            Icons.restaurant,
-            color: Colors.white,
-            size: 40,
-            shadows: const [Shadow(blurRadius: 4, color: Colors.black26)],
+          SvgPicture.asset(
+            'assets/images/food_logo.svg',
+
+            clipBehavior: Clip.hardEdge,
           ),
           const SizedBox(height: 8),
           Text(
@@ -179,6 +179,8 @@ class _SideMenuState extends State<SideMenu> {
             ),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 8),
+          Divider(height: 1, color: Colors.white24, indent: 20, endIndent: 20),
         ],
       ),
     );

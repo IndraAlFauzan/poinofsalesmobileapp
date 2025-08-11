@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/presentations/dashboard/homepage/home_page.dart';
 import 'package:posmobile/presentations/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -73,6 +74,34 @@ class _MainPageState extends State<MainPage> {
                   physics:
                       const NeverScrollableScrollPhysics(), // Menonaktifkan swipe
                   children: const [
+                    HomePage(),
+                    // Center(
+                    //   child: Text(
+                    //     'Home Page',
+                    //     style: TextStyle(
+                    //       fontSize: 24,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    Center(
+                      child: Text(
+                        'Menu Page',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        'Riwayat Transaksi',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     // HomePage(),
                     // MenuPage(),
                     // DetailTransactionPage(),

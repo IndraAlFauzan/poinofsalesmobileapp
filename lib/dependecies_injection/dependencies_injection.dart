@@ -1,5 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:posmobile/data/repository/auth_repository.dart';
+import 'package:posmobile/data/repository/category_repository.dart';
+import 'package:posmobile/data/repository/flavor_repository.dart';
+import 'package:posmobile/data/repository/product_repository.dart';
+import 'package:posmobile/data/repository/spicy_level_repository.dart';
 import 'package:posmobile/service/service.dart';
 
 final locator = GetIt.instance;
@@ -11,5 +15,21 @@ void dependenciesInjection() {
   // Register repositories
   locator.registerLazySingleton(
     () => AuthRepository(locator<ServiceHttpClient>()),
+  );
+
+  locator.registerLazySingleton(
+    () => FlavorRepository(locator<ServiceHttpClient>()),
+  );
+
+  locator.registerLazySingleton(
+    () => ProductRepository(locator<ServiceHttpClient>()),
+  );
+
+  locator.registerLazySingleton(
+    () => CategoryRepository(locator<ServiceHttpClient>()),
+  );
+
+  locator.registerLazySingleton(
+    () => SpicyLevelRepository(locator<ServiceHttpClient>()),
   );
 }

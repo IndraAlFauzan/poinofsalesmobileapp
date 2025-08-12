@@ -8,13 +8,13 @@ import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'widgets/widgets.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class OrderPage extends StatefulWidget {
+  const OrderPage({super.key});
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<OrderPage> createState() => _OrderPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _OrderPageState extends State<OrderPage> {
   final _searchCtrl = TextEditingController();
   final _cartScroll = ScrollController();
   Timer? _debounce;

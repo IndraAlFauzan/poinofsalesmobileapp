@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/presentations/dashboard/homepage/home_page.dart';
+import 'package:posmobile/presentations/dashboard/orderpage/order_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -70,7 +70,7 @@ class _MainPageState extends State<MainPage> {
                 physics:
                     const NeverScrollableScrollPhysics(), // Menonaktifkan swipe
                 children: const [
-                  HomePage(),
+                  OrderPage(),
                   // Center(
                   //   child: Text(
                   //     'Home Page',

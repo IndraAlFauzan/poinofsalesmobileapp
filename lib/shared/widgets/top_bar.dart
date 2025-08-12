@@ -8,8 +8,14 @@ import 'package:posmobile/shared/config/app_fonts.dart';
 class TopBar extends StatefulWidget {
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
+  final String hintText;
 
-  const TopBar({super.key, this.searchController, this.onSearchChanged});
+  const TopBar({
+    super.key,
+    this.searchController,
+    this.onSearchChanged,
+    required this.hintText,
+  });
 
   @override
   State<TopBar> createState() => _TopBarState();
@@ -57,11 +63,21 @@ class _TopBarState extends State<TopBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        children: [
+          Row(
             children: [
               // Brand & Search
               Expanded(
@@ -140,7 +156,7 @@ class _TopBarState extends State<TopBar> {
                             onChanged: widget.onSearchChanged,
                             style: AppFonts.defaultTextTheme.bodyMedium,
                             decoration: InputDecoration(
-                              hintText: 'Cari menu...',
+                              hintText: widget.hintText,
                               hintStyle: AppFonts.defaultTextTheme.bodyMedium
                                   ?.copyWith(color: AppColors.textSecondary),
                               prefixIcon: Icon(
@@ -215,10 +231,10 @@ class _TopBarState extends State<TopBar> {
               ),
             ],
           ),
-        ),
-        const SizedBox(height: 8),
-        const Divider(height: 1, color: AppColors.divider),
-      ],
+          const SizedBox(height: 8),
+          // const Divider(height: 1, color: AppColors.divider),
+        ],
+      ),
     );
   }
 

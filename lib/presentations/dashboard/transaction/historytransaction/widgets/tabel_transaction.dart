@@ -320,7 +320,7 @@ class TransactionTebelData extends DataGridSource {
                             transaction.createdAt.toIso8601String(),
                           ),
                         ),
-                        _buildDetailItem('Customer', transaction.nameUser),
+                        _buildDetailItem('Kasir', transaction.nameUser),
                         _buildDetailItem(
                           'Total Amount',
                           idrFormat(transaction.total.toString()),

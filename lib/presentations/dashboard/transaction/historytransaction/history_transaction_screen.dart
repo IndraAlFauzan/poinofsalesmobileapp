@@ -424,7 +424,7 @@ class _HistoryTransactionScreenState extends State<HistoryTransactionScreen>
                                                         alignment:
                                                             Alignment.center,
                                                         child: const Text(
-                                                          'Person',
+                                                          'Kasir',
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,

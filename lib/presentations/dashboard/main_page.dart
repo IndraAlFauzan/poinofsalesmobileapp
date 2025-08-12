@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/dashboard/homepage/home_page.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -194,10 +195,10 @@ class _SideMenuState extends State<SideMenu> {
             'assets/images/food_logo.svg',
             clipBehavior: Clip.hardEdge,
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           const Divider(
             height: 2,
-            color: Colors.black26,
+            color: AppColors.textSecondary,
             // indent: 20,
             // endIndent: 20,
           ),

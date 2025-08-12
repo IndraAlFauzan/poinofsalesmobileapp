@@ -64,49 +64,43 @@ class _MainPageState extends State<MainPage> {
             ),
             // Content Area
             Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  bottomLeft: Radius.circular(30),
-                ),
-                child: PageView(
-                  controller: _pageController,
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Menonaktifkan swipe
-                  children: const [
-                    HomePage(),
-                    // Center(
-                    //   child: Text(
-                    //     'Home Page',
-                    //     style: TextStyle(
-                    //       fontSize: 24,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
-                    Center(
-                      child: Text(
-                        'Menu Page',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+              child: PageView(
+                controller: _pageController,
+                physics:
+                    const NeverScrollableScrollPhysics(), // Menonaktifkan swipe
+                children: const [
+                  HomePage(),
+                  // Center(
+                  //   child: Text(
+                  //     'Home Page',
+                  //     style: TextStyle(
+                  //       fontSize: 24,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
+                  Center(
+                    child: Text(
+                      'Menu Page',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Center(
-                      child: Text(
-                        'Riwayat Transaksi',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Riwayat Transaksi',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // HomePage(),
-                    // MenuPage(),
-                    // DetailTransactionPage(),
-                  ],
-                ),
+                  ),
+                  // HomePage(),
+                  // MenuPage(),
+                  // DetailTransactionPage(),
+                ],
               ),
             ),
           ],
@@ -158,10 +152,11 @@ class _SideMenuState extends State<SideMenu> {
       child: Column(
         children: [
           _buildLogo(),
+
           const SizedBox(height: 30),
           _buildMenuItem(
-            label: 'Home',
-            icon: Icons.home_rounded,
+            label: 'Order',
+            icon: Icons.restaurant_menu,
             page: MainPageTab.home,
           ),
           _buildMenuItem(
@@ -190,26 +185,22 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _buildLogo() {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(
+        top: 10,
+      ), // Kembali ke 10 seperti permintaan
       child: Column(
         children: [
           SvgPicture.asset(
             'assets/images/food_logo.svg',
-
             clipBehavior: Clip.hardEdge,
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Kedai Seblak',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
+          const SizedBox(height: 14),
+          const Divider(
+            height: 2,
+            color: Colors.black26,
+            // indent: 20,
+            // endIndent: 20,
           ),
-          const SizedBox(height: 8),
-          Divider(height: 1, color: Colors.white24, indent: 20, endIndent: 20),
         ],
       ),
     );
@@ -247,7 +238,11 @@ class _SideMenuState extends State<SideMenu> {
               const SizedBox(height: 5),
               Text(
                 label,
-                style: const TextStyle(color: Colors.white, fontSize: 11),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),

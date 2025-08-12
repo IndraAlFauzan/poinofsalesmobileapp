@@ -57,6 +57,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     _selectedCategoryId = event.categoryId;
+    _query = ''; // Reset search query ketika filter kategori
 
     // Jika cache kosong, fetch dulu
     if (_all.isEmpty) {

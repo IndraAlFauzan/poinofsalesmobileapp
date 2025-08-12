@@ -42,18 +42,20 @@ class _HomePageState extends State<HomePage> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 350), () {
       final query = q.trim();
-      final catState = context.read<CategoryBloc>().state;
-      int selectedId = 0;
-      catState.maybeWhen(
-        success: (_, selectedCategoryId) => selectedId = selectedCategoryId,
-        orElse: () {},
-      );
 
       if (query.isEmpty) {
+        // Ketika search kosong, reset kategori dan filter
+        context.read<CategoryBloc>().add(
+          const CategoryEvent.selectCategory(0), // Reset ke "All"
+        );
+        // Reset filter kategori untuk menampilkan semua produk
         context.read<ProductBloc>().add(
-          ProductEvent.filterProductsByCategory(selectedId),
+          const ProductEvent.filterProductsByCategory(
+            0,
+          ), // Filter kategori "All"
         );
       } else {
+        // Ketika ada search query, cari di semua produk
         context.read<ProductBloc>().add(ProductEvent.searchProducts(query));
       }
     });
@@ -65,35 +67,49 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
+        bottom: false,
         child: Row(
           children: [
             // LEFT: product area
             Expanded(
               flex: 5,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 20,
+                padding: const EdgeInsets.only(
+                  // left: 28,
+                  // right: 28,
+                  // top: 10, // Sejajar dengan logo SideMenu
+                  bottom: 20,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const TopBar(),
-                    const SizedBox(height: 18),
-                    custom.SearchBar(
-                      controller: _searchCtrl,
-                      onChanged: _onSearchChanged,
-                    ),
-                    const SizedBox(height: 18),
-                    CategoryChips(onChipCleared: () => _searchCtrl.clear()),
-                    const SizedBox(height: 18),
                     Expanded(
-                      child: ProductGrid(
-                        onTapProduct: (p) {
-                          context.read<CartBloc>().add(
-                            CartEvent.addToCart(product: p),
-                          );
-                        },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 18),
+                            custom.SearchBar(
+                              controller: _searchCtrl,
+                              onChanged: _onSearchChanged,
+                            ),
+                            const SizedBox(height: 18),
+                            CategoryChips(
+                              onChipCleared: () => _searchCtrl.clear(),
+                            ),
+                            const SizedBox(height: 18),
+                            Expanded(
+                              child: ProductGrid(
+                                onTapProduct: (p) {
+                                  context.read<CartBloc>().add(
+                                    CartEvent.addToCart(product: p),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -106,10 +122,10 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    bottomLeft: Radius.circular(24),
-                  ),
+                  // borderRadius: const BorderRadius.only(
+                  //   topLeft: Radius.circular(24),
+                  //   bottomLeft: Radius.circular(24),
+                  // ),
                   boxShadow: [
                     BoxShadow(
                       color: theme.colorScheme.onSurface.withValues(
@@ -148,42 +164,57 @@ class _HomePageState extends State<HomePage> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(
+                              height: 10,
+                            ), // Sejajar dengan padding atas yang lain
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Order Summary',
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.primary
-                                          .withOpacity(.07),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '#${DateTime.now().millisecondsSinceEpoch % 100000}',
-                                      style: theme.textTheme.labelLarge
+                              child: SizedBox(
+                                height:
+                                    36, // Sama dengan tinggi TopBar untuk alignment
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Order Summary',
+                                      style: theme.textTheme.titleLarge
                                           ?.copyWith(
-                                            color: theme.colorScheme.primary,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: .07),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        '#${DateTime.now().millisecondsSinceEpoch % 100000}',
+                                        style: theme.textTheme.labelLarge
+                                            ?.copyWith(
+                                              color: theme.colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                            ),
+                            Divider(
+                              height: 1,
+                              color: Theme.of(
+                                context,
+                              ).dividerColor.withOpacity(.3),
+                              indent: 24,
+                              endIndent: 24,
                             ),
                             const SizedBox(height: 14),
                             Expanded(

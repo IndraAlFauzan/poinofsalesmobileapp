@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class TotalsBlock extends StatelessWidget {
@@ -19,7 +20,7 @@ class TotalsBlock extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: AppColors.primary.withValues(alpha: .05),
         border: Border(
           top: BorderSide(color: theme.dividerColor.withOpacity(.5)),
         ),
@@ -27,17 +28,17 @@ class TotalsBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _totalRow(context, 'Subtotal', idrFormat(totalPrice)),
+          _totalRow(context, 'Total Item ', '$totalQty'),
           const SizedBox(height: 6),
-          _totalRow(context, 'Taxes', idrFormat(0)),
-          const SizedBox(height: 6),
-          _totalRow(context, 'Discount', '- ${idrFormat(0)}'),
-          const SizedBox(height: 12),
-          Divider(color: theme.dividerColor.withOpacity(.6)),
-          const SizedBox(height: 12),
+          // _totalRow(context, 'Taxes', idrFormat(0)),
+          // const SizedBox(height: 6),
+          // _totalRow(context, 'Discount', '- ${idrFormat(0)}'),
+          // const SizedBox(height: 12),
+          // Divider(color: theme.dividerColor.withOpacity(.6)),
+          // const SizedBox(height: 12),
           _totalRow(
             context,
-            'Total ($totalQty item)',
+            'Total Harga',
             idrFormat(totalPrice),
             strong: true,
             highlight: true,

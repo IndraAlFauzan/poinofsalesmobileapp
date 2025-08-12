@@ -91,11 +91,12 @@ class _HistoryTransactionScreenState extends State<HistoryTransactionScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TopBar(
-                hintText: 'Cari transaksi...',
                 searchController: _searchController,
+                hintText: "Cari transaksi, customer, produk...",
                 onSearchChanged: (query) {
-                  // TODO: Implement search functionality for transactions
-                  // You can add search functionality here later
+                  context.read<HistoryTransactionBloc>().add(
+                    HistoryTransactionEvent.searchTransactions(query),
+                  );
                 },
               ),
               Expanded(

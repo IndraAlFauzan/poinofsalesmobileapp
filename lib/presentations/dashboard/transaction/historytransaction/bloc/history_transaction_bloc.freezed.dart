@@ -55,12 +55,13 @@ extension HistoryTransactionEventPatterns on HistoryTransactionEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _FetchAllTransactions value)?  fetchAllTransactions,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult Function( _SearchTransactions value)?  searchTransactions,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions(_that);case _:
+return fetchAllTransactions(_that);case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that);case _:
   return orElse();
 
 }
@@ -78,12 +79,13 @@ return fetchAllTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _FetchAllTransactions value)  fetchAllTransactions,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _FetchAllTransactions value)  fetchAllTransactions,required TResult Function( _SearchTransactions value)  searchTransactions,}){
 final _that = this;
 switch (_that) {
 case _Started():
 return started(_that);case _FetchAllTransactions():
-return fetchAllTransactions(_that);case _:
+return fetchAllTransactions(_that);case _SearchTransactions():
+return searchTransactions(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +102,13 @@ return fetchAllTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _FetchAllTransactions value)?  fetchAllTransactions,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult? Function( _SearchTransactions value)?  searchTransactions,}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions(_that);case _:
+return fetchAllTransactions(_that);case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that);case _:
   return null;
 
 }
@@ -122,11 +125,12 @@ return fetchAllTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchAllTransactions,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchAllTransactions,TResult Function( String query)?  searchTransactions,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions();case _:
+return fetchAllTransactions();case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that.query);case _:
   return orElse();
 
 }
@@ -144,11 +148,12 @@ return fetchAllTransactions();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchAllTransactions,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchAllTransactions,required TResult Function( String query)  searchTransactions,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _FetchAllTransactions():
-return fetchAllTransactions();case _:
+return fetchAllTransactions();case _SearchTransactions():
+return searchTransactions(_that.query);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +170,12 @@ return fetchAllTransactions();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchAllTransactions,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchAllTransactions,TResult? Function( String query)?  searchTransactions,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions();case _:
+return fetchAllTransactions();case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that.query);case _:
   return null;
 
 }
@@ -240,6 +246,72 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class _SearchTransactions implements HistoryTransactionEvent {
+  const _SearchTransactions(this.query);
+  
+
+ final  String query;
+
+/// Create a copy of HistoryTransactionEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SearchTransactionsCopyWith<_SearchTransactions> get copyWith => __$SearchTransactionsCopyWithImpl<_SearchTransactions>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchTransactions&&(identical(other.query, query) || other.query == query));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query);
+
+@override
+String toString() {
+  return 'HistoryTransactionEvent.searchTransactions(query: $query)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SearchTransactionsCopyWith<$Res> implements $HistoryTransactionEventCopyWith<$Res> {
+  factory _$SearchTransactionsCopyWith(_SearchTransactions value, $Res Function(_SearchTransactions) _then) = __$SearchTransactionsCopyWithImpl;
+@useResult
+$Res call({
+ String query
+});
+
+
+
+
+}
+/// @nodoc
+class __$SearchTransactionsCopyWithImpl<$Res>
+    implements _$SearchTransactionsCopyWith<$Res> {
+  __$SearchTransactionsCopyWithImpl(this._self, this._then);
+
+  final _SearchTransactions _self;
+  final $Res Function(_SearchTransactions) _then;
+
+/// Create a copy of HistoryTransactionEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? query = null,}) {
+  return _then(_SearchTransactions(
+null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
 
 /// @nodoc
 mixin _$HistoryTransactionState {

@@ -7,9 +7,9 @@ class AppColors {
   static const Color primaryLight = Color(0xFF4A6B8B);
   static const Color primaryDark = Color(0xFF0F1F2A);
 
-  // Accent (Sophisticated Green)
-  static const Color accent = Color(0xFF4CAF50);
-  static const Color accentLight = Color(0xFF81C784);
+  // Accent ( Blue terang)
+  static const Color accent = Color(0xFF42A5F5);
+  static const Color accentLight = Color(0xFF80D8FF);
 
   // Neutrals
   static const Color background = Color(0xFFF9F9F9); // Soft off-white

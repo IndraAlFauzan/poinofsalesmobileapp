@@ -132,7 +132,7 @@ class AvailabilityPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = available
-        ? AppColors.primary.withValues(alpha: 0.15) // Available: light green
+        ? AppColors.primary.withValues(alpha: 0.5) // Available: light green
         : AppColors.error.withValues(alpha: 0.12); // Not available: light red
     final fg = available ? AppColors.textOnAccent : AppColors.error;
     return Container(
@@ -142,7 +142,7 @@ class AvailabilityPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        available ? 'Available' : 'Not Available',
+        available ? 'Tersedia' : 'Tidak Tersedia',
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: fg,
           fontWeight: FontWeight.w700,

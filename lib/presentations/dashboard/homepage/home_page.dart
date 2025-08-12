@@ -93,9 +93,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: [
                             const SizedBox(height: 18),
-                            CategoryChips(
-                              onChipCleared: () => _searchCtrl.clear(),
-                            ),
+                            CategoryChips(onChipCleared: () {}),
                             const SizedBox(height: 18),
                             Expanded(
                               child: ProductGrid(

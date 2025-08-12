@@ -156,7 +156,7 @@ class _SideMenuState extends State<SideMenu> {
 
           const SizedBox(height: 30),
           _buildMenuItem(
-            label: 'Order',
+            label: 'Pesanan',
             icon: Icons.restaurant_menu,
             page: MainPageTab.home,
           ),
@@ -264,9 +264,16 @@ class _SideMenuState extends State<SideMenu> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: const [
-            Icon(Icons.logout_rounded, color: Colors.white, size: 24),
+            CircleAvatar(
+              backgroundColor: Colors.white54,
+              child: Icon(
+                Icons.logout_outlined,
+                color: AppColors.primary,
+                size: 24,
+              ),
+            ),
             SizedBox(height: 5),
-            Text("Logout", style: TextStyle(color: Colors.white, fontSize: 11)),
+            Text("Keluar", style: TextStyle(color: Colors.white, fontSize: 11)),
           ],
         ),
       ),

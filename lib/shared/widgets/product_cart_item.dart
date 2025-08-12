@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
+import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/data/model/response/cart_item_model.dart';
 import 'package:posmobile/data/model/response/flavor_model_response.dart';
+import 'package:posmobile/data/model/response/spicy_level_model_response.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
@@ -228,21 +230,20 @@ class _ProductCartItemState extends State<ProductCartItem> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Todo: Spicy Level dropdown placeholder
-                // Spicy Level dropdown - hanya untuk kategori selain Minuman dan Topping
+                // Spicy Level dropdown
                 Expanded(
-                  child: BlocBuilder<FlavorBloc, FlavorState>(
+                  child: BlocBuilder<SpicyLevelBloc, SpicyLevelState>(
                     builder: (context, state) {
                       return state.when(
                         initial: () => const SizedBox.shrink(),
                         loading: () => const SizedBox.shrink(),
                         failure: (msg) => const SizedBox.shrink(),
-                        success: (flavors) {
+                        success: (level) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Rasa:',
+                                'Level:',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -261,29 +262,29 @@ class _ProductCartItemState extends State<ProductCartItem> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<Flavor>(
+                                  child: DropdownButton<SpicyLevel>(
                                     isExpanded: true,
-                                    value: widget.item.selectedFlavor,
+                                    value: widget.item.selectedSpicyLevel,
                                     hint: const Text(
-                                      'Pilih Rasa',
+                                      'Pilih Level',
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.black,
                                     ),
-                                    items: flavors.map((flavor) {
-                                      return DropdownMenuItem<Flavor>(
-                                        value: flavor,
-                                        child: Text(flavor.name),
+                                    items: level.map((level) {
+                                      return DropdownMenuItem<SpicyLevel>(
+                                        value: level,
+                                        child: Text(level.name),
                                       );
                                     }).toList(),
-                                    onChanged: (Flavor? newFlavor) {
-                                      if (newFlavor != null) {
+                                    onChanged: (SpicyLevel? newLevel) {
+                                      if (newLevel != null) {
                                         context.read<CartBloc>().add(
-                                          CartEvent.updateFlavorByIndex(
+                                          CartEvent.updateSpicyLevelByIndex(
                                             itemIndex: widget.itemIndex,
-                                            flavor: newFlavor,
+                                            spicyLevel: newLevel,
                                           ),
                                         );
                                       }

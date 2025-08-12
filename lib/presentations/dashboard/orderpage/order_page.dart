@@ -5,6 +5,7 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
+import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'widgets/widgets.dart';
 
@@ -27,6 +28,7 @@ class _OrderPageState extends State<OrderPage> {
       context.read<CategoryBloc>().add(const CategoryEvent.started());
       context.read<ProductBloc>().add(const ProductEvent.started());
       context.read<FlavorBloc>().add(const FlavorEvent.started());
+      context.read<SpicyLevelBloc>().add(const SpicyLevelEvent.started());
     });
   }
 

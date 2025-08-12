@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/presentations/widgets/idr_format.dart';
+import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;

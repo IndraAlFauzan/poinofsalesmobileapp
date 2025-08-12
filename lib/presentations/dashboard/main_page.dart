@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/dashboard/homepage/home_page.dart';
-import 'package:posmobile/presentations/widgets/custom_alert_dialog.dart';
+import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainPage extends StatefulWidget {

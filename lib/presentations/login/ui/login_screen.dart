@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:posmobile/core/config/app_colors.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/presentations/dashboard/main_page.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/data/model/request/login_model_request.dart';

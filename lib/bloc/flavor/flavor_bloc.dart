@@ -25,12 +25,16 @@ class FlavorBloc extends Bloc<FlavorEvent, FlavorState> {
   }
 
   Future<void> _onFetch(_FetchFlavors event, Emitter<FlavorState> emit) async {
-    emit(const FlavorState.loading());
-    final result = await _repo.fetchFlavors();
+    try {
+      emit(const FlavorState.loading());
+      final result = await _repo.fetchFlavors();
 
-    result.fold((failure) => emit(FlavorState.failure(failure)), (response) {
-      final flavors = List<Flavor>.from(response.data);
-      emit(FlavorState.success(flavors));
-    });
+      result.fold((failure) => emit(FlavorState.failure(failure)), (response) {
+        final flavors = List<Flavor>.from(response.data);
+        emit(FlavorState.success(flavors));
+      });
+    } catch (e) {
+      emit(FlavorState.failure(e.toString()));
+    }
   }
 }

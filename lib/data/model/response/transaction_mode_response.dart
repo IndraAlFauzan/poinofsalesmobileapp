@@ -117,7 +117,7 @@ class TransactionDetail {
   String? flavor;
   int? spicyLevelId;
   String? spicyLevel;
-  String note;
+  String? note;
   int price;
   int subtotal;
 
@@ -126,11 +126,11 @@ class TransactionDetail {
     required this.productId,
     required this.nameProduct,
     required this.quantity,
-    required this.flavorId,
-    required this.flavor,
-    required this.spicyLevelId,
-    required this.spicyLevel,
-    required this.note,
+    this.flavorId,
+    this.flavor,
+    this.spicyLevelId,
+    this.spicyLevel,
+    this.note,
     required this.price,
     required this.subtotal,
   });

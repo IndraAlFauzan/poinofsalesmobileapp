@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/dashboard/orderpage/order_page.dart';
+import 'package:posmobile/presentations/dashboard/transaction/historytransaction/history_transaction_screen.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -82,15 +83,6 @@ class _MainPageState extends State<MainPage> {
                   // ),
                   Center(
                     child: Text(
-                      'Menu Page',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
                       'Riwayat Transaksi',
                       style: TextStyle(
                         fontSize: 24,
@@ -98,6 +90,17 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                   ),
+                  HistoryTransactionScreen(),
+                  // Center(
+                  //   child: Text(
+                  //     'Menu Page',
+                  //     style: TextStyle(
+                  //       fontSize: 24,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
+
                   // HomePage(),
                   // MenuPage(),
                   // DetailTransactionPage(),

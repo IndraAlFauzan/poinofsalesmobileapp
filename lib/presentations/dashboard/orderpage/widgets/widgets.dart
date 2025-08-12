@@ -1,5 +1,5 @@
 // Export all homepage widgets
-export 'top_bar.dart';
+export '../../../../shared/widgets/top_bar.dart';
 export 'search_bar.dart';
 export 'category_chips.dart';
 export 'product_grid.dart';

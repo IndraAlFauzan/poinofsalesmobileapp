@@ -3,34 +3,32 @@ import 'package:flutter/material.dart';
 /// 🎨 Palet warna global POS (clean, elegant, profesional)
 class AppColors {
   // Brand (Deep Navy)
-  static const Color primary = Color(0xFF0D47A1);
-  static const Color primaryLight = Color(0xFF5472D3);
-  static const Color primaryDark = Color(0xFF002171);
+  static const Color primary = Color(0xFF1C3852);
+  static const Color primaryLight = Color(0xFF4A6B8B);
+  static const Color primaryDark = Color(0xFF0F1F2A);
 
-  // Accent (elegan, tidak norak)
-  static const Color accent = Color(0xFF00ACC1);
-  static const Color accentLight = Color(0xFF5DDEF4);
+  // Accent (Sophisticated Green)
+  static const Color accent = Color(0xFF4CAF50);
+  static const Color accentLight = Color(0xFF81C784);
 
   // Neutrals
-  static const Color background = Color.fromARGB(
-    255,
-    238,
-    242,
-    248,
-  ); // Light bg
+  static const Color background = Color(0xFFF9F9F9); // Soft off-white
   static const Color surface = Colors.white;
-  static const Color surfaceDark = Color(0xFF1E1E1E); // Dark surface
-  static const Color backgroundDark = Color(0xFF121212); // Dark bg
-  static const Color divider = Color(0xFFE0E0E0);
+  static const Color divider = Color(0xFFE5E5E5);
 
   // Text
-  static const Color textPrimary = Color(0xFF1B1B1B);
-  static const Color textSecondary = Color(0xFF5F6368);
+  static const Color textPrimary = Color(0xFF333333); // Dark charcoal
+  static const Color textSecondary = Color(0xFF777777); // Muted gray
   static const Color textOnPrimary = Colors.white;
   static const Color textOnAccent = Colors.white;
 
   // Status
-  static const Color success = Color(0xFF2E7D32);
-  static const Color warning = Color(0xFFF9A825);
-  static const Color error = Color(0xFFD32F2F);
+  static const Color success = Color(0xFF4CAF50); // Same as accent for harmony
+  static const Color warning = Color(0xFFFFC107);
+  static const Color error = Color(0xFFE53935);
+
+  static const Color surfaceDark = Color(0xFF1E1E1E); // Dark surface
+  static const Color backgroundDark = Color(0xFF121212); // Dark bg
+
+  // Text
 }

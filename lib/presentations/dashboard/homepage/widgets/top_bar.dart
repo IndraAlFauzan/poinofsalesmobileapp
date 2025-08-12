@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/app_fonts.dart';
 
 class TopBar extends StatefulWidget {
   final TextEditingController? searchController;
@@ -31,7 +32,6 @@ class _TopBarState extends State<TopBar> {
       }
     });
 
-    // Listen to search controller changes to update UI
     if (widget.searchController != null) {
       widget.searchController!.addListener(_onSearchTextChanged);
       _searchText = widget.searchController!.text;
@@ -61,121 +61,16 @@ class _TopBarState extends State<TopBar> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
             children: [
               // Brand & Search
               Expanded(
                 child: Row(
                   children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: .07),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.restaurant,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Search Bar
-                    if (widget.searchController != null &&
-                        widget.onSearchChanged != null)
-                      Expanded(
-                        child: Container(
-                          height: 36,
-                          child: TextField(
-                            controller: widget.searchController,
-                            onChanged: widget.onSearchChanged,
-                            decoration: InputDecoration(
-                              hintText: 'Search menu…',
-                              hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.hintColor,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                size: 18,
-                                color: theme.hintColor,
-                              ),
-                              suffixIcon: _searchText.isNotEmpty
-                                  ? IconButton(
-                                      onPressed: () {
-                                        widget.searchController!.clear();
-                                        // Trigger search changed immediately to ensure proper reset
-                                        if (widget.onSearchChanged != null) {
-                                          widget.onSearchChanged!('');
-                                        }
-                                      },
-                                      icon: Icon(
-                                        Icons.close_rounded,
-                                        size: 18,
-                                        color: theme.hintColor,
-                                      ),
-                                    )
-                                  : null,
-                              filled: true,
-                              fillColor: theme.colorScheme.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: .07),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      size: 18,
-                      color: theme.hintColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _prettyDate(),
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // IconButton(
-                    //   tooltip: 'Refresh',
-                    //   onPressed: () {
-                    //     context.read<ProductBloc>().add(
-                    //       const ProductEvent.started(),
-                    //     );
-                    //   },
-                    //   icon: const Icon(Icons.refresh),
-
-                    // ),
-                    const SizedBox(width: 4),
                     CircleAvatar(
-                      radius: 18,
-                      backgroundColor: theme.colorScheme.onSurface.withValues(
-                        alpha: .07,
-                      ),
+                      radius: 20,
+                      backgroundColor: AppColors.primary.withOpacity(0.08),
                       child: BlocBuilder<LoginBloc, LoginState>(
                         builder: (context, state) {
                           final name = state.maybeWhen(
@@ -184,10 +79,138 @@ class _TopBarState extends State<TopBar> {
                           );
                           return Text(
                             name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                            style: AppFonts.defaultTextTheme.labelLarge
+                                ?.copyWith(color: AppColors.primary),
                           );
                         },
                       ),
                     ),
+
+                    const SizedBox(width: 10),
+                    BlocBuilder<LoginBloc, LoginState>(
+                      builder: (context, state) {
+                        final name = state.maybeWhen(
+                          success: (res) => res.data.user,
+                          orElse: () => 'Pengguna',
+                        );
+                        //rich text
+                        return RichText(
+                          text: TextSpan(
+                            text: 'Hallo, ',
+                            style: AppFonts.defaultTextTheme.labelLarge
+                                ?.copyWith(color: AppColors.primary),
+                            children: [
+                              TextSpan(
+                                text: name.isNotEmpty
+                                    ? name.toUpperCase()
+                                    : 'U',
+                                style: AppFonts.defaultTextTheme.labelLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        );
+                        // return Text(
+                        //   'Hallo, ${name.isNotEmpty ? name.toUpperCase() : 'U'}',
+                        //   style: AppFonts.defaultTextTheme.labelLarge?.copyWith(
+                        //     color: AppColors.primary,
+                        //   ),
+                        // );
+                      },
+                    ),
+                    const SizedBox(width: 24),
+                    if (widget.searchController != null &&
+                        widget.onSearchChanged != null)
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.divider,
+                              width: 1,
+                            ),
+                          ),
+                          height: 40,
+                          child: TextField(
+                            controller: widget.searchController,
+                            onChanged: widget.onSearchChanged,
+                            style: AppFonts.defaultTextTheme.bodyMedium,
+                            decoration: InputDecoration(
+                              hintText: 'Cari menu...',
+                              hintStyle: AppFonts.defaultTextTheme.bodyMedium
+                                  ?.copyWith(color: AppColors.textSecondary),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                size: 20,
+                                color: AppColors.textSecondary,
+                              ),
+                              suffixIcon: _searchText.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        widget.searchController!.clear();
+                                        if (widget.onSearchChanged != null) {
+                                          widget.onSearchChanged!('');
+                                        }
+                                      },
+                                      icon: Icon(
+                                        Icons.close_rounded,
+                                        size: 20,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    )
+                                  : null,
+                              filled: true,
+                              fillColor: AppColors.surface,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 24),
+
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.divider, width: 1),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 20,
+                      color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _prettyDate(),
+                      style: AppFonts.defaultTextTheme.labelMedium?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
                   ],
                 ),
               ),
@@ -195,36 +218,31 @@ class _TopBarState extends State<TopBar> {
           ),
         ),
         const SizedBox(height: 8),
-        const Divider(
-          height: 2,
-          color: Colors.black26,
-          // indent: 20,
-          // endIndent: 20,
-        ),
+        const Divider(height: 1, color: AppColors.divider),
       ],
     );
   }
 
   String _prettyDate() {
     final d = _currentTime.toLocal();
-    return '${_weekday(d.weekday)}, ${d.day} ${_month(d.month)} ${d.year} • ${_two(d.hour)}:${_two(d.minute)}:${_two(d.second)}';
+    return '${_weekday(d.weekday)}, ${d.day} ${_month(d.month)} ${d.year} • ${_two(d.hour)}:${_two(d.minute)}';
   }
 
   String _weekday(int w) =>
-      ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'][w - 1];
+      ['Senin', 'Selasa', 'Rabu', 'Kamis', "Juma't", 'Sabtu', 'Minggu'][w - 1];
   String _month(int m) => [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ][m - 1];
   String _two(int n) => n.toString().padLeft(2, '0');
 }

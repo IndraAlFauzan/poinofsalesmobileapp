@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class ProductCard extends StatelessWidget {
@@ -19,7 +20,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = Theme.of(context); // Ini menggunakan AppThemes.light Anda
     return InkWell(
       onTap: available ? onTap : null,
       borderRadius: BorderRadius.circular(16),
@@ -86,7 +87,8 @@ class ProductCard extends StatelessWidget {
                         idrFormat(price),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: theme.colorScheme.primary,
+                          color: AppColors
+                              .primary, // Menggunakan AppColors langsung
                         ),
                       ),
                       const Spacer(),
@@ -101,6 +103,12 @@ class ProductCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           elevation: 0,
+                          backgroundColor: available
+                              ? AppColors
+                                    .primary // Menggunakan AppColors langsung
+                              : AppColors.error.withValues(
+                                  alpha: 0.5,
+                                ), // Not available
                         ),
                         icon: const Icon(Icons.add, size: 18),
                         label: const Text('Add'),
@@ -123,11 +131,10 @@ class AvailabilityPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final bg = available
-        ? theme.colorScheme.primary.withOpacity(.12)
-        : theme.colorScheme.error.withOpacity(.12);
-    final fg = available ? theme.colorScheme.primary : theme.colorScheme.error;
+        ? AppColors.primary.withValues(alpha: 0.15) // Available: light green
+        : AppColors.error.withValues(alpha: 0.12); // Not available: light red
+    final fg = available ? AppColors.textOnAccent : AppColors.error;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

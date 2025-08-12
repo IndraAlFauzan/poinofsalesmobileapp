@@ -23,17 +23,35 @@ class ProductCartItem extends StatefulWidget {
 
 class _ProductCartItemState extends State<ProductCartItem> {
   late TextEditingController _noteController;
+  late TextEditingController _quantityController;
 
   @override
   void initState() {
     super.initState();
     _noteController = TextEditingController(text: widget.item.note ?? '');
+    _quantityController = TextEditingController(
+      text: widget.item.quantity.toString(),
+    );
   }
 
   @override
   void dispose() {
     _noteController.dispose();
+    _quantityController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(ProductCartItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update quantity controller when widget updates (e.g., from external changes)
+    if (oldWidget.item.quantity != widget.item.quantity) {
+      _quantityController.text = widget.item.quantity.toString();
+    }
+    // Update note controller when widget updates
+    if (oldWidget.item.note != widget.item.note) {
+      _noteController.text = widget.item.note ?? '';
+    }
   }
 
   @override
@@ -346,12 +364,15 @@ class _ProductCartItemState extends State<ProductCartItem> {
                   GestureDetector(
                     onTap: () {
                       final newQty = widget.item.quantity - 1;
-                      context.read<CartBloc>().add(
-                        CartEvent.updateQuantityByIndex(
-                          itemIndex: widget.itemIndex,
-                          quantity: newQty,
-                        ),
-                      );
+                      if (newQty >= 1) {
+                        _quantityController.text = newQty.toString();
+                        context.read<CartBloc>().add(
+                          CartEvent.updateQuantityByIndex(
+                            itemIndex: widget.itemIndex,
+                            quantity: newQty,
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       width: 28,
@@ -367,25 +388,75 @@ class _ProductCartItemState extends State<ProductCartItem> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  // Quantity input field
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      '${widget.item.quantity}',
+                    width: 50,
+                    height: 28,
+                    child: TextField(
+                      controller: _quantityController,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.all(4),
+                      ),
+                      onChanged: (value) {
+                        final newQty = int.tryParse(value) ?? 1;
+                        if (newQty >= 1 && newQty <= 99) {
+                          context.read<CartBloc>().add(
+                            CartEvent.updateQuantityByIndex(
+                              itemIndex: widget.itemIndex,
+                              quantity: newQty,
+                            ),
+                          );
+                        }
+                      },
+                      onSubmitted: (value) {
+                        final newQty = int.tryParse(value) ?? 1;
+                        final validQty = newQty < 1
+                            ? 1
+                            : (newQty > 99 ? 99 : newQty);
+                        _quantityController.text = validQty.toString();
+                        context.read<CartBloc>().add(
+                          CartEvent.updateQuantityByIndex(
+                            itemIndex: widget.itemIndex,
+                            quantity: validQty,
+                          ),
+                        );
+                      },
                     ),
                   ),
+                  const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
                       final newQty = widget.item.quantity + 1;
-                      context.read<CartBloc>().add(
-                        CartEvent.updateQuantityByIndex(
-                          itemIndex: widget.itemIndex,
-                          quantity: newQty,
-                        ),
-                      );
+                      if (newQty <= 99) {
+                        _quantityController.text = newQty.toString();
+                        context.read<CartBloc>().add(
+                          CartEvent.updateQuantityByIndex(
+                            itemIndex: widget.itemIndex,
+                            quantity: newQty,
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       width: 28,

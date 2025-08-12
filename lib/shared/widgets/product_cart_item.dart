@@ -4,6 +4,7 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
 import 'package:posmobile/data/model/response/cart_item_model.dart';
 import 'package:posmobile/data/model/response/flavor_model_response.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class ProductCartItem extends StatefulWidget {
@@ -96,7 +97,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
                     Text(
                       idrFormat(widget.item.product.price),
                       style: const TextStyle(
-                        color: Colors.blue,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),
@@ -134,108 +135,153 @@ class _ProductCartItemState extends State<ProductCartItem> {
           ),
 
           const SizedBox(height: 12),
-
-          // Flavor dropdown - hanya untuk kategori selain Minuman dan Topping
+          // Flavor and Spicy Level dropdowns - hanya untuk kategori selain Minuman dan Topping
           if (widget.item.product.category != 'Minuman' &&
               widget.item.product.category != 'Topping')
-            BlocBuilder<FlavorBloc, FlavorState>(
-              builder: (context, state) {
-                return state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loading: () => const SizedBox.shrink(),
-                  failure: (msg) => const SizedBox.shrink(),
-                  success: (flavors) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Rasa:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<Flavor>(
-                              isExpanded: true,
-                              value: widget.item.selectedFlavor,
-                              hint: const Text(
-                                'Pilih Rasa',
-                                style: TextStyle(fontSize: 12),
+            Row(
+              children: [
+                // Flavor dropdown
+                Expanded(
+                  child: BlocBuilder<FlavorBloc, FlavorState>(
+                    builder: (context, state) {
+                      return state.when(
+                        initial: () => const SizedBox.shrink(),
+                        loading: () => const SizedBox.shrink(),
+                        failure: (msg) => const SizedBox.shrink(),
+                        success: (flavors) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Rasa:',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey,
+                                ),
                               ),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
-                              ),
-                              items: flavors.map((flavor) {
-                                return DropdownMenuItem<Flavor>(
-                                  value: flavor,
-                                  child: Text(flavor.name),
-                                );
-                              }).toList(),
-                              onChanged: (Flavor? newFlavor) {
-                                context.read<CartBloc>().add(
-                                  CartEvent.updateFlavorByIndex(
-                                    itemIndex: widget.itemIndex,
-                                    flavor: newFlavor!,
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                    );
-                  },
-                );
-              },
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<Flavor>(
+                                    isExpanded: true,
+                                    value: widget.item.selectedFlavor,
+                                    hint: const Text(
+                                      'Pilih Rasa',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    items: flavors.map((flavor) {
+                                      return DropdownMenuItem<Flavor>(
+                                        value: flavor,
+                                        child: Text(flavor.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Flavor? newFlavor) {
+                                      if (newFlavor != null) {
+                                        context.read<CartBloc>().add(
+                                          CartEvent.updateFlavorByIndex(
+                                            itemIndex: widget.itemIndex,
+                                            flavor: newFlavor,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Todo: Spicy Level dropdown placeholder
+                // Spicy Level dropdown - hanya untuk kategori selain Minuman dan Topping
+                Expanded(
+                  child: BlocBuilder<FlavorBloc, FlavorState>(
+                    builder: (context, state) {
+                      return state.when(
+                        initial: () => const SizedBox.shrink(),
+                        loading: () => const SizedBox.shrink(),
+                        failure: (msg) => const SizedBox.shrink(),
+                        success: (flavors) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Rasa:',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<Flavor>(
+                                    isExpanded: true,
+                                    value: widget.item.selectedFlavor,
+                                    hint: const Text(
+                                      'Pilih Rasa',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    items: flavors.map((flavor) {
+                                      return DropdownMenuItem<Flavor>(
+                                        value: flavor,
+                                        child: Text(flavor.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Flavor? newFlavor) {
+                                      if (newFlavor != null) {
+                                        context.read<CartBloc>().add(
+                                          CartEvent.updateFlavorByIndex(
+                                            itemIndex: widget.itemIndex,
+                                            flavor: newFlavor,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-
-          // Spicy level dropdown - hanya untuk kategori selain Minuman dan Topping
-          // TODO: Uncomment dan sesuaikan jika sudah ada SpicyLevelBloc
-          /*
-          if (widget.item.product.category != 'Minuman' && 
-              widget.item.product.category != 'Topping')
-            BlocBuilder<SpicyLevelBloc, SpicyLevelState>(
-              builder: (context, state) {
-                return state.when(
-                  success: (spicyLevels) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Level Pedas:', style: TextStyle(...)),
-                        Container(
-                          child: DropdownButton<SpicyLevel>(
-                            value: widget.item.selectedSpicyLevel,
-                            items: spicyLevels.map((level) => ...).toList(),
-                            onChanged: (level) {
-                              context.read<CartBloc>().add(
-                                CartEvent.updateSpicyLevel(...),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                    );
-                  },
-                  orElse: () => const SizedBox.shrink(),
-                );
-              },
-            ),
-          */
           const SizedBox(height: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +391,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Icon(
@@ -364,7 +410,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                  color: Colors.blue,
+                  color: AppColors.primary,
                 ),
               ),
             ],

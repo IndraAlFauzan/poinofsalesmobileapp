@@ -5,8 +5,8 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'widgets/widgets.dart';
-import 'widgets/search_bar.dart' as custom;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -83,17 +83,15 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TopBar(),
+                    TopBar(
+                      searchController: _searchCtrl,
+                      onSearchChanged: _onSearchChanged,
+                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            const SizedBox(height: 18),
-                            custom.SearchBar(
-                              controller: _searchCtrl,
-                              onChanged: _onSearchChanged,
-                            ),
                             const SizedBox(height: 18),
                             CategoryChips(
                               onChipCleared: () => _searchCtrl.clear(),
@@ -169,11 +167,21 @@ class _HomePageState extends State<HomePage> {
                             ), // Sejajar dengan padding atas yang lain
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
+                                horizontal: 8,
                               ),
-                              child: SizedBox(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(
+                                    alpha: .05,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 height:
-                                    36, // Sama dengan tinggi TopBar untuk alignment
+                                    46, // Sama dengan tinggi TopBar untuk alignment
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -183,6 +191,7 @@ class _HomePageState extends State<HomePage> {
                                       style: theme.textTheme.titleLarge
                                           ?.copyWith(
                                             fontWeight: FontWeight.w700,
+                                            color: theme.colorScheme.primary,
                                           ),
                                     ),
                                     Container(
@@ -208,14 +217,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ),
-                            Divider(
-                              height: 1,
-                              color: Theme.of(
-                                context,
-                              ).dividerColor.withOpacity(.3),
-                              indent: 24,
-                              endIndent: 24,
-                            ),
+                            const SizedBox(height: 10),
+                            Divider(height: 1, color: AppColors.divider),
                             const SizedBox(height: 14),
                             Expanded(
                               child: ListView.separated(

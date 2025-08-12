@@ -86,6 +86,7 @@ class _OrderPageState extends State<OrderPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TopBar(
+                      hintText: 'Cari menu...',
                       searchController: _searchCtrl,
                       onSearchChanged: _onSearchChanged,
                     ),

@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:posmobile/data/model/response/payment_method_model_response.dart';
 import 'package:posmobile/data/repository/payment_method_repository.dart';

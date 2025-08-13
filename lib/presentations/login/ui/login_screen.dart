@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   message: data.message,
                   color: Colors.green.shade400,
                 );
-                // TODO: navigate after a short delay or replace with route logic
+
                 Future.delayed(const Duration(milliseconds: 2000), () {
                   if (context.mounted) {
                     Navigator.of(context).pushReplacement(

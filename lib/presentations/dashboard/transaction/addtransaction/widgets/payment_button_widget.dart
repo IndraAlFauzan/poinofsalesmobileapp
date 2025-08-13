@@ -1,27 +1,35 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
-import 'package:posmobile/presentations/dashboard/transaction/transactioncart/transaction_cart_page.dart';
+import 'package:posmobile/presentations/dashboard/main_page.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/bloc/add_transaction_bloc.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_success_dialog.dart';
 import 'package:posmobile/data/model/request/transaction_model_request.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
-import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 
-class PaymentButtonWidget extends StatelessWidget {
+class PaymentButtonWidget extends StatefulWidget {
   final int? selectedPaymentMethod;
   final String? selectedServiceType;
   final double? paymentAmount;
+  final Function(String?)? onValidationError;
 
   const PaymentButtonWidget({
     super.key,
     required this.selectedPaymentMethod,
     required this.selectedServiceType,
     this.paymentAmount,
+    this.onValidationError,
   });
 
+  @override
+  State<PaymentButtonWidget> createState() => _PaymentButtonWidgetState();
+}
+
+class _PaymentButtonWidgetState extends State<PaymentButtonWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddTransactionBloc, AddTransactionState>(
@@ -30,50 +38,64 @@ class PaymentButtonWidget extends StatelessWidget {
           initial: () {},
           loading: () {},
           success: (response) {
-            // Tampilkan notifikasi sukses
-            Flushbar(
-              title: "Sukses",
-              message: "Transaksi berhasil ditambahkan",
-              duration: const Duration(seconds: 4),
-              flushbarStyle: FlushbarStyle.FLOATING,
-              flushbarPosition: FlushbarPosition.TOP,
-              textDirection: Directionality.of(context),
-              borderRadius: BorderRadius.circular(12),
-              leftBarIndicatorColor: Colors.blue[300],
-            ).show(context);
+            // Haptic feedback untuk success
+            HapticFeedback.lightImpact();
 
-            // Clear cart
+            // Simpan data cart sebelum di-clear
+            final cartState = context.read<CartBloc>().state;
+            double? totalPrice;
+            int? totalQty;
+
+            cartState.whenOrNull(
+              updated: (items, price, qty) {
+                totalPrice = price;
+                totalQty = qty;
+              },
+            );
+
+            // Clear cart setelah data disimpan
             context.read<CartBloc>().add(const CartEvent.clearCart());
 
-            // Tampilkan dialog setelah reset
-            Future.delayed(Duration.zero, () {
-              showCupertinoDialog(
-                context: context,
-                builder: (context) {
-                  return CustomAlertDialog(
-                    title: 'Berhasil',
-                    content: 'Apakah Anda yakin ingin print?',
-                    cancelText: 'Home',
-                    confirmText: 'Print',
-                    onCancel: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/main',
-                        (route) => false,
-                      );
-                    },
-                    onConfirm: () {
-                      //back to transaction cart
+            // Clear validation error jika ada
+            if (widget.onValidationError != null) {
+              widget.onValidationError!(null);
+            }
+
+            // Tampilkan success dialog dengan animation
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => TransactionSuccessDialog(
+                    transactionResponse: response,
+                    totalPrice: totalPrice ?? 0,
+                    totalQty: totalQty ?? 0,
+                    onPrint: () {
+                      HapticFeedback.selectionClick();
+                      Navigator.of(context).pop(); // Close dialog
+                      // Navigate to transaction cart for printing
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const TransactionCartPage(),
+                          builder: (context) => const MainPage(),
                         ),
                       );
                     },
-                  );
-                },
-              );
+                    onHome: () {
+                      HapticFeedback.selectionClick();
+                      Navigator.of(context).pop(); // Close dialog
+                      // Navigate to main/home
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainPage(),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
             });
           },
           failure: (message) {
@@ -85,57 +107,97 @@ class PaymentButtonWidget extends StatelessWidget {
               flushbarPosition: FlushbarPosition.TOP,
               textDirection: Directionality.of(context),
               borderRadius: BorderRadius.circular(12),
-              leftBarIndicatorColor: Colors.red[300],
+              leftBarIndicatorColor: AppColors.success,
             ).show(context);
           },
         );
       },
       builder: (context, state) {
         return state.when(
-          initial: () => _buildButton(context),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          success: (_) => _buildButton(context),
-          failure: (_) => _buildButton(context),
+          initial: () => _buildButton(context, isLoading: false),
+          loading: () => _buildButton(context, isLoading: true),
+          success: (_) => _buildButton(context, isLoading: false),
+          failure: (_) => _buildButton(context, isLoading: false),
         );
       },
     );
   }
 
-  Widget _buildButton(BuildContext context) {
+  Widget _buildButton(BuildContext context, {bool isLoading = false}) {
     return ElevatedButton(
-      onPressed: () => _handlePayment(context),
+      onPressed: isLoading ? null : () => _handlePayment(context),
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
-        backgroundColor: AppColors.primary,
+        backgroundColor: isLoading ? Colors.grey[400] : AppColors.primary,
+        disabledBackgroundColor: Colors.grey[400],
       ),
-      child: const Text(
-        "Bayar Sekarang",
-        style: TextStyle(color: Colors.white),
-      ),
+      child: isLoading
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Memproses...",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            )
+          : const Text(
+              "Bayar Sekarang",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
     );
   }
 
   void _handlePayment(BuildContext context) {
-    if (selectedPaymentMethod == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Pilih metode pembayaran")));
+    // Validasi dan kirim error ke parent widget
+    if (widget.selectedPaymentMethod == null) {
+      HapticFeedback.lightImpact();
+      if (widget.onValidationError != null) {
+        widget.onValidationError!("paymentMethod");
+      }
       return;
     }
 
-    if (selectedServiceType == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Pilih tipe layanan")));
+    if (widget.selectedServiceType == null) {
+      HapticFeedback.lightImpact();
+      if (widget.onValidationError != null) {
+        widget.onValidationError!("serviceType");
+      }
       return;
     }
 
-    if (selectedPaymentMethod == 1 &&
-        (paymentAmount == null || paymentAmount! < 1)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Masukkan jumlah uang")));
+    if (widget.selectedPaymentMethod == 1 &&
+        (widget.paymentAmount == null || widget.paymentAmount! < 1)) {
+      HapticFeedback.lightImpact();
+      if (widget.onValidationError != null) {
+        widget.onValidationError!("paymentAmount");
+      }
       return;
+    }
+
+    // Haptic feedback untuk submit
+    HapticFeedback.mediumImpact();
+
+    // Clear error jika validasi berhasil
+    if (widget.onValidationError != null) {
+      widget.onValidationError!(null);
     }
 
     final cartState = context.read<CartBloc>().state;
@@ -152,11 +214,11 @@ class PaymentButtonWidget extends StatelessWidget {
 
         final transaction = TransactionModelRequest(
           userId: userId,
-          paymentMethodId: selectedPaymentMethod!,
-          paymentAmount: selectedPaymentMethod == 1
-              ? paymentAmount!.toInt()
+          paymentMethodId: widget.selectedPaymentMethod!,
+          paymentAmount: widget.selectedPaymentMethod == 1
+              ? widget.paymentAmount!.toInt()
               : totalPrice.toInt(),
-          serviceType: selectedServiceType!,
+          serviceType: widget.selectedServiceType!,
           details: items
               .map(
                 (item) => Detail(

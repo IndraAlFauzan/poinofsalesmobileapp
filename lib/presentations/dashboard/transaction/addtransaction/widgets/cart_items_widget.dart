@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/product_cart_item.dart';
 
 class CartItemsWidget extends StatelessWidget {
@@ -55,7 +56,7 @@ class CartItemsWidget extends StatelessWidget {
                 bottom: 16, // Jarak dari bawah
                 right: 16, // Jarak dari kanan
                 child: FloatingActionButton.extended(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.primary,
                   onPressed: () {
                     Navigator.pop(context);
                   },

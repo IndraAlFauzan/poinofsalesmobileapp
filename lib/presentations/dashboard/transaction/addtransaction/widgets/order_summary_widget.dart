@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class OrderSummaryWidget extends StatelessWidget {
@@ -53,6 +54,7 @@ class OrderSummaryWidget extends StatelessWidget {
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       "Jumlah Pesanan: ",
@@ -62,7 +64,7 @@ class OrderSummaryWidget extends StatelessWidget {
                       "$totalQty item",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: AppColors.primary,
                       ),
                     ),
                   ],

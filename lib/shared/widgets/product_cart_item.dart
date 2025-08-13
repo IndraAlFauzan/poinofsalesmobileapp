@@ -66,7 +66,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -391,7 +391,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
                   ),
                   const SizedBox(width: 8),
                   // Quantity input field
-                  Container(
+                  SizedBox(
                     width: 50,
                     height: 28,
                     child: TextField(

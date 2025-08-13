@@ -22,7 +22,7 @@ class TotalsBlock extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: .05),
         border: Border(
-          top: BorderSide(color: theme.dividerColor.withOpacity(.5)),
+          top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
         ),
       ),
       child: Column(
@@ -34,7 +34,7 @@ class TotalsBlock extends StatelessWidget {
           // const SizedBox(height: 6),
           // _totalRow(context, 'Discount', '- ${idrFormat(0)}'),
           // const SizedBox(height: 12),
-          // Divider(color: theme.dividerColor.withOpacity(.6)),
+          // Divider(color: theme.dividerColor.withValues(alpha: 0.6)),
           // const SizedBox(height: 12),
           _totalRow(
             context,
@@ -83,7 +83,7 @@ class TotalsBlock extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(.75),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
             fontWeight: strong ? FontWeight.w700 : FontWeight.w500,
           ),
         ),

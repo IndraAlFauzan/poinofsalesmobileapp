@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posmobile/data/model/response/transaction_mode_response.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
@@ -155,7 +154,7 @@ class TransactionTebelData extends DataGridSource {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: _getPaymentColor(displayText).withOpacity(0.1),
+                color: _getPaymentColor(displayText).withValues(alpha: 0.1),
                 border: Border.all(
                   color: _getPaymentColor(displayText),
                   width: 1,
@@ -371,7 +370,9 @@ class TransactionTebelData extends DataGridSource {
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.05,
+                                        ),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -447,7 +448,7 @@ class TransactionTebelData extends DataGridSource {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                         ),
@@ -473,7 +474,7 @@ class TransactionTebelData extends DataGridSource {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),

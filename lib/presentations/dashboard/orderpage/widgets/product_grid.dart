@@ -28,8 +28,9 @@ class ProductGrid extends StatelessWidget {
               return Center(
                 child: Text(
                   'No items found',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(.6),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               );

@@ -61,7 +61,7 @@ class _PaginationControlsState extends State<PaginationControls> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -117,13 +117,13 @@ class _PaginationControlsState extends State<PaginationControls> {
             height: 36,
             decoration: BoxDecoration(
               color: onPressed != null
-                  ? AppColors.primary.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.1),
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : Colors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: onPressed != null
-                    ? AppColors.primary.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.3),
+                    ? AppColors.primary.withValues(alpha: 0.3)
+                    : Colors.grey.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),

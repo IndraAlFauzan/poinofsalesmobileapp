@@ -30,7 +30,7 @@ class ProductCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.onSurface.withOpacity(.05),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 6),
             ),
@@ -51,7 +51,7 @@ class ProductCard extends StatelessWidget {
                         imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           child: const Center(
                             child: Icon(Icons.broken_image_outlined),
                           ),

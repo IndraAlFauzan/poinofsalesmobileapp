@@ -85,7 +85,9 @@ class _TopBarState extends State<TopBar> {
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundColor: AppColors.primary.withOpacity(0.08),
+                      backgroundColor: AppColors.primary.withValues(
+                        alpha: 0.08,
+                      ),
                       child: BlocBuilder<LoginBloc, LoginState>(
                         builder: (context, state) {
                           final name = state.maybeWhen(

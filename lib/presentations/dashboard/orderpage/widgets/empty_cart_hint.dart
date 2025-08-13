@@ -16,7 +16,7 @@ class EmptyCartHint extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: .05),
+              color: AppColors.primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             height: 46, // Sama dengan tinggi TopBar untuk alignment
@@ -36,7 +36,7 @@ class EmptyCartHint extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: .07),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.07),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -61,8 +61,8 @@ class EmptyCartHint extends StatelessWidget {
               children: [
                 Icon(
                   Icons.shopping_cart_outlined,
-                  size: 64,
-                  color: theme.hintColor.withOpacity(.5),
+                  size: 72,
+                  color: theme.hintColor.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -75,8 +75,8 @@ class EmptyCartHint extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Add some delicious items to get started!',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.hintColor.withOpacity(.7),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.hintColor.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),

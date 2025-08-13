@@ -20,7 +20,7 @@ class _HistoryTransactionScreenState extends State<HistoryTransactionScreen>
   TransactionTebelData? transactionDataSource;
   final _searchController = TextEditingController();
   AnimationController? _refreshAnimationController;
-  Animation<double>? _refreshAnimation;
+  // Animation<double>? _refreshAnimation;
   bool _isRefreshing = false;
 
   @override
@@ -32,12 +32,12 @@ class _HistoryTransactionScreenState extends State<HistoryTransactionScreen>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _refreshAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _refreshAnimationController!,
-        curve: Curves.easeInOut,
-      ),
-    );
+    // _refreshAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    //   CurvedAnimation(
+    //     parent: _refreshAnimationController!,
+    //     curve: Curves.easeInOut,
+    //   ),
+    // );
 
     context.read<HistoryTransactionBloc>().add(
       HistoryTransactionEvent.fetchAllTransactions(),

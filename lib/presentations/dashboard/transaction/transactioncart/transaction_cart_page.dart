@@ -6,6 +6,7 @@ import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/add_transaction_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'widgets/widgets.dart';
 
@@ -243,9 +244,12 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                               totalQty: totalQty,
                               totalPrice: totalPrice,
                               onPay: totalQty > 0
-                                  ? () => Navigator.pushNamed(
+                                  ? () => Navigator.push(
                                       context,
-                                      '/transaction',
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AddTransactionPage(),
+                                      ),
                                     )
                                   : null,
                             ),

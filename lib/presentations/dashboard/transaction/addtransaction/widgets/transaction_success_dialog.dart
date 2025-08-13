@@ -1,12 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/receipt_preview_dialog.dart';
 
 class TransactionSuccessDialog extends StatefulWidget {
   final dynamic transactionResponse;
   final double totalPrice;
   final int totalQty;
+  final String? paymentMethodName;
+  final String? serviceTypeName;
+  final double? paymentAmount;
+  final double? changeAmount;
+  final List<Map<String, dynamic>>? cartItems;
   final VoidCallback? onPrint;
   final VoidCallback? onHome;
 
@@ -15,6 +21,11 @@ class TransactionSuccessDialog extends StatefulWidget {
     required this.transactionResponse,
     required this.totalPrice,
     required this.totalQty,
+    this.paymentMethodName,
+    this.serviceTypeName,
+    this.paymentAmount,
+    this.changeAmount,
+    this.cartItems,
     this.onPrint,
     this.onHome,
   });
@@ -67,6 +78,25 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
     super.dispose();
   }
 
+  void _showReceiptPreview(BuildContext context) {
+    HapticFeedback.selectionClick();
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => ReceiptPreviewDialog(
+        transactionResponse: widget.transactionResponse,
+        totalPrice: widget.totalPrice,
+        totalQty: widget.totalQty,
+        paymentMethod: widget.paymentMethodName ?? 'Tunai',
+        serviceType: widget.serviceTypeName ?? 'Dine In',
+        paymentAmount: widget.paymentAmount,
+        changeAmount: widget.changeAmount,
+        items: widget.cartItems,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -82,7 +112,7 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -96,7 +126,7 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -200,14 +230,17 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                 opacity: _fadeAnimation,
                 child: Column(
                   children: [
-                    // Print Button
+                    // View Receipt Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: widget.onPrint,
-                        icon: const Icon(Icons.print, color: Colors.white),
+                        onPressed: () => _showReceiptPreview(context),
+                        icon: const Icon(
+                          Icons.receipt_long,
+                          color: Colors.white,
+                        ),
                         label: const Text(
-                          'Print Struk',
+                          'Lihat Nota',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -226,16 +259,16 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
 
                     const SizedBox(height: 12),
 
-                    // Home Button
+                    // Print Button (secondary)
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        onPressed: widget.onHome,
-                        icon: Icon(Icons.home, color: Colors.grey[600]),
+                        onPressed: widget.onPrint,
+                        icon: Icon(Icons.print, color: AppColors.primary),
                         label: Text(
-                          'Kembali ke Home',
+                          'Print Struk',
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: AppColors.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -245,8 +278,32 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
-                            color: Colors.grey[300]!,
+                            color: AppColors.primary,
                             width: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Home Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        onPressed: widget.onHome,
+                        icon: Icon(Icons.home, color: Colors.grey[600]),
+                        label: Text(
+                          'Kembali ke Home',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),

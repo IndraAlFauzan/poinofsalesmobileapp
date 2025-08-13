@@ -1,5 +1,4 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +29,42 @@ class PaymentButtonWidget extends StatefulWidget {
 }
 
 class _PaymentButtonWidgetState extends State<PaymentButtonWidget> {
+  String _getPaymentMethodName() {
+    switch (widget.selectedPaymentMethod) {
+      case 1:
+        return 'Tunai';
+      case 2:
+        return 'QRIS';
+      case 3:
+        return 'Kartu Debit';
+      case 4:
+        return 'Kartu Kredit';
+      default:
+        return 'Tidak Diketahui';
+    }
+  }
+
+  String _getServiceTypeName() {
+    switch (widget.selectedServiceType) {
+      case 'dine_in':
+        return 'Dine In';
+      case 'take_away':
+        return 'Take Away';
+      case 'delivery':
+        return 'Delivery';
+      default:
+        return widget.selectedServiceType?.toUpperCase() ?? 'Tidak Diketahui';
+    }
+  }
+
+  double? _calculateChange(double totalPrice) {
+    if (widget.selectedPaymentMethod == 1 && widget.paymentAmount != null) {
+      final change = widget.paymentAmount! - totalPrice;
+      return change > 0 ? change : 0;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddTransactionBloc, AddTransactionState>(
@@ -45,13 +80,35 @@ class _PaymentButtonWidgetState extends State<PaymentButtonWidget> {
             final cartState = context.read<CartBloc>().state;
             double? totalPrice;
             int? totalQty;
+            List<Map<String, dynamic>>? cartItems;
 
             cartState.whenOrNull(
               updated: (items, price, qty) {
                 totalPrice = price;
                 totalQty = qty;
+                // Convert cart items to simple map for receipt
+                cartItems = items
+                    .map(
+                      (item) => {
+                        'name': item.product.name,
+                        'quantity': item.quantity,
+                        'price': item.product.price,
+                        'note': item.note,
+                        'flavor': item.selectedFlavor?.name,
+                        'spicyLevel': item.selectedSpicyLevel?.name,
+                      },
+                    )
+                    .toList();
               },
             );
+
+            // Get payment and service info
+            final paymentMethodName = _getPaymentMethodName();
+            final serviceTypeName = _getServiceTypeName();
+            final paymentAmount = widget.selectedPaymentMethod == 1
+                ? widget.paymentAmount
+                : null;
+            final changeAmount = _calculateChange(totalPrice ?? 0);
 
             // Clear cart setelah data disimpan
             context.read<CartBloc>().add(const CartEvent.clearCart());
@@ -71,6 +128,11 @@ class _PaymentButtonWidgetState extends State<PaymentButtonWidget> {
                     transactionResponse: response,
                     totalPrice: totalPrice ?? 0,
                     totalQty: totalQty ?? 0,
+                    paymentMethodName: paymentMethodName,
+                    serviceTypeName: serviceTypeName,
+                    paymentAmount: paymentAmount,
+                    changeAmount: changeAmount,
+                    cartItems: cartItems,
                     onPrint: () {
                       HapticFeedback.selectionClick();
                       Navigator.of(context).pop(); // Close dialog
@@ -141,7 +203,7 @@ class _PaymentButtonWidgetState extends State<PaymentButtonWidget> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white.withOpacity(0.8),
+                      Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ),

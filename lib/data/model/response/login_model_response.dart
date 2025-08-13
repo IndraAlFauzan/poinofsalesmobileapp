@@ -35,12 +35,14 @@ class Data {
   String accessToken;
   String tokenType;
   int expiresIn;
+  int userId;
   String user;
 
   Data({
     required this.accessToken,
     required this.tokenType,
     required this.expiresIn,
+    required this.userId,
     required this.user,
   });
 
@@ -48,6 +50,7 @@ class Data {
     accessToken: json["access_token"],
     tokenType: json["token_type"],
     expiresIn: json["expires_in"],
+    userId: json["user_id"],
     user: json["user"],
   );
 
@@ -55,6 +58,7 @@ class Data {
     "access_token": accessToken,
     "token_type": tokenType,
     "expires_in": expiresIn,
+    "user_id": userId,
     "user": user,
   };
 }

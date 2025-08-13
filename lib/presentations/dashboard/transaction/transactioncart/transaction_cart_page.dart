@@ -9,13 +9,13 @@ import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'widgets/widgets.dart';
 
-class OrderPage extends StatefulWidget {
-  const OrderPage({super.key});
+class TransactionCartPage extends StatefulWidget {
+  const TransactionCartPage({super.key});
   @override
-  State<OrderPage> createState() => _OrderPageState();
+  State<TransactionCartPage> createState() => _TransactionCartPageState();
 }
 
-class _OrderPageState extends State<OrderPage> {
+class _TransactionCartPageState extends State<TransactionCartPage> {
   final _searchCtrl = TextEditingController();
   final _cartScroll = ScrollController();
   Timer? _debounce;

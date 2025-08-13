@@ -16,7 +16,8 @@ class FlavorRepository {
         final flavoreResponse = FlavorsModelResnponse.fromJson(jsonResponse);
         return Right(flavoreResponse);
       } else {
-        return Left("Gagal memuat data rasa");
+        final jsonResponse = json.decode(response.body);
+        return Left(jsonResponse['message']);
       }
     } catch (e) {
       return Left("Error: $e");

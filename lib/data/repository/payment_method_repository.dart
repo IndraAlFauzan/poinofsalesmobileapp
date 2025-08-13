@@ -9,7 +9,7 @@ class PaymentMethodRepository {
 
   PaymentMethodRepository(this._serviceHttpClient);
 
-  Future<Either<String, PaymentMethodModelResponse>> fetchPayment() async {
+  Future<Either<String, PaymentMethodModelResponse>> fetchPaymentMehod() async {
     try {
       final response = await _serviceHttpClient.get('payment-methods');
 

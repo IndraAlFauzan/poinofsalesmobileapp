@@ -169,7 +169,7 @@ class _SideMenuState extends State<SideMenu> {
             page: MainPageTab.menu,
           ),
           _buildMenuItem(
-            label: 'Riwayat',
+            label: 'Riwayat Pesanan',
             icon: Icons.history_rounded,
             page: MainPageTab.history,
           ),
@@ -237,6 +237,9 @@ class _SideMenuState extends State<SideMenu> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, color: Colors.white, size: 24),
               const SizedBox(height: 5),
@@ -247,6 +250,7 @@ class _SideMenuState extends State<SideMenu> {
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),

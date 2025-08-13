@@ -24,7 +24,7 @@ class EmptyCartHint extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Order Summary',
+                  'Rangkuman Pesanan',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: theme.colorScheme.primary,
@@ -66,7 +66,7 @@ class EmptyCartHint extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Your cart is empty',
+                  'Pesanan masih kosong',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.hintColor,
                     fontWeight: FontWeight.w600,
@@ -74,7 +74,7 @@ class EmptyCartHint extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Add some delicious items to get started!',
+                  'Tambakan item untuk memesan!',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.hintColor.withValues(alpha: 0.7),
                   ),

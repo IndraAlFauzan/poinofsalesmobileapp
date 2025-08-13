@@ -188,7 +188,7 @@ class _OrderPageState extends State<OrderPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Order Summary',
+                                      'Rangkuman Pesanan',
                                       style: theme.textTheme.titleLarge
                                           ?.copyWith(
                                             fontWeight: FontWeight.w700,

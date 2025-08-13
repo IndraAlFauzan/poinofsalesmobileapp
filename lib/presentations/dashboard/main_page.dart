@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/presentations/dashboard/product/productmainpage/product_main_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/transactioncart/transaction_cart_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/history_transaction_screen.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
@@ -35,11 +36,10 @@ class _MainPageState extends State<MainPage> {
           cancelText: 'Tidak',
           confirmText: 'Ya',
           onConfirm: () {
-            Navigator.of(context).pop();
             // Lakukan logout dan navigasi
             Navigator.of(context).pushReplacementNamed('/login');
           },
-          onCancel: () => Navigator.of(context).pop(),
+          onCancel: () {},
         );
       },
     );
@@ -81,15 +81,16 @@ class _MainPageState extends State<MainPage> {
                   //     ),
                   //   ),
                   // ),
-                  Center(
-                    child: Text(
-                      'Riwayat Transaksi',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  ProductMainPage(),
+                  // Center(
+                  //   child: Text(
+                  //     'Riwayat Transaksi',
+                  //     style: TextStyle(
+                  //       fontSize: 24,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   HistoryTransactionScreen(),
                   // Center(
                   //   child: Text(
@@ -164,7 +165,7 @@ class _SideMenuState extends State<SideMenu> {
             page: MainPageTab.home,
           ),
           _buildMenuItem(
-            label: 'Menu',
+            label: 'Produk',
             icon: Icons.fastfood_rounded,
             page: MainPageTab.menu,
           ),

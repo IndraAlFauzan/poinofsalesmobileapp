@@ -376,23 +376,24 @@ class ReceiptPreviewDialog extends StatelessWidget {
               ),
             ],
           ),
-          if (flavor != null || spicyLevel != null || note != null) ...[
+          // Tampilkan detail hanya jika ada data yang valid
+          if (_hasValidDetails(flavor, spicyLevel, note)) ...[
             const SizedBox(height: 6),
-            if (flavor != null)
+            if (flavor != null && flavor.trim().isNotEmpty)
               Text(
                 'Rasa: $flavor',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.grey[600],
                 ),
               ),
-            if (spicyLevel != null)
+            if (spicyLevel != null && spicyLevel.trim().isNotEmpty)
               Text(
                 'Level Pedas: $spicyLevel',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.grey[600],
                 ),
               ),
-            if (note != null && note.isNotEmpty)
+            if (note != null && note.trim().isNotEmpty)
               Text(
                 'Catatan: $note',
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -404,6 +405,13 @@ class ReceiptPreviewDialog extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Helper method untuk mengecek apakah ada detail yang valid
+  bool _hasValidDetails(String? flavor, String? spicyLevel, String? note) {
+    return (flavor != null && flavor.trim().isNotEmpty) ||
+        (spicyLevel != null && spicyLevel.trim().isNotEmpty) ||
+        (note != null && note.trim().isNotEmpty);
   }
 
   void _copyToClipboard(BuildContext context) {
@@ -565,18 +573,22 @@ Tipe Layanan: ${serviceType.toUpperCase()}
         final qty = item['quantity'] ?? 1;
         final price = (item['price'] ?? 0).toDouble();
         final total = price * qty;
+        final flavor = item['flavor'];
+        final spicyLevel = item['spicyLevel'];
+        final note = item['note'];
 
         receipt += '${name.padRight(20)} ${qty}x\n';
         receipt += '${' ' * 20} ${idrFormat(total)}\n';
 
-        if (item['flavor'] != null) {
-          receipt += '  Rasa: ${item['flavor']}\n';
+        // Tambahkan detail rasa, level pedas, dan catatan jika ada
+        if (flavor != null && flavor.toString().trim().isNotEmpty) {
+          receipt += '  Rasa: $flavor\n';
         }
-        if (item['spicyLevel'] != null) {
-          receipt += '  Level Pedas: ${item['spicyLevel']}\n';
+        if (spicyLevel != null && spicyLevel.toString().trim().isNotEmpty) {
+          receipt += '  Level Pedas: $spicyLevel\n';
         }
-        if (item['note'] != null && item['note'].isNotEmpty) {
-          receipt += '  Catatan: ${item['note']}\n';
+        if (note != null && note.toString().trim().isNotEmpty) {
+          receipt += '  Catatan: $note\n';
         }
         receipt += '\n';
       }

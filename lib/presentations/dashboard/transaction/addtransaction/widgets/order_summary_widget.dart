@@ -1,0 +1,92 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:posmobile/bloc/cart/cart_bloc.dart';
+import 'package:posmobile/shared/widgets/idr_format.dart';
+
+class OrderSummaryWidget extends StatelessWidget {
+  const OrderSummaryWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, cartState) {
+        return cartState.when(
+          initial: () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Jumlah Pesanan: ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "0 item",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "Total Harga",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Text(
+                idrFormat(0),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          updated: (items, totalPrice, totalQty) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Jumlah Pesanan: ",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "$totalQty item",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    "Total Harga",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Text(
+                  idrFormat(totalPrice),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}

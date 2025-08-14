@@ -41,9 +41,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       // Tambah "Semua" di index 0 sebagai default
       list.insert(0, Category(id: 0, name: 'Semua'));
 
-      // Kamu sebelumnya sort berdasar id ascending (a.id.compareTo(b.id))
-      // Kalau mau tetap begitu, biarkan seperti ini:
-      list.sort((a, b) => a.id.compareTo(b.id));
+      // Custom sorting berdasarkan urutan yang diinginkan
+      list.sort(
+        (a, b) => _getCustomOrder(a.name).compareTo(_getCustomOrder(b.name)),
+      );
 
       _cache = list;
 
@@ -72,5 +73,27 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         selectedCategoryId: event.categoryId,
       ),
     );
+  }
+
+  // Method untuk menentukan urutan custom kategori
+  int _getCustomOrder(String categoryName) {
+    switch (categoryName) {
+      case 'Semua':
+        return 0;
+      case 'Prasmanan':
+        return 1;
+      case 'Toping':
+        return 2;
+      case 'Minuman':
+        return 3;
+      case 'Makanan':
+        return 4;
+      case 'Bakso & Mie Ayam':
+        return 5;
+      case 'Camilan':
+        return 6;
+      default:
+        return 999; // Kategori lain diletakkan di akhir
+    }
   }
 }

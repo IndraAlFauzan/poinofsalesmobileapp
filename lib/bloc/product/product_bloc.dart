@@ -113,16 +113,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         // Jika kategori yang dipilih adalah "prasmanan",
         // tambahkan juga produk dari kategori "topping"
         if (_isPrasmananCategory(_selectedCategoryId)) {
-          final isPrasmanan = p.categoryId == _selectedCategoryId;
-          final isToping = _isToppingCategory(p.categoryId);
-
-          // Debug print untuk melihat apa yang terjadi
-          print(
-            'Product: ${p.name}, Category: ${p.category}, CategoryId: ${p.categoryId}',
-          );
-          print('isPrasmanan: $isPrasmanan, isToping: $isToping');
-
-          return isPrasmanan || isToping;
+          return p.categoryId == _selectedCategoryId ||
+              _isToppingCategory(p.categoryId);
         }
         return p.categoryId == _selectedCategoryId;
       });
@@ -133,9 +125,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       list = list.where((p) => p.name.toLowerCase().contains(q));
     }
 
-    final result = List<Product>.from(list);
-    print('Total filtered products: ${result.length}');
-    return result;
+    return List<Product>.from(list);
   }
 
   // Helper method untuk mengecek apakah categoryId adalah prasmanan
@@ -143,13 +133,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (_all.isEmpty) return false;
     try {
       final product = _all.firstWhere((p) => p.categoryId == categoryId);
-      final result = product.category.toLowerCase().contains('prasmanan');
-      print(
-        '_isPrasmananCategory: categoryId=$categoryId, category="${product.category}", result=$result',
-      );
-      return result;
+      return product.category.toLowerCase().contains('prasmanan');
     } catch (e) {
-      print('_isPrasmananCategory: categoryId=$categoryId not found');
       return false;
     }
   }
@@ -159,13 +144,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (_all.isEmpty) return false;
     try {
       final product = _all.firstWhere((p) => p.categoryId == categoryId);
-      final result = product.category.toLowerCase().contains('toping');
-      print(
-        '_isToppingCategory: categoryId=$categoryId, category="${product.category}", result=$result',
-      );
-      return result;
+      return product.category.toLowerCase().contains('toping');
     } catch (e) {
-      print('_isToppingCategory: categoryId=$categoryId not found');
       return false;
     }
   }

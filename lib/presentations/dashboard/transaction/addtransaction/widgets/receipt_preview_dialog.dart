@@ -175,22 +175,52 @@ class ReceiptPreviewDialog extends StatelessWidget {
           _buildInfoRow(
             theme,
             'No. Transaksi:',
-            '#${now.millisecondsSinceEpoch % 100000}',
+            transactionResponse?.data?.orderNo != null
+                ? '#${transactionResponse.data.orderNo}'
+                : '#${now.millisecondsSinceEpoch % 100000}',
           ),
           const SizedBox(height: 8),
           _buildInfoRow(
             theme,
             'Tanggal:',
-            '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}',
+            transactionResponse?.data?.createdAt != null
+                ? '${transactionResponse.data.createdAt.day.toString().padLeft(2, '0')}/${transactionResponse.data.createdAt.month.toString().padLeft(2, '0')}/${transactionResponse.data.createdAt.year}'
+                : '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}',
           ),
           const SizedBox(height: 8),
           _buildInfoRow(
             theme,
             'Waktu:',
-            '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
+            transactionResponse?.data?.createdAt != null
+                ? '${transactionResponse.data.createdAt.hour.toString().padLeft(2, '0')}:${transactionResponse.data.createdAt.minute.toString().padLeft(2, '0')}:${transactionResponse.data.createdAt.second.toString().padLeft(2, '0')}'
+                : '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
           ),
           const SizedBox(height: 8),
-          _buildInfoRow(theme, 'Tipe Layanan:', serviceType.toUpperCase()),
+          _buildInfoRow(
+            theme,
+            'Tipe Layanan:',
+            transactionResponse?.data?.serviceType?.toUpperCase() ??
+                serviceType.toUpperCase(),
+          ),
+          // Tampilkan info meja jika ada
+          if (transactionResponse?.data?.tableNo != null) ...[
+            const SizedBox(height: 8),
+            _buildInfoRow(
+              theme,
+              'No. Meja:',
+              transactionResponse!.data.tableNo,
+            ),
+          ],
+          // Tampilkan info nama pelanggan jika ada
+          if (transactionResponse?.data?.customerName != null &&
+              transactionResponse!.data.customerName.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            _buildInfoRow(
+              theme,
+              'Nama Pelanggan:',
+              transactionResponse!.data.customerName,
+            ),
+          ],
 
           const SizedBox(height: 20),
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
@@ -271,23 +301,6 @@ class ReceiptPreviewDialog extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(height: 20),
-          Container(width: double.infinity, height: 1, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-
-          // Payment Info
-          _buildInfoRow(theme, 'Metode Bayar:', paymentMethod),
-
-          if (paymentAmount != null) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow(theme, 'Bayar:', idrFormat(paymentAmount!)),
-          ],
-
-          if (changeAmount != null && changeAmount! > 0) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow(theme, 'Kembalian:', idrFormat(changeAmount!)),
-          ],
 
           const SizedBox(height: 24),
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
@@ -549,7 +562,6 @@ class ReceiptPreviewDialog extends StatelessWidget {
 
   String _generateReceiptText() {
     final now = DateTime.now();
-    final receiptNumber = now.millisecondsSinceEpoch % 100000;
 
     String receipt =
         '''
@@ -559,10 +571,10 @@ class ReceiptPreviewDialog extends StatelessWidget {
      Telp: (021) 123-4567
 ===============================
 
-No. Transaksi: #$receiptNumber
-Tanggal: ${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}
-Waktu: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}
-Tipe Layanan: ${serviceType.toUpperCase()}
+No. Transaksi: ${transactionResponse?.data?.orderNo != null ? '#${transactionResponse.data.orderNo}' : '#${now.millisecondsSinceEpoch % 100000}'}
+Tanggal: ${transactionResponse?.data?.createdAt != null ? '${transactionResponse.data.createdAt.day.toString().padLeft(2, '0')}/${transactionResponse.data.createdAt.month.toString().padLeft(2, '0')}/${transactionResponse.data.createdAt.year}' : '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}'}
+Waktu: ${transactionResponse?.data?.createdAt != null ? '${transactionResponse.data.createdAt.hour.toString().padLeft(2, '0')}:${transactionResponse.data.createdAt.minute.toString().padLeft(2, '0')}:${transactionResponse.data.createdAt.second.toString().padLeft(2, '0')}' : '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}'}
+Tipe Layanan: ${transactionResponse?.data?.serviceType?.toUpperCase() ?? serviceType.toUpperCase()}
 
 ===============================
         DETAIL PESANAN
@@ -610,24 +622,11 @@ Tipe Layanan: ${serviceType.toUpperCase()}
 ===============================
 Total Item: $totalQty item
 TOTAL: ${idrFormat(totalPrice)}
-===============================
-
-Metode Bayar: $paymentMethod''';
-
-    if (paymentAmount != null) {
-      receipt += '\nBayar: ${idrFormat(paymentAmount!)}';
-    }
-
-    if (changeAmount != null && changeAmount! > 0) {
-      receipt += '\nKembalian: ${idrFormat(changeAmount!)}';
-    }
-
-    receipt += '''
 
 ===============================
-   Terima kasih atas kunjungan!
- Barang yang sudah dibeli tidak
-       dapat dikembalikan
+  Nota Untuk Dapur Sebagai
+  Proses Pembuatan Pesanan
+  
 ===============================
 ''';
 

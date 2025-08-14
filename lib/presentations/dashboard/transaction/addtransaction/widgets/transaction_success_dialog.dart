@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/receipt_preview_dialog.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
@@ -73,6 +74,62 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
     _scaleController.dispose();
     _fadeController.dispose();
     super.dispose();
+  }
+
+  void _showReceiptPreview(BuildContext context) {
+    HapticFeedback.mediumImpact();
+
+    // Use transaction response data if available, otherwise use cartItems
+    List<Map<String, dynamic>> formattedItems = [];
+
+    if (widget.transactionResponse != null &&
+        widget.transactionResponse.data != null &&
+        widget.transactionResponse.data.details != null) {
+      // Use data from transaction response
+      final transactionData = widget.transactionResponse.data;
+
+      formattedItems = transactionData.details
+          .map<Map<String, dynamic>>(
+            (detail) => {
+              'name': detail.nameProduct,
+              'price': detail.price.toDouble(),
+              'quantity': detail.quantity,
+              'note': detail.note,
+              'flavor': detail.flavor,
+              'spicyLevel': detail.spicyLevel,
+            },
+          )
+          .toList();
+    } else {
+      // Fallback to cartItems
+      formattedItems =
+          widget.cartItems?.map((item) {
+            final product = item['product'];
+            return {
+              'name': product?.name ?? 'Unknown Product',
+              'price': product?.price ?? 0.0,
+              'quantity': item['quantity'] ?? 1,
+              'note': item['note'],
+              'flavor': item['selectedFlavor']?.name,
+              'spicyLevel': item['selectedSpicyLevel']?.name,
+            };
+          }).toList() ??
+          [];
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => ReceiptPreviewDialog(
+        transactionResponse: widget.transactionResponse,
+        totalPrice: widget.totalPrice,
+        totalQty: widget.totalQty,
+        paymentMethod: widget.paymentMethodName ?? 'Tunai',
+        serviceType: widget.serviceTypeName ?? 'Dine In',
+        paymentAmount: widget.paymentAmount,
+        changeAmount: widget.changeAmount,
+        items: formattedItems,
+      ),
+    );
   }
 
   @override
@@ -188,7 +245,9 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                             ),
                           ),
                           Text(
-                            '#${DateTime.now().millisecondsSinceEpoch % 100000}',
+                            widget.transactionResponse?.data?.orderNo != null
+                                ? '#${widget.transactionResponse.data.orderNo}'
+                                : '#${DateTime.now().millisecondsSinceEpoch % 100000}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               fontFamily: 'monospace',
@@ -208,26 +267,54 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                 opacity: _fadeAnimation,
                 child: Column(
                   children: [
-                    // Home Button
+                    // Print Receipt Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: widget.onHome,
-                        icon: const Icon(Icons.home, color: Colors.white),
+                        onPressed: () => _showReceiptPreview(context),
+                        icon: const Icon(Icons.print, color: Colors.white),
                         label: const Text(
-                          'Kembali ke Menu Utama',
+                          'Cetak Nota',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: AppColors.success,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 2,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Home Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          HapticFeedback.selectionClick();
+                          widget.onHome?.call();
+                        },
+                        icon: Icon(Icons.home, color: AppColors.primary),
+                        label: Text(
+                          'Kembali ke Menu Utama',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(color: AppColors.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ),

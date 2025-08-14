@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
 import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/bloc/payment_method/payment_method_bloc.dart';
-import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/data/model/response/pending_transactions_response.dart';
 import 'package:posmobile/data/model/request/payment_settle_request.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
@@ -24,6 +23,8 @@ class _PaymentPageState extends State<PaymentPage> {
   int? _selectedPaymentMethodId;
   final _tenderedAmountController = TextEditingController();
   final _noteController = TextEditingController();
+  String? _selectedTableNo;
+  List<PendingTransaction> _allTransactions = [];
 
   @override
   void initState() {
@@ -50,6 +51,52 @@ class _PaymentPageState extends State<PaymentPage> {
       0.0,
       (sum, transaction) => sum + double.parse(transaction.grandTotal),
     );
+  }
+
+  // Get unique table numbers from transactions
+  List<String> get availableTableNumbers {
+    final tables = _allTransactions.map((t) => t.tableNo).toSet().toList();
+    tables.sort(
+      (a, b) =>
+          int.tryParse(a)?.compareTo(int.tryParse(b) ?? 0) ?? a.compareTo(b),
+    );
+    return tables;
+  }
+
+  // Get filtered and sorted transactions
+  List<PendingTransaction> get filteredTransactions {
+    var filtered = _allTransactions;
+
+    // Filter by selected table if any
+    if (_selectedTableNo != null) {
+      filtered = filtered.where((t) => t.tableNo == _selectedTableNo).toList();
+    }
+
+    // Sort by creation time (oldest first)
+    filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+    return filtered;
+  }
+
+  // Helper method to calculate waiting time and priority
+  String _getWaitingTimeText(DateTime createdAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+
+    if (difference.inHours > 0) {
+      return '${difference.inHours}j ${difference.inMinutes % 60}m';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m';
+    } else {
+      return 'Baru saja';
+    }
+  }
+
+  bool _isHighPriority(DateTime createdAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+    return difference.inMinutes >
+        30; // High priority if waiting more than 30 minutes
   }
 
   void _toggleTransactionSelection(PendingTransaction transaction) {
@@ -138,6 +185,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     setState(() {
                       _selectedTransactions.clear();
                       _selectedPaymentMethodId = null;
+                      _selectedTableNo = null;
                       _tenderedAmountController.clear();
                       _noteController.clear();
                     });
@@ -272,6 +320,81 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               ],
             ),
+
+            // Table filter dropdown
+            if (_allTransactions.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedTableNo,
+                  decoration: InputDecoration(
+                    labelText: 'Filter No. Meja',
+                    prefixIcon: Icon(
+                      Icons.table_restaurant_rounded,
+                      color: AppColors.primary,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(16),
+                    labelStyle: TextStyle(color: AppColors.primary),
+                  ),
+                  hint: const Text('Semua Meja'),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('Semua Meja'),
+                    ),
+                    ...availableTableNumbers.map(
+                      (tableNo) => DropdownMenuItem<String>(
+                        value: tableNo,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.table_restaurant_rounded,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Meja $tableNo'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedTableNo = value;
+                      _selectedTransactions
+                          .clear(); // Clear selections when changing filter
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Show transaction count for selected table
+              Row(
+                children: [
+                  Icon(Icons.info_outline, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    _selectedTableNo != null
+                        ? 'Menampilkan ${filteredTransactions.length} pesanan untuk Meja $_selectedTableNo'
+                        : 'Menampilkan ${filteredTransactions.length} pesanan dari ${availableTableNumbers.length} meja',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 16),
             Expanded(
               child: BlocBuilder<PendingTransactionBloc, PendingTransactionState>(
@@ -282,13 +405,24 @@ class _PaymentPageState extends State<PaymentPage> {
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     success: (transactions) {
-                      if (transactions.isEmpty) {
-                        return _buildEmptyState('Belum ada pesanan pending');
+                      // Store all transactions for filtering - create mutable copy
+                      _allTransactions = List<PendingTransaction>.from(
+                        transactions,
+                      );
+
+                      final displayTransactions = filteredTransactions;
+
+                      if (displayTransactions.isEmpty) {
+                        return _selectedTableNo != null
+                            ? _buildEmptyState(
+                                'Tidak ada pesanan di Meja $_selectedTableNo',
+                              )
+                            : _buildEmptyState('Belum ada pesanan pending');
                       }
                       return ListView.builder(
-                        itemCount: transactions.length,
+                        itemCount: displayTransactions.length,
                         itemBuilder: (context, index) {
-                          final transaction = transactions[index];
+                          final transaction = displayTransactions[index];
                           final isSelected = _selectedTransactions.contains(
                             transaction,
                           );
@@ -395,7 +529,12 @@ class _PaymentPageState extends State<PaymentPage> {
                                                   Icon(
                                                     Icons.access_time_rounded,
                                                     size: 16,
-                                                    color: Colors.grey[600],
+                                                    color:
+                                                        _isHighPriority(
+                                                          transaction.createdAt,
+                                                        )
+                                                        ? Colors.red[600]
+                                                        : Colors.grey[600],
                                                   ),
                                                   const SizedBox(width: 4),
                                                   Text(
@@ -406,6 +545,68 @@ class _PaymentPageState extends State<PaymentPage> {
                                                     style: TextStyle(
                                                       color: Colors.grey[600],
                                                       fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 6,
+                                                          vertical: 2,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          _isHighPriority(
+                                                            transaction
+                                                                .createdAt,
+                                                          )
+                                                          ? Colors.red
+                                                                .withValues(
+                                                                  alpha: 0.1,
+                                                                )
+                                                          : Colors.blue
+                                                                .withValues(
+                                                                  alpha: 0.1,
+                                                                ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                      border: Border.all(
+                                                        color:
+                                                            _isHighPriority(
+                                                              transaction
+                                                                  .createdAt,
+                                                            )
+                                                            ? Colors.red
+                                                                  .withValues(
+                                                                    alpha: 0.3,
+                                                                  )
+                                                            : Colors.blue
+                                                                  .withValues(
+                                                                    alpha: 0.3,
+                                                                  ),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      _isHighPriority(
+                                                            transaction
+                                                                .createdAt,
+                                                          )
+                                                          ? 'PRIORITAS • ${_getWaitingTimeText(transaction.createdAt)}'
+                                                          : 'TUNGGU • ${_getWaitingTimeText(transaction.createdAt)}',
+                                                      style: TextStyle(
+                                                        color:
+                                                            _isHighPriority(
+                                                              transaction
+                                                                  .createdAt,
+                                                            )
+                                                            ? Colors.red[700]
+                                                            : Colors.blue[700],
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],

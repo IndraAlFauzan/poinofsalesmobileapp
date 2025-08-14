@@ -78,6 +78,10 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                                   selectedTableNo,
                                   selectedTransactions,
                                   availableTables,
+                                  paymentMethodId,
+                                  paymentMethodName,
+                                  tenderedAmount,
+                                  note,
                                 ) {
                                   if (selectedTransactions.isNotEmpty) {
                                     return const Expanded(
@@ -118,6 +122,10 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                 selectedTableNo,
                 selectedTransactions,
                 availableTables,
+                paymentMethodId,
+                paymentMethodName,
+                tenderedAmount,
+                note,
               ) {
                 final currentTotalAmount = paymentPageBloc.getTotalAmount();
 
@@ -125,8 +133,14 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                 final paidTransactions = List<PendingTransaction>.from(
                   selectedTransactions,
                 );
-                const currentPaymentMethod =
-                    'Payment Method'; // You may need to get this from payment form
+                final currentPaymentMethod =
+                    paymentMethodName ?? 'Unknown Payment Method';
+                final currentTenderedAmount = tenderedAmount;
+                final currentChangeAmount =
+                    currentTenderedAmount != null &&
+                        currentTenderedAmount > currentTotalAmount
+                    ? currentTenderedAmount - currentTotalAmount
+                    : null;
 
                 // Clear selections
                 context.read<PaymentPageBloc>().add(
@@ -147,8 +161,8 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                     paidTransactions: paidTransactions,
                     totalAmount: currentTotalAmount,
                     paymentMethod: currentPaymentMethod,
-                    tenderedAmount: null, // Get from payment form if needed
-                    changeAmount: null, // Calculate if needed
+                    tenderedAmount: currentTenderedAmount,
+                    changeAmount: currentChangeAmount,
                   ),
                 );
               },

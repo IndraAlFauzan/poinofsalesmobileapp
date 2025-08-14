@@ -39,6 +39,10 @@ class _PaymentFormState extends State<PaymentForm> {
                 selectedTableNo,
                 selectedTransactions,
                 availableTables,
+                paymentMethodId,
+                paymentMethodName,
+                tenderedAmount,
+                note,
               ) => selectedTransactions,
         ) ??
         [];
@@ -69,12 +73,41 @@ class _PaymentFormState extends State<PaymentForm> {
       final totalAmount = paymentPageBloc.getTotalAmount();
 
       if (tenderedAmount == null || tenderedAmount < totalAmount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Jumlah uang tidak valid')),
-        );
+        Flushbar(
+          message: 'Jumlah uang tidak mencukupi',
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          flushbarStyle: FlushbarStyle.GROUNDED,
+        ).show(context);
         return;
       }
     }
+
+    // Store payment info to bloc before processing payment
+    // First get payment method name
+    final paymentMethodBloc = context.read<PaymentMethodBloc>();
+    String paymentMethodName = 'Unknown';
+    paymentMethodBloc.state.whenOrNull(
+      success: (paymentMethods) {
+        final method = paymentMethods.firstWhere(
+          (m) => m.id == _selectedPaymentMethodId,
+          orElse: () => paymentMethods.first,
+        );
+        paymentMethodName = method.name;
+      },
+    );
+
+    // Save payment info to bloc
+    context.read<PaymentPageBloc>().add(
+      PaymentPageEvent.setPaymentInfo(
+        paymentMethodId: _selectedPaymentMethodId!,
+        paymentMethodName: paymentMethodName,
+        tenderedAmount: _selectedPaymentMethodId == 1
+            ? double.tryParse(_tenderedAmountController.text)
+            : null,
+        note: _noteController.text.isEmpty ? null : _noteController.text,
+      ),
+    );
 
     final request = PaymentSettleRequest(
       paymentMethodId: _selectedPaymentMethodId!,
@@ -234,22 +267,101 @@ class _PaymentFormState extends State<PaymentForm> {
   }
 
   Widget _buildCashAmountField() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: TextFormField(
-        controller: _tenderedAmountController,
-        decoration: const InputDecoration(
-          labelText: 'Jumlah Uang Diterima',
-          prefixIcon: Icon(Icons.attach_money_rounded),
-          prefixText: 'Rp ',
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(16),
-        ),
-        keyboardType: TextInputType.number,
-      ),
+    return BlocBuilder<PaymentPageBloc, PaymentPageState>(
+      builder: (context, state) {
+        final paymentPageBloc = context.read<PaymentPageBloc>();
+        final totalAmount = paymentPageBloc.getTotalAmount();
+        final tenderedAmount =
+            double.tryParse(_tenderedAmountController.text) ?? 0.0;
+        final changeAmount = tenderedAmount > totalAmount
+            ? tenderedAmount - totalAmount
+            : 0.0;
+
+        return Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
+              child: TextFormField(
+                controller: _tenderedAmountController,
+                decoration: const InputDecoration(
+                  labelText: 'Jumlah Uang Diterima',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(16),
+                  prefixText: 'Rp ',
+                ),
+
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {}); // Trigger rebuild untuk update kembalian
+                },
+              ),
+            ),
+            if (tenderedAmount > 0) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: changeAmount >= 0
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: changeAmount >= 0
+                        ? Colors.green.withValues(alpha: 0.3)
+                        : Colors.red.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              changeAmount >= 0
+                                  ? Icons.check_circle
+                                  : Icons.warning,
+                              size: 16,
+                              color: changeAmount >= 0
+                                  ? Colors.green[600]
+                                  : Colors.red[600],
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              changeAmount >= 0 ? 'Kembalian:' : 'Kurang:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: changeAmount >= 0
+                                    ? Colors.green[600]
+                                    : Colors.red[600],
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          idrFormat(changeAmount.abs().toString()),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: changeAmount >= 0
+                                ? Colors.green[600]
+                                : Colors.red[600],
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 
@@ -267,7 +379,6 @@ class _PaymentFormState extends State<PaymentForm> {
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(16),
         ),
-        maxLines: 3,
       ),
     );
   }
@@ -358,6 +469,10 @@ class _SelectedTransactionsSummary extends StatelessWidget {
                 selectedTableNo,
                 selectedTransactions,
                 availableTables,
+                paymentMethodId,
+                paymentMethodName,
+                tenderedAmount,
+                note,
               ) {
                 if (selectedTransactions.isEmpty) {
                   return const SizedBox.shrink();

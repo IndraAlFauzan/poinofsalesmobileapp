@@ -18,6 +18,10 @@ class TableFilterDropdown extends StatelessWidget {
                 selectedTableNo,
                 selectedTransactions,
                 availableTables,
+                paymentMethodId,
+                paymentMethodName,
+                tenderedAmount,
+                note,
               ) {
                 if (availableTables.isEmpty) {
                   return const SizedBox.shrink();

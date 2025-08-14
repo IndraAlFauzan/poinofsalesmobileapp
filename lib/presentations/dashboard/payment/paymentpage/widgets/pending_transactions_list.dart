@@ -103,6 +103,10 @@ class PendingTransactionsList extends StatelessWidget {
                         selectedTableNo,
                         selectedTransactions,
                         availableTables,
+                        paymentMethodId,
+                        paymentMethodName,
+                        tenderedAmount,
+                        note,
                       ) {
                         final paymentPageBloc = context.read<PaymentPageBloc>();
                         final displayTransactions = paymentPageBloc

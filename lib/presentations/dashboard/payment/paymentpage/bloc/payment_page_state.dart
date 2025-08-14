@@ -9,5 +9,9 @@ class PaymentPageState with _$PaymentPageState {
     String? selectedTableNo,
     @Default([]) List<PendingTransaction> selectedTransactions,
     @Default([]) List<String> availableTables,
+    int? paymentMethodId,
+    String? paymentMethodName,
+    double? tenderedAmount,
+    String? note,
   }) = _Loaded;
 }

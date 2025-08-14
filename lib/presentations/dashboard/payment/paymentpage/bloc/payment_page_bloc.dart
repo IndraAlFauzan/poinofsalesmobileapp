@@ -13,6 +13,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     on<_ToggleTransactionSelection>(_onToggleTransactionSelection);
     on<_ClearSelections>(_onClearSelections);
     on<_ValidateTableSelection>(_onValidateTableSelection);
+    on<_SetPaymentInfo>(_onSetPaymentInfo);
   }
 
   void _onUpdateTransactions(
@@ -112,7 +113,14 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     final currentState = state;
     if (currentState is _Loaded) {
       emit(
-        currentState.copyWith(selectedTableNo: null, selectedTransactions: []),
+        currentState.copyWith(
+          selectedTableNo: null,
+          selectedTransactions: [],
+          paymentMethodId: null,
+          paymentMethodName: null,
+          tenderedAmount: null,
+          note: null,
+        ),
       );
     }
   }
@@ -133,6 +141,23 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
           ),
         );
       }
+    }
+  }
+
+  void _onSetPaymentInfo(
+    _SetPaymentInfo event,
+    Emitter<PaymentPageState> emit,
+  ) {
+    final currentState = state;
+    if (currentState is _Loaded) {
+      emit(
+        currentState.copyWith(
+          paymentMethodId: event.paymentMethodId,
+          paymentMethodName: event.paymentMethodName,
+          tenderedAmount: event.tenderedAmount,
+          note: event.note,
+        ),
+      );
     }
   }
 

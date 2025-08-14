@@ -16,4 +16,11 @@ class PaymentPageEvent with _$PaymentPageEvent {
 
   const factory PaymentPageEvent.validateTableSelection() =
       _ValidateTableSelection;
+
+  const factory PaymentPageEvent.setPaymentInfo({
+    required int paymentMethodId,
+    required String paymentMethodName,
+    double? tenderedAmount,
+    String? note,
+  }) = _SetPaymentInfo;
 }

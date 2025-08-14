@@ -17,7 +17,6 @@ class ProductMainPage extends StatefulWidget {
 
 class _ProductMainPageState extends State<ProductMainPage> {
   final _searchCtrl = TextEditingController();
-  final _cartScroll = ScrollController();
   Timer? _debounce;
 
   @override
@@ -35,7 +34,6 @@ class _ProductMainPageState extends State<ProductMainPage> {
   void dispose() {
     _debounce?.cancel();
     _searchCtrl.dispose();
-    _cartScroll.dispose();
     super.dispose();
   }
 
@@ -69,53 +67,32 @@ class _ProductMainPageState extends State<ProductMainPage> {
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         bottom: false,
-        child: Row(
-          children: [
-            // LEFT: product area
-            Expanded(
-              flex: 5,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  // left: 28,
-                  // right: 28,
-                  // top: 10, // Sejajar dengan logo SideMenu
-                  bottom: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TopBar(
-                      hintText: 'Cari menu...',
-                      searchController: _searchCtrl,
-                      onSearchChanged: _onSearchChanged,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 18),
-                            CategoryChips(onChipCleared: () {}),
-                            const SizedBox(height: 18),
-                            Expanded(child: ProductGridMain()),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TopBar(
+                hintText: 'Cari menu...',
+                searchController: _searchCtrl,
+                onSearchChanged: _onSearchChanged,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 18),
+                      CategoryChips(onChipCleared: () {}),
+                      const SizedBox(height: 18),
+                      Expanded(child: ProductGridMain()),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Aksi ketika FAB ditekan, misalnya membuka halaman tambah produk
-          // Navigator.of(context).pushNamed('/add-product');
-        },
-        label: const Text('Tambah Produk'),
-        icon: const Icon(Icons.add),
       ),
     );
   }

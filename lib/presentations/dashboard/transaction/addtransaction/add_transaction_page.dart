@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/custom_app_bar.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/cart_items_widget.dart';
-import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/payment_details_widget.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_details_widget.dart';
 
 class AddTransactionPage extends StatelessWidget {
   const AddTransactionPage({super.key});
@@ -25,7 +25,7 @@ class AddTransactionPage extends StatelessWidget {
                       children: [const Expanded(child: CartItemsWidget())],
                     ),
                   ),
-                  const Expanded(flex: 2, child: PaymentDetailsWidget()),
+                  const Expanded(flex: 2, child: TransactionDetailsWidget()),
                 ],
               ),
             ),

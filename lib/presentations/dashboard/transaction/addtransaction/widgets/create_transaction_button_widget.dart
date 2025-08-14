@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
+import 'package:posmobile/data/model/response/table_response.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/service_type_dropdown.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/table_dropdown.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/data/model/request/create_transaction_request.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_success_dialog.dart';
@@ -21,13 +23,12 @@ class CreateTransactionButtonWidget extends StatefulWidget {
 
 class _CreateTransactionButtonWidgetState
     extends State<CreateTransactionButtonWidget> {
-  final _tableController = TextEditingController();
   final _customerController = TextEditingController();
   String? selectedServiceType;
+  TableData? selectedTable;
 
   @override
   void dispose() {
-    _tableController.dispose();
     _customerController.dispose();
     super.dispose();
   }
@@ -35,6 +36,12 @@ class _CreateTransactionButtonWidgetState
   void _onServiceTypeChanged(String? serviceType) {
     setState(() {
       selectedServiceType = serviceType;
+    });
+  }
+
+  void _onTableChanged(TableData? table) {
+    setState(() {
+      selectedTable = table;
     });
   }
 
@@ -58,8 +65,8 @@ class _CreateTransactionButtonWidgetState
       return;
     }
 
-    if (_tableController.text.isEmpty) {
-      widget.onValidationError?.call('Masukkan nomor meja');
+    if (selectedTable == null) {
+      widget.onValidationError?.call('Pilih meja terlebih dahulu');
       return;
     }
 
@@ -102,7 +109,7 @@ class _CreateTransactionButtonWidgetState
     if (cartItems.isEmpty) return;
 
     final request = CreateTransactionRequest(
-      tableId: int.tryParse(_tableController.text) ?? 1,
+      tableId: selectedTable!.id,
       customerName: _customerController.text,
       userId: userId!,
       serviceType: selectedServiceType!,
@@ -132,8 +139,11 @@ class _CreateTransactionButtonWidgetState
             context.read<CartBloc>().add(const CartEvent.clearCart());
 
             // Clear form
-            _tableController.clear();
             _customerController.clear();
+            setState(() {
+              selectedTable = null;
+              selectedServiceType = null;
+            });
 
             // Get cart data for dialog
             final cartState = context.read<CartBloc>().state;
@@ -187,28 +197,22 @@ class _CreateTransactionButtonWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ServiceTypeDropdown(onServiceTypeChanged: _onServiceTypeChanged),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: ServiceTypeDropdown(
+                  onServiceTypeChanged: _onServiceTypeChanged,
+                ),
+              ),
 
-          const SizedBox(height: 16),
-          // Table Number Input
-          TextFormField(
-            controller: _tableController,
-            decoration: InputDecoration(
-              labelText: 'Nomor Meja',
-              labelStyle: const TextStyle(color: AppColors.textSecondary),
-              filled: true,
-              fillColor: AppColors.surface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
+              const SizedBox(width: 8),
+              // Table Dropdown
+              Expanded(
+                flex: 1,
+                child: TableDropdown(onTableChanged: _onTableChanged),
               ),
-              prefixIcon: const Icon(
-                Icons.table_restaurant,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            style: const TextStyle(color: AppColors.textPrimary),
-            keyboardType: TextInputType.number,
+            ],
           ),
           const SizedBox(height: 12),
 
@@ -288,7 +292,7 @@ class _CreateTransactionButtonWidgetState
           Text(
             'Pesanan akan disimpan sebagai pending dan dapat dibayar di tab Pembayaran',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textPrimary,
+              color: AppColors.accent,
               fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,

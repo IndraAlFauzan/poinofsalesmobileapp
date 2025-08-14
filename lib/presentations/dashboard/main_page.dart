@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:posmobile/presentations/dashboard/product/productmainpage/product_main_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/transactioncart/transaction_cart_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/history_transaction_screen.dart';
-import 'package:posmobile/presentations/dashboard/payment/payment_page.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/payment_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/custom_alert_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';

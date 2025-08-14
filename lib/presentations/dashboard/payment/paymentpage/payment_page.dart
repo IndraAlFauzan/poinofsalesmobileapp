@@ -9,7 +9,8 @@ import 'package:posmobile/data/model/request/payment_settle_request.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
-import 'package:posmobile/presentations/dashboard/payment/widgets/payment_success_dialog.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_success_dialog.dart';
+import 'package:posmobile/shared/widgets/top_bar.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -195,7 +196,7 @@ class _PaymentPageState extends State<PaymentPage> {
           ],
           child: Column(
             children: [
-              _buildTopBar(context),
+              TopBar(hintText: 'Cari Pesanan...'),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -215,143 +216,6 @@ class _PaymentPageState extends State<PaymentPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: AppColors.primary,
-              size: 22,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          const SizedBox(width: 8),
-          Icon(Icons.payment_rounded, color: AppColors.primary, size: 28),
-          const SizedBox(width: 12),
-          Text(
-            'Pembayaran Pesanan',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-            ),
-          ),
-          const Spacer(),
-          BlocBuilder<LoginBloc, LoginState>(
-            builder: (context, state) {
-              final name = state.maybeWhen(
-                success: (res) => res.data.user,
-                orElse: () => 'Kasir',
-              );
-              return Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                    child: Text(
-                      name.isNotEmpty ? name[0].toUpperCase() : 'K',
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        name.isNotEmpty ? name : 'Kasir',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                          fontSize: 14,
-                        ),
-                      ),
-                      StreamBuilder<DateTime>(
-                        stream: Stream.periodic(
-                          const Duration(seconds: 1),
-                          (_) => DateTime.now(),
-                        ),
-                        initialData: DateTime.now(),
-                        builder: (context, snapshot) {
-                          final now = snapshot.data ?? DateTime.now();
-                          return Text(
-                            "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary.withValues(alpha: 0.1),
-                          AppColors.primary.withValues(alpha: 0.05),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.account_balance_wallet_rounded,
-                          size: 20,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Sistem Pembayaran',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
       ),
     );
   }

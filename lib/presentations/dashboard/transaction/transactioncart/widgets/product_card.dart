@@ -4,7 +4,7 @@ import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;
-  final String imageUrl;
+  final String? imageUrl; // Changed to nullable
   final double price;
   final bool available;
   final VoidCallback onTap;
@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
     required this.title,
-    required this.imageUrl,
+    this.imageUrl, // Changed to optional
     required this.price,
     required this.available,
     required this.onTap,
@@ -47,16 +47,7 @@ class ProductCard extends StatelessWidget {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
-                          child: const Center(
-                            child: Icon(Icons.broken_image_outlined),
-                          ),
-                        ),
-                      ),
+                      child: _buildProductImage(theme),
                     ),
                   ),
                   Positioned(
@@ -116,6 +107,61 @@ class ProductCard extends StatelessWidget {
                     ],
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductImage(ThemeData theme) {
+    // Handle null or empty imageUrl
+    if (imageUrl == null || imageUrl!.trim().isEmpty) {
+      return _buildPlaceholderImage(theme);
+    }
+
+    return Image.network(
+      imageUrl!,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _buildPlaceholderImage(theme),
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Container(
+          color: theme.colorScheme.surfaceContainerHighest,
+          child: Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                  : null,
+              strokeWidth: 2,
+              color: AppColors.primary,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPlaceholderImage(ThemeData theme) {
+    return Container(
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.image_not_supported_outlined,
+              size: 32,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'No Image',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 10,
               ),
             ),
           ],

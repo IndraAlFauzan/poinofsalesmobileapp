@@ -82,20 +82,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
               // Product image
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  widget.item.product.photoUrl,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 60,
-                      height: 60,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image),
-                    );
-                  },
-                ),
+                child: _buildProductImage(),
               ),
               const SizedBox(width: 12),
 
@@ -157,7 +144,7 @@ class _ProductCartItemState extends State<ProductCartItem> {
           const SizedBox(height: 12),
           // Flavor and Spicy Level dropdowns - hanya untuk kategori selain Minuman dan Topping
           if (widget.item.product.category != 'Minuman' &&
-              widget.item.product.category != 'Topping')
+              widget.item.product.category != 'Toping')
             Row(
               children: [
                 // Flavor dropdown
@@ -302,56 +289,58 @@ class _ProductCartItemState extends State<ProductCartItem> {
               ],
             ),
           const SizedBox(height: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Catatan:',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _noteController,
-                style: const TextStyle(fontSize: 12),
-                decoration: InputDecoration(
-                  hintText: 'Tambahkan catatan...',
-                  hintStyle: TextStyle(
+          // Kalau Toping
+          if (widget.item.product.category != 'Toping')
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Catatan:',
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade500,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey,
                   ),
                 ),
-                maxLines: 2,
-                onChanged: (note) {
-                  context.read<CartBloc>().add(
-                    CartEvent.updateNoteByIndex(
-                      itemIndex: widget.itemIndex,
-                      note: note,
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _noteController,
+                  style: const TextStyle(fontSize: 12),
+                  decoration: InputDecoration(
+                    hintText: 'Tambahkan catatan...',
+                    hintStyle: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
                     ),
-                  );
-                },
-              ),
-            ],
-          ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.blue),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                  ),
+                  maxLines: 2,
+                  onChanged: (note) {
+                    context.read<CartBloc>().add(
+                      CartEvent.updateNoteByIndex(
+                        itemIndex: widget.itemIndex,
+                        note: note,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
 
           const SizedBox(height: 12),
 
@@ -486,6 +475,45 @@ class _ProductCartItemState extends State<ProductCartItem> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductImage() {
+    // Handle null or empty photoUrl
+    if (widget.item.product.photoUrl == null ||
+        widget.item.product.photoUrl!.trim().isEmpty) {
+      return _buildPlaceholderImage();
+    }
+
+    return Image.network(
+      widget.item.product.photoUrl!,
+      width: 60,
+      height: 60,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      width: 60,
+      height: 60,
+      color: Colors.grey[300],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_not_supported_outlined,
+            size: 20,
+            color: Colors.grey[600],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'No Image',
+            style: TextStyle(fontSize: 8, color: Colors.grey[600]),
           ),
         ],
       ),

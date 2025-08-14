@@ -37,7 +37,7 @@ class Product {
   String name;
   double price;
   int stock;
-  String photoUrl;
+  String? photoUrl; // Changed to nullable
   String category;
 
   Product({
@@ -46,7 +46,7 @@ class Product {
     required this.name,
     required this.price,
     required this.stock,
-    required this.photoUrl,
+    this.photoUrl, // Changed to optional
     required this.category,
   });
 
@@ -56,7 +56,7 @@ class Product {
     name: json["name"],
     price: json["price"].toDouble(),
     stock: json["stock"],
-    photoUrl: json["photo_url"],
+    photoUrl: json["photo_url"], // Will be null if API returns null
     category: json["category"],
   );
 

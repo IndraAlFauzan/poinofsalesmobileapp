@@ -110,6 +110,14 @@ class _ProductMainPageState extends State<ProductMainPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Aksi ketika FAB ditekan, misalnya membuka halaman tambah produk
+          // Navigator.of(context).pushNamed('/add-product');
+        },
+        label: const Text('Tambah Produk'),
+        icon: const Icon(Icons.add),
+      ),
     );
   }
 }

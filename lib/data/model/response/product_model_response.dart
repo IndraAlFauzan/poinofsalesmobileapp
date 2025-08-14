@@ -54,7 +54,9 @@ class Product {
     id: json["id"],
     categoryId: json["category_id"],
     name: json["name"],
-    price: json["price"].toDouble(),
+    price: json["price"] is String
+        ? double.parse(json["price"])
+        : (json["price"] as num).toDouble(),
     stock: json["stock"],
     photoUrl: json["photo_url"], // Will be null if API returns null
     category: json["category"],

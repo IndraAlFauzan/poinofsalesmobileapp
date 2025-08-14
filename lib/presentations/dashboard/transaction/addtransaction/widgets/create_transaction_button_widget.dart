@@ -5,6 +5,8 @@ import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/service_type_dropdown.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/data/model/request/create_transaction_request.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_success_dialog.dart';
+import 'package:posmobile/presentations/dashboard/main_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 
 class CreateTransactionButtonWidget extends StatefulWidget {
@@ -34,6 +36,19 @@ class _CreateTransactionButtonWidgetState
     setState(() {
       selectedServiceType = serviceType;
     });
+  }
+
+  String _getServiceTypeName() {
+    switch (selectedServiceType) {
+      case 'dine_in':
+        return 'Dine In';
+      case 'take_away':
+        return 'Take Away';
+      case 'delivery':
+        return 'Delivery';
+      default:
+        return 'Tidak Diketahui';
+    }
   }
 
   void _createOrder() {
@@ -120,13 +135,47 @@ class _CreateTransactionButtonWidgetState
             _tableController.clear();
             _customerController.clear();
 
-            // Show success message
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Pesanan ${response.data.orderNo} berhasil dibuat',
-                ),
-                backgroundColor: Colors.green,
+            // Get cart data for dialog
+            final cartState = context.read<CartBloc>().state;
+            List<Map<String, dynamic>> cartItems = [];
+            double totalPrice = 0;
+            int totalQty = 0;
+
+            cartState.whenOrNull(
+              updated: (items, price, qty) {
+                totalPrice = price;
+                totalQty = qty;
+                cartItems = items
+                    .map(
+                      (item) => {
+                        'product': item.product,
+                        'quantity': item.quantity,
+                        'note': item.note,
+                        'selectedFlavor': item.selectedFlavor,
+                        'selectedSpicyLevel': item.selectedSpicyLevel,
+                      },
+                    )
+                    .toList();
+              },
+            );
+
+            // Show success dialog
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => TransactionSuccessDialog(
+                transactionResponse: response,
+                totalPrice: totalPrice,
+                totalQty: totalQty,
+                serviceTypeName: _getServiceTypeName(),
+                cartItems: cartItems,
+                onHome: () {
+                  Navigator.of(context).pop(); // Close dialog
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const MainPage()),
+                    (route) => false,
+                  );
+                },
               ),
             );
           },

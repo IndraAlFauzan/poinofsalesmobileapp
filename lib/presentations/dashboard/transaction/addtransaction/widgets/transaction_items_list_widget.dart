@@ -4,8 +4,8 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
-class OrderItemsListWidget extends StatelessWidget {
-  const OrderItemsListWidget({super.key});
+class TransactionItemsListWidget extends StatelessWidget {
+  const TransactionItemsListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

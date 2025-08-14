@@ -76,6 +76,32 @@ class ServiceHttpClient {
     }
   }
 
+  Future<http.Response> putWithToken(
+    String endPoint,
+    Map<String, dynamic> body,
+  ) async {
+    final token = await secureStorage.read(key: "authToken");
+    final url = Uri.parse("$baseUrl$endPoint");
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      // Log request untuk debugging
+      _logRequest("PUT", url, body, response);
+      return response;
+    } catch (e) {
+      throw Exception("PUT request failed: $e");
+    }
+  }
+
   /// Logging untuk debug request
   void _logRequest(
     String method,

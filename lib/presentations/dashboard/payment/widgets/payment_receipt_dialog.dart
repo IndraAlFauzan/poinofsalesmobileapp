@@ -2,27 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/data/model/response/pending_transactions_response.dart';
 
-class ReceiptPreviewDialog extends StatelessWidget {
-  final dynamic transactionResponse;
-  final double totalPrice;
-  final int totalQty;
+class PaymentReceiptDialog extends StatelessWidget {
+  final int paymentId;
+  final List<PendingTransaction> paidTransactions;
+  final double totalAmount;
   final String paymentMethod;
-  final String serviceType;
-  final double? paymentAmount;
+  final double? tenderedAmount;
   final double? changeAmount;
-  final List<Map<String, dynamic>>? items;
 
-  const ReceiptPreviewDialog({
+  const PaymentReceiptDialog({
     super.key,
-    required this.transactionResponse,
-    required this.totalPrice,
-    required this.totalQty,
+    required this.paymentId,
+    required this.paidTransactions,
+    required this.totalAmount,
     required this.paymentMethod,
-    required this.serviceType,
-    this.paymentAmount,
+    this.tenderedAmount,
     this.changeAmount,
-    this.items,
   });
 
   @override
@@ -54,7 +51,7 @@ class ReceiptPreviewDialog extends StatelessWidget {
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
-                      'Nota Transaksi',
+                      'Struk Pembayaran',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -171,12 +168,8 @@ class ReceiptPreviewDialog extends StatelessWidget {
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
           const SizedBox(height: 16),
 
-          // Transaction Info
-          _buildInfoRow(
-            theme,
-            'No. Transaksi:',
-            '#${now.millisecondsSinceEpoch % 100000}',
-          ),
+          // Payment Info
+          _buildInfoRow(theme, 'Payment ID:', paymentId.toString()),
           const SizedBox(height: 8),
           _buildInfoRow(
             theme,
@@ -189,16 +182,14 @@ class ReceiptPreviewDialog extends StatelessWidget {
             'Waktu:',
             '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
           ),
-          const SizedBox(height: 8),
-          _buildInfoRow(theme, 'Tipe Layanan:', serviceType.toUpperCase()),
 
           const SizedBox(height: 20),
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
           const SizedBox(height: 16),
 
-          // Items Header
+          // Transactions Header
           Text(
-            'DETAIL PESANAN',
+            'PESANAN YANG DIBAYAR',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -206,43 +197,21 @@ class ReceiptPreviewDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Items List
-          if (items != null && items!.isNotEmpty) ...[
-            ...items!.map(
-              (item) => _buildReceiptItem(
-                theme,
-                item['name'] ?? 'Item',
-                item['quantity'] ?? 1,
-                (item['price'] ?? 0) is String
-                    ? double.parse(item['price'] ?? '0')
-                    : ((item['price'] ?? 0) as num).toDouble(),
-                item['note'],
-                item['flavor'],
-                item['spicyLevel'],
-              ),
-            ),
-          ] else ...[
-            // Fallback untuk mock data
-            ...List.generate(
-              totalQty.clamp(1, 3),
-              (index) => _buildReceiptItem(
-                theme,
-                'Item ${index + 1}',
-                1,
-                totalPrice / totalQty,
-                null,
-                null,
-                null,
-              ),
-            ),
-          ],
+          // Transactions List
+          ...paidTransactions.map(
+            (transaction) => _buildTransactionItem(theme, transaction),
+          ),
 
           const SizedBox(height: 16),
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
           const SizedBox(height: 16),
 
           // Totals
-          _buildInfoRow(theme, 'Total Item:', '$totalQty item'),
+          _buildInfoRow(
+            theme,
+            'Jumlah Transaksi:',
+            '${paidTransactions.length} pesanan',
+          ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -254,14 +223,14 @@ class ReceiptPreviewDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'TOTAL:',
+                  'TOTAL PEMBAYARAN:',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
                   ),
                 ),
                 Text(
-                  idrFormat(totalPrice),
+                  idrFormat(totalAmount),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
@@ -279,9 +248,9 @@ class ReceiptPreviewDialog extends StatelessWidget {
           // Payment Info
           _buildInfoRow(theme, 'Metode Bayar:', paymentMethod),
 
-          if (paymentAmount != null) ...[
+          if (tenderedAmount != null) ...[
             const SizedBox(height: 8),
-            _buildInfoRow(theme, 'Bayar:', idrFormat(paymentAmount!)),
+            _buildInfoRow(theme, 'Bayar:', idrFormat(tenderedAmount!)),
           ],
 
           if (changeAmount != null && changeAmount! > 0) ...[
@@ -309,7 +278,7 @@ class ReceiptPreviewDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Simpan struk ini sebagai bukti pembelian',
+            'Simpan struk ini sebagai bukti pembayaran',
             style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
@@ -336,14 +305,9 @@ class ReceiptPreviewDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildReceiptItem(
+  Widget _buildTransactionItem(
     ThemeData theme,
-    String name,
-    int qty,
-    double price,
-    String? note,
-    String? flavor,
-    String? spicyLevel,
+    PendingTransaction transaction,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -357,63 +321,65 @@ class ReceiptPreviewDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                flex: 3,
-                child: Text(
-                  name,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      transaction.orderNo,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Meja ${transaction.tableNo} - ${transaction.customerName}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text('${qty}x', style: theme.textTheme.bodyMedium),
-              const SizedBox(width: 16),
               Text(
-                idrFormat(price * qty),
+                idrFormat(double.parse(transaction.grandTotal)),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
                 ),
               ),
             ],
           ),
-          // Tampilkan detail hanya jika ada data yang valid
-          if (_hasValidDetails(flavor, spicyLevel, note)) ...[
-            const SizedBox(height: 6),
-            if (flavor != null && flavor.trim().isNotEmpty)
-              Text(
-                'Rasa: $flavor',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+          const SizedBox(height: 8),
+          const Divider(height: 1),
+          const SizedBox(height: 8),
+          Text(
+            'Detail Pesanan:',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 4),
+          ...transaction.details.map(
+            (detail) => Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: Row(
+                children: [
+                  Text('${detail.quantity}x '),
+                  Expanded(child: Text(detail.nameProduct)),
+                  Text(
+                    idrFormat((detail.quantity * detail.price).toString()),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-            if (spicyLevel != null && spicyLevel.trim().isNotEmpty)
-              Text(
-                'Level Pedas: $spicyLevel',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-            if (note != null && note.trim().isNotEmpty)
-              Text(
-                'Catatan: $note',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-          ],
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  // Helper method untuk mengecek apakah ada detail yang valid
-  bool _hasValidDetails(String? flavor, String? spicyLevel, String? note) {
-    return (flavor != null && flavor.trim().isNotEmpty) ||
-        (spicyLevel != null && spicyLevel.trim().isNotEmpty) ||
-        (note != null && note.trim().isNotEmpty);
   }
 
   void _copyToClipboard(BuildContext context) {
@@ -422,7 +388,7 @@ class ReceiptPreviewDialog extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Nota berhasil disalin ke clipboard'),
+        content: Text('Struk berhasil disalin ke clipboard'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -489,28 +455,12 @@ class ReceiptPreviewDialog extends StatelessWidget {
                 child: Icon(Icons.text_fields, color: AppColors.primary),
               ),
               title: const Text('Copy Text'),
-              subtitle: const Text('Copy nota dalam format teks'),
+              subtitle: const Text('Copy struk dalam format teks'),
               onTap: () {
                 HapticFeedback.selectionClick();
                 Navigator.pop(context);
                 _copyToClipboard(context);
               },
-            ),
-
-            // Option 3: Future PDF (disabled for now)
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.picture_as_pdf, color: Colors.grey),
-              ),
-              title: const Text('Export PDF'),
-              subtitle: const Text('Segera hadir - Export ke PDF'),
-              enabled: false,
-              onTap: null,
             ),
 
             const SizedBox(height: 20),
@@ -529,11 +479,11 @@ class ReceiptPreviewDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Untuk mengambil screenshot nota:'),
+            Text('Untuk mengambil screenshot struk:'),
             SizedBox(height: 12),
             Text('• Tutup dialog ini'),
             Text('• Ambil screenshot layar'),
-            Text('• Crop bagian nota'),
+            Text('• Crop bagian struk'),
             Text('• Share atau print dari galeri'),
           ],
         ),
@@ -549,7 +499,6 @@ class ReceiptPreviewDialog extends StatelessWidget {
 
   String _generateReceiptText() {
     final now = DateTime.now();
-    final receiptNumber = now.millisecondsSinceEpoch % 100000;
 
     String receipt =
         '''
@@ -559,63 +508,40 @@ class ReceiptPreviewDialog extends StatelessWidget {
      Telp: (021) 123-4567
 ===============================
 
-No. Transaksi: #$receiptNumber
+Payment ID: $paymentId
 Tanggal: ${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}
 Waktu: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}
-Tipe Layanan: ${serviceType.toUpperCase()}
 
 ===============================
-        DETAIL PESANAN
+    PESANAN YANG DIBAYAR
 ===============================
 ''';
 
-    if (items != null && items!.isNotEmpty) {
-      for (var item in items!) {
-        final name = item['name'] ?? 'Item';
-        final qty = item['quantity'] ?? 1;
-        final price = (item['price'] ?? 0) is String
-            ? double.parse(item['price'] ?? '0')
-            : ((item['price'] ?? 0) as num).toDouble();
-        final total = price * qty;
-        final flavor = item['flavor'];
-        final spicyLevel = item['spicyLevel'];
-        final note = item['note'];
+    for (var transaction in paidTransactions) {
+      receipt += '${transaction.orderNo}\n';
+      receipt += 'Meja ${transaction.tableNo} - ${transaction.customerName}\n';
+      receipt +=
+          'Total: ${idrFormat(double.parse(transaction.grandTotal))}\n\n';
 
-        receipt += '${name.padRight(20)} ${qty}x\n';
-        receipt += '${' ' * 20} ${idrFormat(total)}\n';
-
-        // Tambahkan detail rasa, level pedas, dan catatan jika ada
-        if (flavor != null && flavor.toString().trim().isNotEmpty) {
-          receipt += '  Rasa: $flavor\n';
-        }
-        if (spicyLevel != null && spicyLevel.toString().trim().isNotEmpty) {
-          receipt += '  Level Pedas: $spicyLevel\n';
-        }
-        if (note != null && note.toString().trim().isNotEmpty) {
-          receipt += '  Catatan: $note\n';
-        }
-        receipt += '\n';
+      for (var detail in transaction.details) {
+        receipt += '${detail.nameProduct.padRight(20)} ${detail.quantity}x\n';
+        receipt +=
+            '${' ' * 20} ${idrFormat((detail.quantity * detail.price).toString())}\n';
       }
-    } else {
-      // Mock data
-      for (int i = 0; i < totalQty.clamp(1, 3); i++) {
-        final price = totalPrice / totalQty;
-        receipt += '${'Item ${i + 1}'.padRight(20)} 1x\n';
-        receipt += '${' ' * 20} ${idrFormat(price)}\n\n';
-      }
+      receipt += '\n';
     }
 
     receipt +=
         '''
 ===============================
-Total Item: $totalQty item
-TOTAL: ${idrFormat(totalPrice)}
+Jumlah Transaksi: ${paidTransactions.length} pesanan
+TOTAL PEMBAYARAN: ${idrFormat(totalAmount)}
 ===============================
 
 Metode Bayar: $paymentMethod''';
 
-    if (paymentAmount != null) {
-      receipt += '\nBayar: ${idrFormat(paymentAmount!)}';
+    if (tenderedAmount != null) {
+      receipt += '\nBayar: ${idrFormat(tenderedAmount!)}';
     }
 
     if (changeAmount != null && changeAmount! > 0) {

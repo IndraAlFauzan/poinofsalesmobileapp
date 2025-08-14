@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
-import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/receipt_preview_dialog.dart';
 
 class TransactionSuccessDialog extends StatefulWidget {
   final dynamic transactionResponse;
@@ -13,7 +12,6 @@ class TransactionSuccessDialog extends StatefulWidget {
   final double? paymentAmount;
   final double? changeAmount;
   final List<Map<String, dynamic>>? cartItems;
-  final VoidCallback? onPrint;
   final VoidCallback? onHome;
 
   const TransactionSuccessDialog({
@@ -26,7 +24,6 @@ class TransactionSuccessDialog extends StatefulWidget {
     this.paymentAmount,
     this.changeAmount,
     this.cartItems,
-    this.onPrint,
     this.onHome,
   });
 
@@ -76,25 +73,6 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
     _scaleController.dispose();
     _fadeController.dispose();
     super.dispose();
-  }
-
-  void _showReceiptPreview(BuildContext context) {
-    HapticFeedback.selectionClick();
-
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => ReceiptPreviewDialog(
-        transactionResponse: widget.transactionResponse,
-        totalPrice: widget.totalPrice,
-        totalQty: widget.totalQty,
-        paymentMethod: widget.paymentMethodName ?? 'Tunai',
-        serviceType: widget.serviceTypeName ?? 'Dine In',
-        paymentAmount: widget.paymentAmount,
-        changeAmount: widget.changeAmount,
-        items: widget.cartItems,
-      ),
-    );
   }
 
   @override
@@ -230,17 +208,14 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
                 opacity: _fadeAnimation,
                 child: Column(
                   children: [
-                    // View Receipt Button
+                    // Home Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => _showReceiptPreview(context),
-                        icon: const Icon(
-                          Icons.receipt_long,
-                          color: Colors.white,
-                        ),
+                        onPressed: widget.onHome,
+                        icon: const Icon(Icons.home, color: Colors.white),
                         label: const Text(
-                          'Lihat Nota',
+                          'Kembali ke Menu Utama',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -259,54 +234,15 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
 
                     const SizedBox(height: 12),
 
-                    // Print Button (secondary)
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: widget.onPrint,
-                        icon: Icon(Icons.print, color: AppColors.primary),
-                        label: Text(
-                          'Print Struk',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: BorderSide(
-                            color: AppColors.primary,
-                            width: 1.5,
-                          ),
-                        ),
+                    // Info text
+                    Text(
+                      'Pesanan berhasil dibuat dan menunggu pembayaran.\nSilakan ke tab Pembayaran untuk menyelesaikan transaksi.',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
                       ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Home Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextButton.icon(
-                        onPressed: widget.onHome,
-                        icon: Icon(Icons.home, color: Colors.grey[600]),
-                        label: Text(
-                          'Kembali ke Home',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

@@ -3,15 +3,14 @@ import 'package:posmobile/presentations/dashboard/transaction/addtransaction/wid
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_summary_widget.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/create_transaction_button_widget.dart';
 
-class TransactionDetailsWidget extends StatefulWidget {
-  const TransactionDetailsWidget({super.key});
+class PaymentDetailsWidget extends StatefulWidget {
+  const PaymentDetailsWidget({super.key});
 
   @override
-  State<TransactionDetailsWidget> createState() =>
-      _TransactionDetailsWidgetState();
+  State<PaymentDetailsWidget> createState() => _PaymentDetailsWidgetState();
 }
 
-class _TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
+class _PaymentDetailsWidgetState extends State<PaymentDetailsWidget> {
   String? validationError;
 
   @override

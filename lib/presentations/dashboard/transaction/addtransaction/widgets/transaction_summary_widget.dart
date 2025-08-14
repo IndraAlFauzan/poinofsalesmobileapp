@@ -4,8 +4,8 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
-class OrderSummaryWidget extends StatelessWidget {
-  const OrderSummaryWidget({super.key});
+class TransactionSummaryWidget extends StatelessWidget {
+  const TransactionSummaryWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +32,23 @@ class OrderSummaryWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              const SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "Total Harga",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Text(
-                idrFormat(0),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Total Harga",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    idrFormat(0),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -70,19 +74,20 @@ class OrderSummaryWidget extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    "Total Harga",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Text(
-                  idrFormat(totalPrice),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total Harga",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      idrFormat(totalPrice),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ],
             );

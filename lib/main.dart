@@ -3,8 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
+import 'package:posmobile/bloc/payment_method/payment_method_bloc.dart';
+import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
+import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
-import 'package:posmobile/core/config/app_themes.dart';
+import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
+import 'package:posmobile/bloc/table/table_bloc.dart';
+import 'package:posmobile/data/repository/payment_method_repository.dart';
+import 'package:posmobile/data/repository/spicy_level_repository.dart';
+import 'package:posmobile/data/repository/table_repository.dart';
+import 'package:posmobile/data/repository/transaction_repository.dart';
+import 'package:posmobile/presentations/dashboard/transaction/addtransaction/bloc/add_transaction_bloc.dart';
+import 'package:posmobile/presentations/dashboard/transaction/historytransaction/bloc/history_transaction_bloc.dart';
+import 'package:posmobile/shared/config/app_themes.dart';
 import 'package:posmobile/data/repository/auth_repository.dart';
 import 'package:posmobile/data/repository/category_repository.dart';
 import 'package:posmobile/data/repository/flavor_repository.dart';
@@ -39,12 +50,38 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ProductBloc(locator<ProductRepository>()),
         ),
+        BlocProvider(
+          create: (context) => SpicyLevelBloc(locator<SpicyLevelRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              HistoryTransactionBloc(locator<TransactionRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              AddTransactionBloc(locator<TransactionRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              PaymentMethodBloc(locator<PaymentMethodRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              PendingTransactionBloc(locator<TransactionRepository>()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              PaymentSettlementBloc(locator<TransactionRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => TableBloc(locator<TableRepository>()),
+        ),
       ],
       child: MaterialApp(
         title: 'POS',
         debugShowCheckedModeBanner: false,
         theme: AppThemes.light,
-        darkTheme: AppThemes.dark,
+        darkTheme: AppThemes.light,
         themeMode: ThemeMode.system,
 
         initialRoute: '/login',

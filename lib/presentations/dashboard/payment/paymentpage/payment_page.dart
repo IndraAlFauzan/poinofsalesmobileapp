@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
@@ -65,7 +66,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   // Get filtered and sorted transactions
   List<PendingTransaction> get filteredTransactions {
-    var filtered = _allTransactions;
+    var filtered = List<PendingTransaction>.from(_allTransactions);
 
     // Filter by selected table if any
     if (_selectedTableNo != null) {
@@ -111,16 +112,24 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _processPayment() {
     if (_selectedTransactions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih pesanan yang akan dibayar')),
-      );
+      //pakai flushbar
+      Flushbar(
+        message: 'Pilih pesanan yang akan dibayar',
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        flushbarStyle: FlushbarStyle.GROUNDED,
+      ).show(context);
+
       return;
     }
 
     if (_selectedPaymentMethodId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Pilih metode pembayaran')));
+      Flushbar(
+        message: 'Pilih metode pembayaran',
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        flushbarStyle: FlushbarStyle.GROUNDED,
+      ).show(context);
       return;
     }
 
@@ -256,7 +265,9 @@ class _PaymentPageState extends State<PaymentPage> {
                       const SizedBox(width: 16),
 
                       // Right side - Payment form
-                      Expanded(flex: 1, child: _buildPaymentForm()),
+                      // jika tidak ada transaksi yang dipilih, tampilkan kosong
+                      if (_selectedTransactions.isNotEmpty)
+                        Expanded(flex: 1, child: _buildPaymentForm()),
                     ],
                   ),
                 ),
@@ -324,75 +335,98 @@ class _PaymentPageState extends State<PaymentPage> {
             // Table filter dropdown
             if (_allTransactions.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                  ),
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedTableNo,
-                  decoration: InputDecoration(
-                    labelText: 'Filter No. Meja',
-                    prefixIcon: Icon(
-                      Icons.table_restaurant_rounded,
-                      color: AppColors.primary,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(16),
-                    labelStyle: TextStyle(color: AppColors.primary),
-                  ),
-                  hint: const Text('Semua Meja'),
-                  items: [
-                    const DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('Semua Meja'),
-                    ),
-                    ...availableTableNumbers.map(
-                      (tableNo) => DropdownMenuItem<String>(
-                        value: tableNo,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.table_restaurant_rounded,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 8),
-                            Text('Meja $tableNo'),
-                          ],
-                        ),
+              Builder(
+                builder: (context) {
+                  // Calculate available tables here to avoid constant rebuilds
+                  final availableTables = _allTransactions
+                      .map((t) => t.tableNo)
+                      .toSet()
+                      .toList();
+                  availableTables.sort(
+                    (a, b) =>
+                        int.tryParse(a)?.compareTo(int.tryParse(b) ?? 0) ??
+                        a.compareTo(b),
+                  );
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.2),
                       ),
                     ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedTableNo = value;
-                      _selectedTransactions
-                          .clear(); // Clear selections when changing filter
-                    });
-                  },
-                ),
+                    child: DropdownButtonFormField<String>(
+                      key: const ValueKey('table_filter_dropdown'),
+                      value: _selectedTableNo,
+                      decoration: InputDecoration(
+                        labelText: 'Filter No. Meja',
+                        prefixIcon: Icon(
+                          Icons.table_restaurant_rounded,
+                          color: AppColors.primary,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.all(16),
+                        labelStyle: TextStyle(color: AppColors.primary),
+                      ),
+                      hint: const Text('Semua Meja'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('Semua Meja'),
+                        ),
+                        ...availableTables.map(
+                          (tableNo) => DropdownMenuItem<String>(
+                            value: tableNo,
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 8),
+                                Text('Meja $tableNo'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedTableNo = value;
+                          _selectedTransactions
+                              .clear(); // Clear selections when changing filter
+                        });
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 8),
               // Show transaction count for selected table
-              Row(
-                children: [
-                  Icon(Icons.info_outline, size: 16, color: AppColors.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    _selectedTableNo != null
-                        ? 'Menampilkan ${filteredTransactions.length} pesanan untuk Meja $_selectedTableNo'
-                        : 'Menampilkan ${filteredTransactions.length} pesanan dari ${availableTableNumbers.length} meja',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              Builder(
+                builder: (context) {
+                  final availableTables = _allTransactions
+                      .map((t) => t.tableNo)
+                      .toSet()
+                      .toList();
+                  return Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _selectedTableNo != null
+                            ? 'Menampilkan ${filteredTransactions.length} pesanan untuk Meja $_selectedTableNo'
+                            : 'Menampilkan ${filteredTransactions.length} pesanan dari ${availableTables.length} meja',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
             const SizedBox(height: 16),
@@ -405,10 +439,38 @@ class _PaymentPageState extends State<PaymentPage> {
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     success: (transactions) {
-                      // Store all transactions for filtering - create mutable copy
-                      _allTransactions = List<PendingTransaction>.from(
-                        transactions,
-                      );
+                      // Only update _allTransactions if data actually changed
+                      if (_allTransactions.length != transactions.length ||
+                          !_allTransactions.every(
+                            (t) => transactions.any(
+                              (nt) => nt.transactionId == t.transactionId,
+                            ),
+                          )) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            setState(() {
+                              _allTransactions = List<PendingTransaction>.from(
+                                transactions,
+                              );
+
+                              // Validate that selected table still exists in new data
+                              if (_selectedTableNo != null) {
+                                final availableTables = _allTransactions
+                                    .map((t) => t.tableNo)
+                                    .toSet();
+                                if (!availableTables.contains(
+                                  _selectedTableNo,
+                                )) {
+                                  _selectedTableNo =
+                                      null; // Reset if table no longer exists
+                                  _selectedTransactions
+                                      .clear(); // Clear selections
+                                }
+                              }
+                            });
+                          }
+                        });
+                      }
 
                       final displayTransactions = filteredTransactions;
 

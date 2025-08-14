@@ -88,7 +88,15 @@ class ServiceHttpClient {
     log("URL: $url");
     if (body != null) log("Body: ${jsonEncode(body)}");
     log("Status Code: ${response.statusCode}");
-    log("Response Body: ${response.body}");
+    // message
+
+    try {
+      final jsonResponse = json.decode(response.body);
+      log("Response: ${jsonResponse["message"]}");
+    } catch (e) {
+      log("Response: ${response.body}");
+    }
+
     log("======================");
   }
 }

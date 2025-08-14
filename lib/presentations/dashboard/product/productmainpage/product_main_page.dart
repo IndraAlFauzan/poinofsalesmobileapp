@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/flavor/flavor_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';

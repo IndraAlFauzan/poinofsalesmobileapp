@@ -1,0 +1,197 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/table_filter_dropdown.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/transaction_card.dart';
+import 'package:posmobile/shared/config/app_colors.dart';
+
+class PendingTransactionsList extends StatelessWidget {
+  const PendingTransactionsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(context),
+            const SizedBox(height: 16),
+            const TableFilterDropdown(),
+            const SizedBox(height: 16),
+            Expanded(child: _buildTransactionsList()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.pending_actions_rounded,
+            color: AppColors.primary,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          'Pesanan Pending',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            context.read<PendingTransactionBloc>().add(
+              const PendingTransactionEvent.fetchPendingTransactions(),
+            );
+          },
+          icon: Icon(Icons.refresh_rounded, color: AppColors.primary),
+          tooltip: 'Refresh Data',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTransactionsList() {
+    return BlocConsumer<PendingTransactionBloc, PendingTransactionState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          success: (transactions) {
+            // Update payment page bloc with new transactions
+            context.read<PaymentPageBloc>().add(
+              PaymentPageEvent.updateTransactions(transactions: transactions),
+            );
+          },
+        );
+      },
+      builder: (context, state) {
+        return state.when(
+          initial: () => _buildEmptyState('Belum ada pesanan pending'),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          success: (transactions) {
+            return BlocBuilder<PaymentPageBloc, PaymentPageState>(
+              builder: (context, paymentState) {
+                return paymentState.when(
+                  initial: () => _buildEmptyState('Memuat data...'),
+                  loaded:
+                      (
+                        allTransactions,
+                        selectedTableNo,
+                        selectedTransactions,
+                        availableTables,
+                      ) {
+                        final paymentPageBloc = context.read<PaymentPageBloc>();
+                        final displayTransactions = paymentPageBloc
+                            .getFilteredTransactions();
+
+                        if (displayTransactions.isEmpty) {
+                          return selectedTableNo != null
+                              ? _buildEmptyState(
+                                  'Tidak ada pesanan di Meja $selectedTableNo',
+                                )
+                              : _buildEmptyState('Belum ada pesanan pending');
+                        }
+
+                        return ListView.builder(
+                          itemCount: displayTransactions.length,
+                          itemBuilder: (context, index) {
+                            final transaction = displayTransactions[index];
+                            return TransactionCard(transaction: transaction);
+                          },
+                        );
+                      },
+                );
+              },
+            );
+          },
+          failure: (message) => _buildErrorState(context, message),
+          transactionCreated: (_) => const SizedBox.shrink(),
+          transactionUpdated: (_) => const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.pending_actions_outlined,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 48, color: Colors.red[400]),
+          const SizedBox(height: 16),
+          Text(
+            'Error: $message',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red[600]),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () {
+              context.read<PendingTransactionBloc>().add(
+                const PendingTransactionEvent.fetchPendingTransactions(),
+              );
+            },
+            icon: const Icon(Icons.refresh),
+            label: const Text('Coba Lagi'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

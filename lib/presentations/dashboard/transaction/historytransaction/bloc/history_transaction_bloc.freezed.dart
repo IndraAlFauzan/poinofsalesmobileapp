@@ -55,13 +55,16 @@ extension HistoryTransactionEventPatterns on HistoryTransactionEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult Function( _SearchTransactions value)?  searchTransactions,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult Function( _RefreshTransactions value)?  refreshTransactions,TResult Function( _SearchTransactions value)?  searchTransactions,TResult Function( _FilterTransactions value)?  filterTransactions,TResult Function( _ClearFilters value)?  clearFilters,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions(_that);case _SearchTransactions() when searchTransactions != null:
-return searchTransactions(_that);case _:
+return fetchAllTransactions(_that);case _RefreshTransactions() when refreshTransactions != null:
+return refreshTransactions(_that);case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that);case _FilterTransactions() when filterTransactions != null:
+return filterTransactions(_that);case _ClearFilters() when clearFilters != null:
+return clearFilters(_that);case _:
   return orElse();
 
 }
@@ -79,13 +82,16 @@ return searchTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _FetchAllTransactions value)  fetchAllTransactions,required TResult Function( _SearchTransactions value)  searchTransactions,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _FetchAllTransactions value)  fetchAllTransactions,required TResult Function( _RefreshTransactions value)  refreshTransactions,required TResult Function( _SearchTransactions value)  searchTransactions,required TResult Function( _FilterTransactions value)  filterTransactions,required TResult Function( _ClearFilters value)  clearFilters,}){
 final _that = this;
 switch (_that) {
 case _Started():
 return started(_that);case _FetchAllTransactions():
-return fetchAllTransactions(_that);case _SearchTransactions():
-return searchTransactions(_that);case _:
+return fetchAllTransactions(_that);case _RefreshTransactions():
+return refreshTransactions(_that);case _SearchTransactions():
+return searchTransactions(_that);case _FilterTransactions():
+return filterTransactions(_that);case _ClearFilters():
+return clearFilters(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -102,13 +108,16 @@ return searchTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult? Function( _SearchTransactions value)?  searchTransactions,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _FetchAllTransactions value)?  fetchAllTransactions,TResult? Function( _RefreshTransactions value)?  refreshTransactions,TResult? Function( _SearchTransactions value)?  searchTransactions,TResult? Function( _FilterTransactions value)?  filterTransactions,TResult? Function( _ClearFilters value)?  clearFilters,}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions(_that);case _SearchTransactions() when searchTransactions != null:
-return searchTransactions(_that);case _:
+return fetchAllTransactions(_that);case _RefreshTransactions() when refreshTransactions != null:
+return refreshTransactions(_that);case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that);case _FilterTransactions() when filterTransactions != null:
+return filterTransactions(_that);case _ClearFilters() when clearFilters != null:
+return clearFilters(_that);case _:
   return null;
 
 }
@@ -125,12 +134,15 @@ return searchTransactions(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchAllTransactions,TResult Function( String query)?  searchTransactions,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchAllTransactions,TResult Function()?  refreshTransactions,TResult Function( String query)?  searchTransactions,TResult Function( TransactionFilter filter)?  filterTransactions,TResult Function()?  clearFilters,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions();case _SearchTransactions() when searchTransactions != null:
-return searchTransactions(_that.query);case _:
+return fetchAllTransactions();case _RefreshTransactions() when refreshTransactions != null:
+return refreshTransactions();case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that.query);case _FilterTransactions() when filterTransactions != null:
+return filterTransactions(_that.filter);case _ClearFilters() when clearFilters != null:
+return clearFilters();case _:
   return orElse();
 
 }
@@ -148,12 +160,15 @@ return searchTransactions(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchAllTransactions,required TResult Function( String query)  searchTransactions,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchAllTransactions,required TResult Function()  refreshTransactions,required TResult Function( String query)  searchTransactions,required TResult Function( TransactionFilter filter)  filterTransactions,required TResult Function()  clearFilters,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _FetchAllTransactions():
-return fetchAllTransactions();case _SearchTransactions():
-return searchTransactions(_that.query);case _:
+return fetchAllTransactions();case _RefreshTransactions():
+return refreshTransactions();case _SearchTransactions():
+return searchTransactions(_that.query);case _FilterTransactions():
+return filterTransactions(_that.filter);case _ClearFilters():
+return clearFilters();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +185,15 @@ return searchTransactions(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchAllTransactions,TResult? Function( String query)?  searchTransactions,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchAllTransactions,TResult? Function()?  refreshTransactions,TResult? Function( String query)?  searchTransactions,TResult? Function( TransactionFilter filter)?  filterTransactions,TResult? Function()?  clearFilters,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchAllTransactions() when fetchAllTransactions != null:
-return fetchAllTransactions();case _SearchTransactions() when searchTransactions != null:
-return searchTransactions(_that.query);case _:
+return fetchAllTransactions();case _RefreshTransactions() when refreshTransactions != null:
+return refreshTransactions();case _SearchTransactions() when searchTransactions != null:
+return searchTransactions(_that.query);case _FilterTransactions() when filterTransactions != null:
+return filterTransactions(_that.filter);case _ClearFilters() when clearFilters != null:
+return clearFilters();case _:
   return null;
 
 }
@@ -239,6 +257,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'HistoryTransactionEvent.fetchAllTransactions()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _RefreshTransactions implements HistoryTransactionEvent {
+  const _RefreshTransactions();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RefreshTransactions);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'HistoryTransactionEvent.refreshTransactions()';
 }
 
 
@@ -314,6 +364,104 @@ as String,
 }
 
 /// @nodoc
+
+
+class _FilterTransactions implements HistoryTransactionEvent {
+  const _FilterTransactions(this.filter);
+  
+
+ final  TransactionFilter filter;
+
+/// Create a copy of HistoryTransactionEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FilterTransactionsCopyWith<_FilterTransactions> get copyWith => __$FilterTransactionsCopyWithImpl<_FilterTransactions>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FilterTransactions&&(identical(other.filter, filter) || other.filter == filter));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,filter);
+
+@override
+String toString() {
+  return 'HistoryTransactionEvent.filterTransactions(filter: $filter)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$FilterTransactionsCopyWith<$Res> implements $HistoryTransactionEventCopyWith<$Res> {
+  factory _$FilterTransactionsCopyWith(_FilterTransactions value, $Res Function(_FilterTransactions) _then) = __$FilterTransactionsCopyWithImpl;
+@useResult
+$Res call({
+ TransactionFilter filter
+});
+
+
+
+
+}
+/// @nodoc
+class __$FilterTransactionsCopyWithImpl<$Res>
+    implements _$FilterTransactionsCopyWith<$Res> {
+  __$FilterTransactionsCopyWithImpl(this._self, this._then);
+
+  final _FilterTransactions _self;
+  final $Res Function(_FilterTransactions) _then;
+
+/// Create a copy of HistoryTransactionEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? filter = null,}) {
+  return _then(_FilterTransactions(
+null == filter ? _self.filter : filter // ignore: cast_nullable_to_non_nullable
+as TransactionFilter,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _ClearFilters implements HistoryTransactionEvent {
+  const _ClearFilters();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClearFilters);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'HistoryTransactionEvent.clearFilters()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$HistoryTransactionState {
 
 
@@ -357,12 +505,13 @@ extension HistoryTransactionStatePatterns on HistoryTransactionState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Failure value)?  failure,TResult Function( _Success value)?  success,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Refreshing value)?  refreshing,TResult Function( _Failure value)?  failure,TResult Function( _Success value)?  success,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Failure() when failure != null:
+return loading(_that);case _Refreshing() when refreshing != null:
+return refreshing(_that);case _Failure() when failure != null:
 return failure(_that);case _Success() when success != null:
 return success(_that);case _:
   return orElse();
@@ -382,12 +531,13 @@ return success(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Failure value)  failure,required TResult Function( _Success value)  success,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Refreshing value)  refreshing,required TResult Function( _Failure value)  failure,required TResult Function( _Success value)  success,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Loading():
-return loading(_that);case _Failure():
+return loading(_that);case _Refreshing():
+return refreshing(_that);case _Failure():
 return failure(_that);case _Success():
 return success(_that);case _:
   throw StateError('Unexpected subclass');
@@ -406,12 +556,13 @@ return success(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Failure value)?  failure,TResult? Function( _Success value)?  success,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Refreshing value)?  refreshing,TResult? Function( _Failure value)?  failure,TResult? Function( _Success value)?  success,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Failure() when failure != null:
+return loading(_that);case _Refreshing() when refreshing != null:
+return refreshing(_that);case _Failure() when failure != null:
 return failure(_that);case _Success() when success != null:
 return success(_that);case _:
   return null;
@@ -430,11 +581,12 @@ return success(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  failure,TResult Function( AllTransactionModelResponse transactions)?  success,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  refreshing,TResult Function( String message)?  failure,TResult Function( AllTransactionModelResponse transactions)?  success,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
-return loading();case _Failure() when failure != null:
+return loading();case _Refreshing() when refreshing != null:
+return refreshing();case _Failure() when failure != null:
 return failure(_that.message);case _Success() when success != null:
 return success(_that.transactions);case _:
   return orElse();
@@ -454,11 +606,12 @@ return success(_that.transactions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  failure,required TResult Function( AllTransactionModelResponse transactions)  success,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  refreshing,required TResult Function( String message)  failure,required TResult Function( AllTransactionModelResponse transactions)  success,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
-return loading();case _Failure():
+return loading();case _Refreshing():
+return refreshing();case _Failure():
 return failure(_that.message);case _Success():
 return success(_that.transactions);case _:
   throw StateError('Unexpected subclass');
@@ -477,11 +630,12 @@ return success(_that.transactions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  failure,TResult? Function( AllTransactionModelResponse transactions)?  success,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  refreshing,TResult? Function( String message)?  failure,TResult? Function( AllTransactionModelResponse transactions)?  success,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
-return loading();case _Failure() when failure != null:
+return loading();case _Refreshing() when refreshing != null:
+return refreshing();case _Failure() when failure != null:
 return failure(_that.message);case _Success() when success != null:
 return success(_that.transactions);case _:
   return null;
@@ -547,6 +701,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'HistoryTransactionState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _Refreshing implements HistoryTransactionState {
+  const _Refreshing();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Refreshing);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'HistoryTransactionState.refreshing()';
 }
 
 

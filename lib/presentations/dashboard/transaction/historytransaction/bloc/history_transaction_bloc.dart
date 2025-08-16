@@ -16,6 +16,12 @@ class HistoryTransactionBloc
     extends Bloc<HistoryTransactionEvent, HistoryTransactionState> {
   final TransactionRepository _transactionRepository;
   List<Transaction> _allTransactions = []; // Store all transactions for search
+  TransactionFilter? _currentFilter;
+  String _currentSearchQuery = '';
+
+  // Getter to access current filter state
+  TransactionFilter? get currentFilter => _currentFilter;
+  String get currentSearchQuery => _currentSearchQuery;
 
   HistoryTransactionBloc(this._transactionRepository) : super(_Initial()) {
     on<_Started>(
@@ -26,8 +32,20 @@ class HistoryTransactionBloc
       _onFetchAllTransactions,
       transformer: _droppableThrottle(const Duration(milliseconds: 300)),
     );
+    on<_RefreshTransactions>(
+      _onRefreshTransactions,
+      transformer: _droppableThrottle(const Duration(milliseconds: 300)),
+    );
     on<_SearchTransactions>(
       _onSearchTransactions,
+      transformer: _droppableThrottle(const Duration(milliseconds: 300)),
+    );
+    on<_FilterTransactions>(
+      _onFilterTransactions,
+      transformer: _droppableThrottle(const Duration(milliseconds: 300)),
+    );
+    on<_ClearFilters>(
+      _onClearFilters,
       transformer: _droppableThrottle(const Duration(milliseconds: 300)),
     );
   }
@@ -38,7 +56,7 @@ class HistoryTransactionBloc
   ) async {
     try {
       emit(const HistoryTransactionState.loading());
-      final result = await _transactionRepository.fetchAllTransactions();
+      final result = await _transactionRepository.fetchAllTransactionsHistory();
 
       result.fold((error) => emit(HistoryTransactionState.failure(error)), (
         response,
@@ -51,36 +69,108 @@ class HistoryTransactionBloc
     }
   }
 
+  Future<void> _onRefreshTransactions(
+    _RefreshTransactions event,
+    Emitter<HistoryTransactionState> emit,
+  ) async {
+    try {
+      emit(const HistoryTransactionState.refreshing());
+      final result = await _transactionRepository.fetchAllTransactionsHistory();
+
+      result.fold((error) => emit(HistoryTransactionState.failure(error)), (
+        response,
+      ) {
+        _allTransactions = response.data; // Store all transactions
+        emit(HistoryTransactionState.success(response));
+      });
+    } catch (e) {
+      emit(
+        HistoryTransactionState.failure("Error refreshing transactions: $e"),
+      );
+    }
+  }
+
   Future<void> _onSearchTransactions(
     _SearchTransactions event,
     Emitter<HistoryTransactionState> emit,
   ) async {
     try {
-      final query = event.query.toLowerCase().trim();
+      _currentSearchQuery = event.query.toLowerCase().trim();
+      final filteredTransactions = _applyFiltersAndSearch();
 
-      if (query.isEmpty) {
-        // If search is empty, return all transactions
-        emit(
-          HistoryTransactionState.success(
-            AllTransactionModelResponse(
-              success: true,
-              message: "Success",
-              data: _allTransactions,
-            ),
+      emit(
+        HistoryTransactionState.success(
+          AllTransactionModelResponse(
+            success: true,
+            message: _currentSearchQuery.isEmpty ? "Success" : "Search results",
+            data: filteredTransactions,
           ),
-        );
-        return;
-      }
+        ),
+      );
+    } catch (e) {
+      emit(HistoryTransactionState.failure("Error searching transactions: $e"));
+    }
+  }
 
-      // Filter transactions based on multiple criteria
-      final filteredTransactions = _allTransactions.where((transaction) {
+  Future<void> _onFilterTransactions(
+    _FilterTransactions event,
+    Emitter<HistoryTransactionState> emit,
+  ) async {
+    try {
+      _currentFilter = event.filter;
+      final filteredTransactions = _applyFiltersAndSearch();
+
+      emit(
+        HistoryTransactionState.success(
+          AllTransactionModelResponse(
+            success: true,
+            message: "Filtered results",
+            data: filteredTransactions,
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(HistoryTransactionState.failure("Error filtering transactions: $e"));
+    }
+  }
+
+  Future<void> _onClearFilters(
+    _ClearFilters event,
+    Emitter<HistoryTransactionState> emit,
+  ) async {
+    try {
+      _currentFilter = null;
+      _currentSearchQuery = '';
+      final allTransactions = _applyFiltersAndSearch();
+
+      emit(
+        HistoryTransactionState.success(
+          AllTransactionModelResponse(
+            success: true,
+            message: "Filters cleared",
+            data: allTransactions,
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(HistoryTransactionState.failure("Error clearing filters: $e"));
+    }
+  }
+
+  List<Transaction> _applyFiltersAndSearch() {
+    var transactions = List<Transaction>.from(_allTransactions);
+
+    // Apply search filter
+    if (_currentSearchQuery.isNotEmpty) {
+      transactions = transactions.where((transaction) {
         final transactionId = transaction.transactionId
             .toString()
             .toLowerCase();
-        final userName = transaction.nameUser.toLowerCase();
-        final paymentMethod = transaction.paymentMethod.toLowerCase();
-        final total = transaction.total.toString();
-        final date = transaction.createdAt.toIso8601String().toLowerCase();
+        final orderNo = transaction.orderNo.toLowerCase();
+        final customerName = transaction.customerName.toLowerCase();
+        final status = transaction.status.toLowerCase();
+        final grandTotal = transaction.grandTotal;
+        final date = transaction.createdAtFormatted.toLowerCase();
 
         // Search in product names and details
         final hasMatchingProduct = transaction.details.any((detail) {
@@ -89,31 +179,88 @@ class HistoryTransactionBloc
           final spicyLevel = detail.spicyLevel?.toLowerCase() ?? '';
           final note = detail.note?.toLowerCase() ?? '';
 
-          return productName.contains(query) ||
-              flavor.contains(query) ||
-              spicyLevel.contains(query) ||
-              note.contains(query);
+          return productName.contains(_currentSearchQuery) ||
+              flavor.contains(_currentSearchQuery) ||
+              spicyLevel.contains(_currentSearchQuery) ||
+              note.contains(_currentSearchQuery);
         });
 
-        return transactionId.contains(query) ||
-            userName.contains(query) ||
-            paymentMethod.contains(query) ||
-            total.contains(query) ||
-            date.contains(query) ||
+        return transactionId.contains(_currentSearchQuery) ||
+            orderNo.contains(_currentSearchQuery) ||
+            customerName.contains(_currentSearchQuery) ||
+            status.contains(_currentSearchQuery) ||
+            grandTotal.contains(_currentSearchQuery) ||
+            date.contains(_currentSearchQuery) ||
             hasMatchingProduct;
       }).toList();
-
-      emit(
-        HistoryTransactionState.success(
-          AllTransactionModelResponse(
-            success: true,
-            message: "Search results",
-            data: filteredTransactions,
-          ),
-        ),
-      );
-    } catch (e) {
-      emit(HistoryTransactionState.failure("Error searching transactions: $e"));
     }
+
+    // Apply filters
+    if (_currentFilter != null) {
+      final filter = _currentFilter!;
+
+      // Filter by status
+      if (filter.status != null && filter.status!.isNotEmpty) {
+        transactions = transactions.where((transaction) {
+          return transaction.status.toLowerCase() ==
+              filter.status!.toLowerCase();
+        }).toList();
+      }
+
+      // Filter by date range
+      if (filter.startDate != null || filter.endDate != null) {
+        transactions = transactions.where((transaction) {
+          final transactionDate = transaction.createdAt;
+
+          if (filter.startDate != null &&
+              transactionDate.isBefore(filter.startDate!)) {
+            return false;
+          }
+
+          if (filter.endDate != null &&
+              transactionDate.isAfter(
+                filter.endDate!.add(const Duration(days: 1)),
+              )) {
+            return false;
+          }
+
+          return true;
+        }).toList();
+      }
+
+      // Filter by customer name
+      if (filter.customerName != null && filter.customerName!.isNotEmpty) {
+        transactions = transactions.where((transaction) {
+          return transaction.customerName.toLowerCase().contains(
+            filter.customerName!.toLowerCase(),
+          );
+        }).toList();
+      }
+
+      // Filter by amount range
+      if (filter.minAmount != null || filter.maxAmount != null) {
+        transactions = transactions.where((transaction) {
+          final amount =
+              double.tryParse(
+                transaction.grandTotal
+                    .replaceAll(',', '')
+                    .replaceAll('.00', ''),
+              ) ??
+              0.0;
+
+          if (filter.minAmount != null && amount < filter.minAmount!) {
+            return false;
+          }
+
+          if (filter.maxAmount != null && amount > filter.maxAmount!) {
+            return false;
+          }
+
+          return true;
+        }).toList();
+      }
+    }
+
+    return transactions;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:posmobile/data/model/response/transaction_mode_response.dart';
-import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -34,41 +34,57 @@ class TransactionTebelData extends DataGridSource {
   }
 
   void _updateDataForCurrentPage() {
-    final startIndex = (_currentPage - 1) * itemsPerPage;
-    final endIndex = (startIndex + itemsPerPage).clamp(0, transactions.length);
-    final currentPageTransactions = transactions.sublist(startIndex, endIndex);
+    try {
+      final startIndex = (_currentPage - 1) * itemsPerPage;
+      final endIndex = (startIndex + itemsPerPage).clamp(
+        0,
+        transactions.length,
+      );
+      final currentPageTransactions = transactions.sublist(
+        startIndex,
+        endIndex,
+      );
 
-    _transactionData = currentPageTransactions.asMap().entries.map<DataGridRow>(
-      (entry) {
-        final transaction = entry.value;
+      _transactionData = currentPageTransactions
+          .asMap()
+          .entries
+          .map<DataGridRow>((entry) {
+            final transaction = entry.value;
 
-        return DataGridRow(
-          cells: [
-            DataGridCell<String>(
-              columnName: 'Order ID',
-              value: '#${transaction.transactionId}',
-            ),
-            DataGridCell<String>(
-              columnName: 'Tanggal',
-              value: formatDateTime(transaction.createdAt.toIso8601String()),
-            ),
-            DataGridCell<String>(
-              columnName: 'Person',
-              value: transaction.nameUser,
-            ),
-            DataGridCell<String>(
-              columnName: 'Total Harga',
-              value: idrFormat(transaction.total.toString()),
-            ),
-            DataGridCell<String>(
-              columnName: 'Payment',
-              value: transaction.paymentMethod,
-            ),
-            DataGridCell<String>(columnName: 'Detail', value: 'Detail'),
-          ],
-        );
-      },
-    ).toList();
+            return DataGridRow(
+              cells: [
+                DataGridCell<String>(
+                  columnName: 'Order ID',
+                  value: transaction.orderNo,
+                ),
+                DataGridCell<String>(
+                  columnName: 'Tanggal',
+                  value: transaction.createdAtFormatted,
+                ),
+                DataGridCell<String>(
+                  columnName: 'Person',
+                  value: transaction.customerName.isEmpty
+                      ? 'Unknown'
+                      : transaction.customerName,
+                ),
+                DataGridCell<String>(
+                  columnName: 'Total Harga',
+                  value: idrFormat(transaction.grandTotal),
+                ),
+                DataGridCell<String>(
+                  columnName: 'Status',
+                  value: _getPaymentStatus(transaction.status),
+                ),
+                DataGridCell<String>(columnName: 'Detail', value: 'Detail'),
+              ],
+            );
+          })
+          .toList();
+    } catch (e) {
+      // Handle any errors during data processing
+      _transactionData = [];
+      debugPrint('Error updating transaction data: $e');
+    }
   }
 
   // Methods for pagination
@@ -116,8 +132,11 @@ class TransactionTebelData extends DataGridSource {
             alignment: Alignment.center,
             child: InkWell(
               onTap: () {
-                final transaction = transactions[rowIndex];
-                _showTransactionDetail(context, transaction);
+                // Add safety check for rowIndex
+                if (rowIndex >= 0 && rowIndex < transactions.length) {
+                  final transaction = transactions[rowIndex];
+                  _showTransactionDetail(context, transaction);
+                }
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
@@ -142,10 +161,10 @@ class TransactionTebelData extends DataGridSource {
           );
         }
 
-        // Special handling for Payment column to display badges
-        if (cell.columnName == 'Payment') {
-          final paymentMethod = cell.value.toString();
-          final displayText = _formatPaymentMethod(paymentMethod);
+        // Special handling for Status column to display badges
+        if (cell.columnName == 'Status') {
+          final status = cell.value.toString();
+          final displayText = _getPaymentStatus(status);
 
           return Container(
             alignment: Alignment.center,
@@ -154,16 +173,13 @@ class TransactionTebelData extends DataGridSource {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: _getPaymentColor(displayText).withValues(alpha: 0.1),
-                border: Border.all(
-                  color: _getPaymentColor(displayText),
-                  width: 1,
-                ),
+                color: _getPaymentColor(status).withValues(alpha: 0.1),
+                border: Border.all(color: _getPaymentColor(status), width: 1),
               ),
               child: Text(
                 displayText,
                 style: TextStyle(
-                  color: _getPaymentColor(displayText),
+                  color: _getPaymentColor(status),
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
                 ),
@@ -196,20 +212,16 @@ class TransactionTebelData extends DataGridSource {
     );
   }
 
-  String _formatPaymentMethod(String paymentMethod) {
-    switch (paymentMethod.toLowerCase()) {
-      case 'cash':
-        return 'Cash';
-      case 'qris':
-        return 'QRIS';
-      case 'credit_card':
-        return 'Credit Card';
-      case 'debit_card':
-        return 'Debit Card';
-      case 'transfer':
-        return 'Transfer';
+  String _getPaymentStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return 'Completed';
+      case 'pending':
+        return 'Pending';
+      case 'cancelled':
+        return 'Cancelled';
       default:
-        return paymentMethod
+        return status
             .replaceAll('_', ' ')
             .split(' ')
             .map(
@@ -221,18 +233,14 @@ class TransactionTebelData extends DataGridSource {
     }
   }
 
-  Color _getPaymentColor(String paymentMethod) {
-    switch (paymentMethod.toLowerCase()) {
-      case 'cash':
+  Color _getPaymentColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
         return Colors.green;
-      case 'qris':
-        return Colors.blue;
-      case 'credit card':
-        return Colors.purple;
-      case 'debit card':
+      case 'pending':
         return Colors.orange;
-      case 'transfer':
-        return Colors.teal;
+      case 'cancelled':
+        return Colors.red;
       default:
         return Colors.grey;
     }
@@ -309,26 +317,25 @@ class TransactionTebelData extends DataGridSource {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildDetailItem(
-                          'Order ID',
-                          '#${transaction.transactionId}',
-                        ),
+                        _buildDetailItem('Order ID', transaction.orderNo),
                         _buildDetailItem(
                           'Date',
-                          formatDateTime(
-                            transaction.createdAt.toIso8601String(),
-                          ),
+                          transaction.createdAtFormatted,
                         ),
-                        _buildDetailItem('Kasir', transaction.nameUser),
+                        _buildDetailItem('Customer', transaction.customerName),
+                        _buildDetailItem('Table', transaction.tableNo),
                         _buildDetailItem(
                           'Total Amount',
-                          idrFormat(transaction.total.toString()),
+                          idrFormat(transaction.grandTotal),
                         ),
                         _buildDetailItem(
-                          'Payment Method',
-                          _formatPaymentMethod(transaction.paymentMethod),
+                          'Status',
+                          _getPaymentStatus(transaction.status),
                         ),
-                        _buildDetailItem('Status', 'Completed'),
+                        _buildDetailItem(
+                          'Service Type',
+                          transaction.serviceType,
+                        ),
                         const SizedBox(height: 24),
                         // Items section
                         Container(

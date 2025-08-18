@@ -39,7 +39,6 @@ class PaymentSettleData {
   final String changeAmount;
   final DateTime receivedAt;
   final String? note;
-  final int cashierId;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String method;
@@ -54,7 +53,6 @@ class PaymentSettleData {
     required this.changeAmount,
     required this.receivedAt,
     this.note,
-    required this.cashierId,
     required this.createdAt,
     required this.updatedAt,
     required this.method,
@@ -71,7 +69,6 @@ class PaymentSettleData {
         changeAmount: json["change_amount"],
         receivedAt: DateTime.parse(json["received_at"]),
         note: json["note"],
-        cashierId: json["cashier_id"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         method: json["method"],
@@ -89,7 +86,6 @@ class PaymentSettleData {
     "change_amount": changeAmount,
     "received_at": receivedAt.toIso8601String(),
     "note": note,
-    "cashier_id": cashierId,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
     "method": method,
@@ -139,7 +135,6 @@ class PaymentData {
   final String changeAmount;
   final DateTime receivedAt;
   final String? note;
-  final int cashierId;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String method;
@@ -154,7 +149,6 @@ class PaymentData {
     required this.changeAmount,
     required this.receivedAt,
     this.note,
-    required this.cashierId,
     required this.createdAt,
     required this.updatedAt,
     required this.method,
@@ -170,7 +164,6 @@ class PaymentData {
     changeAmount: json["change_amount"],
     receivedAt: DateTime.parse(json["received_at"]),
     note: json["note"],
-    cashierId: json["cashier_id"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
     method: json["method"],
@@ -188,7 +181,6 @@ class PaymentData {
     "change_amount": changeAmount,
     "received_at": receivedAt.toIso8601String(),
     "note": note,
-    "cashier_id": cashierId,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
     "method": method,

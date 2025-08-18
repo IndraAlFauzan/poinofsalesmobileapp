@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:posmobile/data/model/request/payment_settle_request.dart';
 import 'package:posmobile/data/model/response/payment_response.dart';
-import 'package:posmobile/data/repository/transaction_repository.dart';
+import 'package:posmobile/data/repository/payment_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'payment_settlement_event.dart';
@@ -17,9 +17,9 @@ EventTransformer<E> _droppableThrottle<E>(Duration duration) {
 
 class PaymentSettlementBloc
     extends Bloc<PaymentSettlementEvent, PaymentSettlementState> {
-  final TransactionRepository _transactionRepository;
+  final PaymentRepository _paymentRepo;
 
-  PaymentSettlementBloc(this._transactionRepository) : super(const _Initial()) {
+  PaymentSettlementBloc(this._paymentRepo) : super(const _Initial()) {
     on<_Started>(
       (event, emit) => add(const PaymentSettlementEvent.fetchPayments()),
     );
@@ -41,7 +41,7 @@ class PaymentSettlementBloc
   ) async {
     try {
       emit(const PaymentSettlementState.loading());
-      final result = await _transactionRepository.fetchPayments();
+      final result = await _paymentRepo.fetchPayments();
 
       result.fold(
         (error) => emit(PaymentSettlementState.failure(error)),
@@ -60,7 +60,7 @@ class PaymentSettlementBloc
   ) async {
     try {
       emit(const PaymentSettlementState.loading());
-      final result = await _transactionRepository.settlePayment(event.request);
+      final result = await _paymentRepo.settlePayment(event.request);
 
       result.fold((error) => emit(PaymentSettlementState.failure(error)), (
         response,

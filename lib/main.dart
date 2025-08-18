@@ -10,6 +10,7 @@ import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/bloc/table/table_bloc.dart';
 import 'package:posmobile/data/repository/payment_method_repository.dart';
+import 'package:posmobile/data/repository/payment_repository.dart';
 import 'package:posmobile/data/repository/spicy_level_repository.dart';
 import 'package:posmobile/data/repository/table_repository.dart';
 import 'package:posmobile/data/repository/transaction_repository.dart';
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
-              PaymentSettlementBloc(locator<TransactionRepository>()),
+              PaymentSettlementBloc(locator<PaymentRepository>()),
         ),
         BlocProvider(
           create: (context) => TableBloc(locator<TableRepository>()),

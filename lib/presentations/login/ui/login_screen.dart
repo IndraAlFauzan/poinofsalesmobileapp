@@ -21,6 +21,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isNavigating = false; // Add flag to prevent double navigation
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset navigation flag when entering login screen
+    _isNavigating = false;
+    // Add listeners to update UI when text changes
+    _emailController.addListener(() => setState(() {}));
+    _passwordController.addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
@@ -30,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _submit() {
+    if (_isNavigating) return; // Prevent multiple submissions
+
     if (_formKey.currentState?.validate() ?? false) {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
@@ -65,7 +78,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             state.whenOrNull(
+              initial: () {
+                // Reset navigation flag when returning to initial state
+                if (_isNavigating) {
+                  setState(() => _isNavigating = false);
+                }
+              },
               success: (data) {
+                if (_isNavigating) return; // Prevent double navigation
+                setState(() => _isNavigating = true);
+
                 _showFlushbar(
                   title: 'Sukses',
                   message: data.message,
@@ -73,7 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
 
                 Future.delayed(const Duration(milliseconds: 2000), () {
-                  if (context.mounted) {
+                  if (context.mounted && _isNavigating) {
+                    // Fix: should be _isNavigating, not !_isNavigating
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const MainPage()),
                     );
@@ -83,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 });
               },
               failure: (message) {
+                setState(() => _isNavigating = false); // Reset on failure
                 _showFlushbar(
                   title: 'Gagal',
                   message: message,
@@ -127,10 +151,32 @@ class _LoginScreenState extends State<LoginScreen> {
                               loading: () => true,
                               orElse: () => false,
                             );
-                            return LoginButton(
-                              isLoading: isLoading,
-                              onPressed: _submit,
-                            );
+
+                            final hasData =
+                                _emailController.text.isNotEmpty &&
+                                _passwordController.text.isNotEmpty;
+
+                            final isButtonEnabled =
+                                hasData && !_isNavigating && !isLoading;
+
+                            return isButtonEnabled
+                                ? LoginButton(
+                                    isLoading: isLoading,
+                                    onPressed: _submit,
+                                  )
+                                : ElevatedButton(
+                                    onPressed: null,
+                                    child: Text(
+                                      _isNavigating
+                                          ? "Berhasil..."
+                                          : isLoading
+                                          ? "Loading..."
+                                          : "Login",
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  );
                           },
                         ),
                       ],

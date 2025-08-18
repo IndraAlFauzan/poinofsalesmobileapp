@@ -31,12 +31,17 @@ class CartItemsWidget extends StatelessWidget {
                                 crossAxisSpacing: 8, // Jarak antar kolom
                                 mainAxisSpacing: 8, // Jarak antar baris
                                 childAspectRatio:
-                                    0.84, // Menyesuaikan ukuran grid
+                                    0.82, // Menyesuaikan ukuran grid
                               ),
                           itemCount: items.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                                left: 8,
+                                right: 8,
+                                bottom: 8,
+                              ),
                               child: ProductCartItem(
                                 item: items[index],
                                 itemIndex: index,

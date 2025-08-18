@@ -29,6 +29,7 @@ class _TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -80,7 +81,7 @@ class _TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
 
               // List item pesanan
               SizedBox(
-                height: 300, // Fixed height for the items list
+                height: 330, // Fixed height for the items list
                 child: const TransactionItemsListWidget(),
               ),
 

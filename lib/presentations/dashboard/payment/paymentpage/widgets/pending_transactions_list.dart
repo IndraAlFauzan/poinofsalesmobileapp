@@ -69,18 +69,20 @@ class PendingTransactionsList extends StatelessWidget {
               loading: () => true,
               orElse: () => false,
             );
-            
+
             return Stack(
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  onPressed: isRefreshing ? null : () {
-                    context.read<PendingTransactionBloc>().add(
-                      const PendingTransactionEvent.fetchPendingTransactions(),
-                    );
-                  },
+                  onPressed: isRefreshing
+                      ? null
+                      : () {
+                          context.read<PendingTransactionBloc>().add(
+                            const PendingTransactionEvent.fetchPendingTransactions(),
+                          );
+                        },
                   icon: Icon(
-                    Icons.refresh_rounded, 
+                    Icons.refresh_rounded,
                     color: isRefreshing ? Colors.grey : AppColors.primary,
                   ),
                   tooltip: 'Refresh Data',
@@ -92,7 +94,9 @@ class PendingTransactionsList extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.primary,
+                        ),
                       ),
                     ),
                   ),

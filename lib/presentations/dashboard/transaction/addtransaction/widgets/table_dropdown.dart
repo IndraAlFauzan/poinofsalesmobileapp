@@ -85,40 +85,15 @@ class _TableDropdownState extends State<TableDropdown> {
             // Filter tables based on search query
             final filteredTables = activeTables;
 
-            return CustomDropdown<TableData>.searchRequest(
-              futureRequest: (searchQuery) async {
-                // Filter tables based on search query
-                if (searchQuery.isEmpty) {
-                  return filteredTables;
-                }
-                return filteredTables
-                    .where(
-                      (table) => table.tableNo.toLowerCase().contains(
-                        searchQuery.toLowerCase(),
-                      ),
-                    )
-                    .toList();
-              },
+            return CustomDropdown<TableData>(
               decoration: CustomDropdownDecoration(
                 closedBorder: Border.all(color: Colors.grey),
                 expandedBorder: Border.all(color: AppColors.primary),
                 closedFillColor: AppColors.surface,
                 expandedFillColor: AppColors.surface,
-                searchFieldDecoration: SearchFieldDecoration(
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: AppColors.primary),
-                  ),
-                ),
               ),
               hintText: "Pilih Meja",
-              searchHintText: "Cari nomor meja...",
-              maxlines: 6,
+              items: filteredTables,
               excludeSelected: false,
               listItemBuilder: (context, item, isSelected, onItemSelect) {
                 return Container(
@@ -132,7 +107,7 @@ class _TableDropdownState extends State<TableDropdown> {
                         : null,
                   ),
                   child: Text(
-                    " ${item.tableNo} (${item.capacity} orang)",
+                    " ${item.tableNo} ",
                     style: TextStyle(
                       fontWeight: isSelected
                           ? FontWeight.w600

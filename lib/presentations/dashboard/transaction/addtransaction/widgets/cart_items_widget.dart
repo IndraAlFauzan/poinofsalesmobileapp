@@ -30,8 +30,8 @@ class CartItemsWidget extends StatelessWidget {
                                 crossAxisCount: 3, // 2 kolom dalam grid
                                 crossAxisSpacing: 8, // Jarak antar kolom
                                 mainAxisSpacing: 8, // Jarak antar baris
-                                // childAspectRatio:
-                                //     0.9, // Menyesuaikan ukuran grid
+                                childAspectRatio:
+                                    0.84, // Menyesuaikan ukuran grid
                               ),
                           itemCount: items.length,
                           itemBuilder: (context, index) {

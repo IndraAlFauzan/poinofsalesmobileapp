@@ -24,6 +24,8 @@ class AddItemToTransactionDialog extends StatefulWidget {
 
 class _AddItemToTransactionDialogState
     extends State<AddItemToTransactionDialog> {
+  final ScrollController _cartScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -35,64 +37,58 @@ class _AddItemToTransactionDialogState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.85,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
-            _buildFooter(),
-          ],
-        ),
-      ),
-    );
+  void dispose() {
+    _cartScrollController.dispose();
+    super.dispose();
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_cartScrollController.hasClients) {
+        _cartScrollController.animateTo(
+          _cartScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true, // Penting untuk handle keyboard
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Tambah Item ke Pesanan',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '${widget.transaction.orderNo} - Meja ${widget.transaction.tableNo}',
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+          ],
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close, color: Colors.white),
         ),
       ),
-      child: Row(
+      body: Column(
         children: [
-          const Icon(Icons.add_shopping_cart, color: Colors.white, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Tambah Item ke Pesanan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '${widget.transaction.orderNo} - Meja ${widget.transaction.tableNo}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close, color: Colors.white),
-          ),
+          Expanded(child: _buildBody()),
+          _buildFooter(),
         ],
       ),
     );
@@ -107,24 +103,22 @@ class _AddItemToTransactionDialogState
           // Left side - Product list with categories
           Expanded(
             flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 18),
-                  CategoryChips(onChipCleared: () {}),
-                  const SizedBox(height: 18),
-                  Expanded(
-                    child: ProductGrid(
-                      onTapProduct: (p) {
-                        context.read<CartBloc>().add(
-                          CartEvent.addToCart(product: p),
-                        );
-                      },
-                    ),
+            child: Column(
+              children: [
+                CategoryChips(onChipCleared: () {}),
+                const SizedBox(height: 18),
+                Expanded(
+                  child: ProductGrid(
+                    onTapProduct: (p) {
+                      context.read<CartBloc>().add(
+                        CartEvent.addToCart(product: p),
+                      );
+                      // Auto scroll ke item baru setelah ditambahkan
+                      _scrollToBottom();
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 20),
@@ -185,10 +179,11 @@ class _AddItemToTransactionDialogState
               children: [
                 Expanded(
                   child: ListView.builder(
+                    controller: _cartScrollController,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.all(8.0),
                         child: ProductCartItem(
                           item: items[index],
                           itemIndex: index,
@@ -237,10 +232,7 @@ class _AddItemToTransactionDialogState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,

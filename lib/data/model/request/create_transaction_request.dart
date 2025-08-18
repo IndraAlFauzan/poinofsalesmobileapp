@@ -7,14 +7,14 @@ String createTransactionRequestToJson(CreateTransactionRequest data) =>
     json.encode(data.toJson());
 
 class CreateTransactionRequest {
-  final int tableId;
+  final int? tableId;
   final String customerName;
   final int userId;
   final String serviceType;
   final List<TransactionDetail> details;
 
   CreateTransactionRequest({
-    required this.tableId,
+    this.tableId,
     required this.customerName,
     required this.userId,
     required this.serviceType,
@@ -33,7 +33,7 @@ class CreateTransactionRequest {
       );
 
   Map<String, dynamic> toJson() => {
-    "table_id": tableId,
+    if (tableId != null) "table_id": tableId,
     "customer_name": customerName,
     "user_id": userId,
     "service_type": serviceType,

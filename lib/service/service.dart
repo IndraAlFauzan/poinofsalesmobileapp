@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceHttpClient {
-  // Force localhost for iPad Simulator
-  String get baseUrl => "http://127.0.0.1:8000/api/";
+  // IP untuk real device iPad
+  String get baseUrl => "http://192.168.100.234:8000/api/";
 
   final secureStorage = FlutterSecureStorage();
 

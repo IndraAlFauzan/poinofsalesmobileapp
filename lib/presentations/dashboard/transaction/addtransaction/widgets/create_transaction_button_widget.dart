@@ -24,18 +24,24 @@ class CreateTransactionButtonWidget extends StatefulWidget {
 class _CreateTransactionButtonWidgetState
     extends State<CreateTransactionButtonWidget> {
   final _customerController = TextEditingController();
+  final _scrollController = ScrollController();
   String? selectedServiceType;
   TableData? selectedTable;
 
   @override
   void dispose() {
     _customerController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _onServiceTypeChanged(String? serviceType) {
     setState(() {
       selectedServiceType = serviceType;
+      // Reset table selection when changing from dine_in to other service types
+      if (serviceType != 'dine_in') {
+        selectedTable = null;
+      }
     });
   }
 
@@ -65,7 +71,8 @@ class _CreateTransactionButtonWidgetState
       return;
     }
 
-    if (selectedTable == null) {
+    // Table validation only for dine in
+    if (selectedServiceType == 'dine_in' && selectedTable == null) {
       widget.onValidationError?.call('Pilih meja terlebih dahulu');
       return;
     }
@@ -109,7 +116,7 @@ class _CreateTransactionButtonWidgetState
     if (cartItems.isEmpty) return;
 
     final request = CreateTransactionRequest(
-      tableId: selectedTable!.id,
+      tableId: selectedServiceType == 'dine_in' ? selectedTable!.id : null,
       customerName: _customerController.text,
       userId: userId!,
       serviceType: selectedServiceType!,
@@ -194,110 +201,142 @@ class _CreateTransactionButtonWidgetState
           },
         );
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: ServiceTypeDropdown(
-                  onServiceTypeChanged: _onServiceTypeChanged,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: ServiceTypeDropdown(
+                    onServiceTypeChanged: _onServiceTypeChanged,
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+                // Table Dropdown - only show for Dine In
+                if (selectedServiceType == 'dine_in')
+                  Expanded(
+                    flex: 1,
+                    child: TableDropdown(onTableChanged: _onTableChanged),
+                  )
+                else
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Center(
+                        child: Text(
+                          selectedServiceType == 'take_away'
+                              ? 'Take Away'
+                              : selectedServiceType == 'delivery'
+                              ? 'Delivery'
+                              : 'Pilih Pesanan',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Customer Name Input
+            TextFormField(
+              controller: _customerController,
+              decoration: InputDecoration(
+                labelText: 'Nama Customer',
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
+                filled: true,
+                fillColor: AppColors.surface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: const Icon(
+                  Icons.person,
+                  color: AppColors.textSecondary,
                 ),
               ),
-
-              const SizedBox(width: 8),
-              // Table Dropdown
-              Expanded(
-                flex: 1,
-                child: TableDropdown(onTableChanged: _onTableChanged),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Customer Name Input
-          TextFormField(
-            controller: _customerController,
-            decoration: InputDecoration(
-              labelText: 'Nama Customer',
-              labelStyle: const TextStyle(color: AppColors.textSecondary),
-              filled: true,
-              fillColor: AppColors.surface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: const Icon(
-                Icons.person,
-                color: AppColors.textSecondary,
-              ),
+              style: const TextStyle(color: AppColors.textPrimary),
             ),
-            style: const TextStyle(color: AppColors.textPrimary),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // Create Order Button
-          SizedBox(
-            width: double.infinity,
-            child: BlocBuilder<PendingTransactionBloc, PendingTransactionState>(
-              builder: (context, state) {
-                final isLoading = state.maybeWhen(
-                  loading: () => true,
-                  orElse: () => false,
-                );
+            // Create Order Button
+            SizedBox(
+              width: double.infinity,
+              child:
+                  BlocBuilder<PendingTransactionBloc, PendingTransactionState>(
+                    builder: (context, state) {
+                      final isLoading = state.maybeWhen(
+                        loading: () => true,
+                        orElse: () => false,
+                      );
 
-                return ElevatedButton(
-                  onPressed: isLoading ? null : _createOrder,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.surface,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 4,
-                  ),
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.surface,
-                            ),
+                      return ElevatedButton(
+                        onPressed: isLoading ? null : _createOrder,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.surface,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.add_shopping_cart),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Buat Pesanan',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textOnPrimary,
-                                  ),
-                            ),
-                          ],
+                          elevation: 4,
                         ),
-                );
-              },
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.surface,
+                                  ),
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.add_shopping_cart),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Buat Pesanan',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textOnPrimary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                      );
+                    },
+                  ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Pesanan akan disimpan sebagai pending dan dapat dibayar di tab Pembayaran',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.accent,
-              fontStyle: FontStyle.italic,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            // const SizedBox(height: 8),
+            // Text(
+            //   'Pesanan akan disimpan sebagai pending dan dapat dibayar di tab Pembayaran',
+            //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            //     color: AppColors.accent,
+            //     fontStyle: FontStyle.italic,
+            //   ),
+            //   textAlign: TextAlign.center,
+            // ),
+          ],
+        ),
       ),
     );
   }

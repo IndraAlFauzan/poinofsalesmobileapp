@@ -131,8 +131,9 @@ mixin ResponsiveMixin {
   double getResponsiveFontSize(BuildContext context, double baseFontSize) {
     final width = MediaQuery.of(context).size.width;
 
-    if (width > 1200)
+    if (width > 1200) {
       return baseFontSize * 1.1; // Desktop large - sedikit lebih besar
+    }
     if (width > 900) return baseFontSize; // Desktop medium - normal
     if (width > 600) return baseFontSize * 0.95; // Tablet - sedikit lebih kecil
     if (width > 400) return baseFontSize * 0.9; // Mobile large - lebih kecil
@@ -147,7 +148,7 @@ mixin ResponsiveMixin {
     TextAlign textAlign = TextAlign.start,
   }) {
     final baseStyle = style ?? const TextStyle();
-    
+
     return Text(
       price,
       style: baseStyle.copyWith(
@@ -158,7 +159,9 @@ mixin ResponsiveMixin {
       overflow: TextOverflow.visible,
       softWrap: false,
     );
-  }  /// Text yang responsive dengan auto font scaling
+  }
+
+  /// Text yang responsive dengan auto font scaling
   Widget responsiveText(
     String text, {
     TextStyle? style,

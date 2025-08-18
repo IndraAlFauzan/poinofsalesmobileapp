@@ -127,38 +127,48 @@ class _SideMenuState extends State<SideMenu> {
       ),
       child: Column(
         children: [
-          _buildLogo(),
+          _buildLogo(), // Logo tetap di atas, tidak bisa di-scroll
 
-          const SizedBox(height: 30),
-          _buildMenuItem(
-            label: 'Pesanan',
-            icon: Icons.restaurant_menu,
-            page: MainPageTab.home,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  _buildMenuItem(
+                    label: 'Pesanan',
+                    icon: Icons.restaurant_menu,
+                    page: MainPageTab.home,
+                  ),
+                  _buildMenuItem(
+                    label: 'Produk',
+                    icon: Icons.fastfood_rounded,
+                    page: MainPageTab.menu,
+                  ),
+                  _buildMenuItem(
+                    label: 'Pembayaran',
+                    icon: Icons.payment_rounded,
+                    page: MainPageTab.payment,
+                  ),
+                  _buildMenuItem(
+                    label: 'Riwayat',
+                    icon: Icons.history_rounded,
+                    page: MainPageTab.history,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                  ), // Replace Spacer with SizedBox
+                  const Divider(
+                    height: 1,
+                    color: Colors.white24,
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  _buildLogoutButton(),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
           ),
-          _buildMenuItem(
-            label: 'Produk',
-            icon: Icons.fastfood_rounded,
-            page: MainPageTab.menu,
-          ),
-          _buildMenuItem(
-            label: 'Pembayaran',
-            icon: Icons.payment_rounded,
-            page: MainPageTab.payment,
-          ),
-          _buildMenuItem(
-            label: 'Riwayat',
-            icon: Icons.history_rounded,
-            page: MainPageTab.history,
-          ),
-          const Spacer(),
-          const Divider(
-            height: 1,
-            color: Colors.white24,
-            indent: 20,
-            endIndent: 20,
-          ),
-          _buildLogoutButton(),
-          const SizedBox(height: 20),
         ],
       ),
     );

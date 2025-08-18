@@ -315,12 +315,14 @@ class _ProductCartItemState extends State<ProductCartItem>
                 TextField(
                   controller: _noteController,
                   style: const TextStyle(fontSize: 12),
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     hintText: 'Tambahkan catatan...',
                     hintStyle: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade500,
                     ),
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey.shade300),

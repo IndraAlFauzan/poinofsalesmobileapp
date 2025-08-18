@@ -158,10 +158,11 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
             ),
           ],
         ),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               _buildHeader(),
               const SizedBox(height: 20),
@@ -174,7 +175,7 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
               ],
               const SizedBox(height: 16),
               _buildNoteField(),
-              const Spacer(),
+              const SizedBox(height: 20),
               _buildPaymentButton(),
             ],
           ),

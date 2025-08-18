@@ -8,10 +8,10 @@ import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
 
-class TransactionCard extends StatelessWidget {
+class PaymentTransactionPendingCard extends StatelessWidget {
   final PendingTransaction transaction;
 
-  const TransactionCard({super.key, required this.transaction});
+  const PaymentTransactionPendingCard({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +114,12 @@ class TransactionCard extends StatelessWidget {
           const Spacer(),
           TextButton.icon(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) =>
-                    AddItemToTransactionDialog(transaction: transaction),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AddItemToTransactionDialog(transaction: transaction),
+                  fullscreenDialog: true,
+                ),
               );
             },
             icon: const Icon(Icons.edit_outlined, size: 16),
@@ -382,10 +384,12 @@ class _TransactionDetails extends StatelessWidget {
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AddItemToTransactionDialog(
-                          transaction: latestTransaction,
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddItemToTransactionDialog(
+                            transaction: latestTransaction,
+                          ),
+                          fullscreenDialog: true,
                         ),
                       );
                     },

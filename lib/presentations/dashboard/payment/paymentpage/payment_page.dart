@@ -49,48 +49,69 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
       bottom: false,
       child: Scaffold(
         backgroundColor: Colors.blueGrey[50],
+        resizeToAvoidBottomInset: true, // Penting untuk handle keyboard
         body: BlocListener<PaymentSettlementBloc, PaymentSettlementState>(
           listener: _handlePaymentSettlement,
           child: Column(
             children: [
               TopBar(hintText: 'Cari Pesanan...'),
               Expanded(
-                child: Padding(
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Left side - Pending transactions list
-                      const Expanded(flex: 2, child: PendingTransactionsList()),
-                      const SizedBox(width: 16),
-                      // Right side - Payment form
-                      BlocBuilder<PaymentPageBloc, PaymentPageState>(
-                        builder: (context, state) {
-                          return state.when(
-                            initial: () => const SizedBox.shrink(),
-                            loaded:
-                                (
-                                  allTransactions,
-                                  selectedTableNo,
-                                  selectedTransactions,
-                                  availableTables,
-                                  paymentMethodId,
-                                  paymentMethodName,
-                                  tenderedAmount,
-                                  note,
-                                ) {
-                                  if (selectedTransactions.isNotEmpty) {
-                                    return const Expanded(
-                                      flex: 1,
-                                      child: PaymentForm(),
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                          );
-                        },
-                      ),
-                    ],
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          MediaQuery.of(context).size.height -
+                          160, // Account for TopBar and padding
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left side - Pending transactions list
+                        Expanded(
+                          flex: 2,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - 160,
+                            child: const PendingTransactionsList(),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Right side - Payment form
+                        BlocBuilder<PaymentPageBloc, PaymentPageState>(
+                          builder: (context, state) {
+                            return state.when(
+                              initial: () => const SizedBox.shrink(),
+                              loaded:
+                                  (
+                                    allTransactions,
+                                    selectedTableNo,
+                                    selectedTransactions,
+                                    availableTables,
+                                    paymentMethodId,
+                                    paymentMethodName,
+                                    tenderedAmount,
+                                    note,
+                                  ) {
+                                    if (selectedTransactions.isNotEmpty) {
+                                      return Expanded(
+                                        flex: 1,
+                                        child: SizedBox(
+                                          height:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height -
+                                              160,
+                                          child: const PaymentForm(),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

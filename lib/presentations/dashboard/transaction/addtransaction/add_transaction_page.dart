@@ -12,6 +12,7 @@ class AddTransactionPage extends StatelessWidget {
       bottom: false,
       child: Scaffold(
         backgroundColor: Colors.blueGrey[50],
+        resizeToAvoidBottomInset: true,
         body: Column(
           children: [
             const CustomAppBar(),
@@ -19,13 +20,13 @@ class AddTransactionPage extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 6,
+                    flex: 7,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [const Expanded(child: CartItemsWidget())],
                     ),
                   ),
-                  const Expanded(flex: 2, child: TransactionDetailsWidget()),
+                  const Expanded(flex: 3, child: TransactionDetailsWidget()),
                 ],
               ),
             ),

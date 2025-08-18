@@ -169,7 +169,9 @@ class PendingTransactionsList extends StatelessWidget {
                           itemCount: displayTransactions.length,
                           itemBuilder: (context, index) {
                             final transaction = displayTransactions[index];
-                            return TransactionCard(transaction: transaction);
+                            return PaymentTransactionPendingCard(
+                              transaction: transaction,
+                            );
                           },
                         );
                       },

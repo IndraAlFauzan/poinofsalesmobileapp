@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
-import 'product_card.dart';
+import 'package:posmobile/shared/widgets/product_card.dart';
 
 class ProductGrid extends StatelessWidget {
   final void Function(dynamic product) onTapProduct;
@@ -45,13 +45,7 @@ class ProductGrid extends StatelessWidget {
               ),
               itemBuilder: (_, i) {
                 final p = products[i];
-                return ProductCard(
-                  title: p.name,
-                  imageUrl: p.photoUrl,
-                  price: p.price,
-                  available: true,
-                  onTap: () => onTapProduct(p),
-                );
+                return ProductCard(product: p, onTap: () => onTapProduct(p));
               },
             );
           },

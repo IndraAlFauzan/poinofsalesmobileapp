@@ -20,44 +20,42 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     _UpdateTransactions event,
     Emitter<PaymentPageState> emit,
   ) {
-    final currentState = state;
-
-    // Check if data actually changed
-    if (currentState is _Loaded) {
-      final currentTransactions = currentState.allTransactions;
-      if (currentTransactions.length == event.transactions.length &&
-          currentTransactions.every(
-            (t) => event.transactions.any(
-              (nt) => nt.transactionId == t.transactionId,
-            ),
-          )) {
-        return; // No change needed
-      }
-    }
-
     final availableTables = _getAvailableTables(event.transactions);
 
     // Validate selected table still exists
     String? validatedSelectedTable;
     List<PendingTransaction> validatedSelectedTransactions = [];
 
-    if (currentState is _Loaded) {
+    if (state is _Loaded) {
+      final currentState = state as _Loaded;
       final currentSelectedTable = currentState.selectedTableNo;
       if (currentSelectedTable != null &&
           availableTables.contains(currentSelectedTable)) {
         validatedSelectedTable = currentSelectedTable;
-        // Keep only selected transactions that still exist and match the table
-        validatedSelectedTransactions = currentState.selectedTransactions
-            .where(
-              (selected) =>
-                  event.transactions.any(
-                    (t) => t.transactionId == selected.transactionId,
-                  ) &&
-                  (validatedSelectedTable == null ||
-                      selected.tableNo == validatedSelectedTable),
-            )
-            .toList();
       }
+
+      // Update selected transactions with fresh data while preserving selections
+      validatedSelectedTransactions = currentState.selectedTransactions
+          .map((selected) {
+            // Find the updated version of this transaction
+            try {
+              final updatedTransaction = event.transactions.firstWhere(
+                (t) => t.transactionId == selected.transactionId,
+              );
+              return updatedTransaction;
+            } catch (e) {
+              // Transaction no longer exists, remove from selection
+              return null;
+            }
+          })
+          .where((t) => t != null)
+          .cast<PendingTransaction>()
+          .where(
+            (t) =>
+                validatedSelectedTable == null ||
+                t.tableNo == validatedSelectedTable,
+          )
+          .toList();
     }
 
     emit(
@@ -66,6 +64,16 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
         selectedTableNo: validatedSelectedTable,
         selectedTransactions: validatedSelectedTransactions,
         availableTables: availableTables,
+        paymentMethodId: state is _Loaded
+            ? (state as _Loaded).paymentMethodId
+            : null,
+        paymentMethodName: state is _Loaded
+            ? (state as _Loaded).paymentMethodName
+            : null,
+        tenderedAmount: state is _Loaded
+            ? (state as _Loaded).tenderedAmount
+            : null,
+        note: state is _Loaded ? (state as _Loaded).note : null,
       ),
     );
   }
@@ -231,5 +239,26 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     final now = DateTime.now();
     final difference = now.difference(createdAt);
     return difference.inMinutes > 30;
+  }
+
+  PendingTransaction? getTransactionById(int transactionId) {
+    final currentState = state;
+    if (currentState is _Loaded) {
+      try {
+        // Always return the latest data from allTransactions
+        return currentState.allTransactions.firstWhere(
+          (t) => t.transactionId == transactionId,
+        );
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // Helper method to get updated transaction data after changes
+  PendingTransaction getUpdatedTransaction(PendingTransaction original) {
+    final updated = getTransactionById(original.transactionId);
+    return updated ?? original;
   }
 }

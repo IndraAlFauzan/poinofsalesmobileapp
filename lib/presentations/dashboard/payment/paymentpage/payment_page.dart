@@ -49,12 +49,8 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
       bottom: false,
       child: Scaffold(
         backgroundColor: Colors.blueGrey[50],
-        body: MultiBlocListener(
-          listeners: [
-            BlocListener<PaymentSettlementBloc, PaymentSettlementState>(
-              listener: _handlePaymentSettlement,
-            ),
-          ],
+        body: BlocListener<PaymentSettlementBloc, PaymentSettlementState>(
+          listener: _handlePaymentSettlement,
           child: Column(
             children: [
               TopBar(hintText: 'Cari Pesanan...'),

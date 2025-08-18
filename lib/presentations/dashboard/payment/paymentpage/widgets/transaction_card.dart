@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
 import 'package:posmobile/data/model/response/pending_transactions_response.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/add_item_to_transaction_dialog.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
@@ -13,59 +15,127 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PaymentPageBloc, PaymentPageState>(
-      builder: (context, state) {
-        final paymentPageBloc = context.read<PaymentPageBloc>();
-        final isSelected = paymentPageBloc.isTransactionSelected(transaction);
+    return BlocListener<PendingTransactionBloc, PendingTransactionState>(
+      listener: (context, state) {
+        // Force rebuild when PendingTransactionBloc state changes
+        state.whenOrNull(
+          success: (transactions) {
+            // This will trigger rebuild of BlocBuilder below
+          },
+        );
+      },
+      child: BlocBuilder<PaymentPageBloc, PaymentPageState>(
+        builder: (context, state) {
+          final paymentPageBloc = context.read<PaymentPageBloc>();
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary.withValues(alpha: 0.05)
-                : Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
+          // Get the latest transaction data from state
+          final latestTransaction =
+              paymentPageBloc.getTransactionById(transaction.transactionId) ??
+              transaction;
+          final isSelected = paymentPageBloc.isTransactionSelected(
+            latestTransaction,
+          );
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.primary.withValues(alpha: 0.3)
-                  : Colors.grey.withValues(alpha: 0.2),
-              width: isSelected ? 2 : 1,
+                  ? AppColors.primary.withValues(alpha: 0.05)
+                  : Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primary.withValues(alpha: 0.3)
+                    : Colors.grey.withValues(alpha: 0.2),
+                width: isSelected ? 2 : 1,
+              ),
             ),
-          ),
-          child: InkWell(
-            onTap: () {
-              context.read<PaymentPageBloc>().add(
-                PaymentPageEvent.toggleTransactionSelection(
-                  transaction: transaction,
+            child: InkWell(
+              onTap: () {
+                context.read<PaymentPageBloc>().add(
+                  PaymentPageEvent.toggleTransactionSelection(
+                    transaction: latestTransaction,
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        _SelectionCheckbox(isSelected: isSelected),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _TransactionInfo(
+                            transaction: latestTransaction,
+                          ),
+                        ),
+                        _TransactionAmount(transaction: latestTransaction),
+                      ],
+                    ),
+                    if (isSelected) ...[
+                      const SizedBox(height: 16),
+                      _buildQuickActionButtons(context, latestTransaction),
+                      const SizedBox(height: 12),
+                      _TransactionDetails(transaction: latestTransaction),
+                    ],
+                  ],
                 ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButtons(
+    BuildContext context,
+    PendingTransaction transaction,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.flash_on_rounded, size: 16, color: AppColors.primary),
+          const SizedBox(width: 8),
+          const Text(
+            'Aksi Cepat:',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
+          const Spacer(),
+          TextButton.icon(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    AddItemToTransactionDialog(transaction: transaction),
               );
             },
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      _SelectionCheckbox(isSelected: isSelected),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _TransactionInfo(transaction: transaction),
-                      ),
-                      _TransactionAmount(transaction: transaction),
-                    ],
-                  ),
-                  if (isSelected) ...[
-                    const SizedBox(height: 16),
-                    _TransactionDetails(transaction: transaction),
-                  ],
-                ],
+            icon: const Icon(Icons.edit_outlined, size: 16),
+            label: const Text('Tambah Item'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              backgroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+                side: BorderSide(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                ),
               ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
@@ -204,35 +274,46 @@ class _TransactionAmount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          idrFormat(transaction.grandTotal),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: AppColors.primary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.orange.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-          ),
-          child: Text(
-            transaction.status.toUpperCase(),
-            style: const TextStyle(
-              color: Colors.orange,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
+    return BlocBuilder<PaymentPageBloc, PaymentPageState>(
+      builder: (context, state) {
+        final paymentPageBloc = context.read<PaymentPageBloc>();
+
+        // Get the latest transaction data from state
+        final latestTransaction =
+            paymentPageBloc.getTransactionById(transaction.transactionId) ??
+            transaction;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              idrFormat(latestTransaction.grandTotal),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: AppColors.primary,
+              ),
             ),
-          ),
-        ),
-      ],
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                latestTransaction.status.toUpperCase(),
+                style: const TextStyle(
+                  color: Colors.orange,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -244,78 +325,113 @@ class _TransactionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.receipt_long_rounded,
-                size: 16,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Detail Pesanan:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                  fontSize: 14,
-                ),
-              ),
-            ],
+    return BlocBuilder<PaymentPageBloc, PaymentPageState>(
+      builder: (context, state) {
+        final paymentPageBloc = context.read<PaymentPageBloc>();
+
+        // Get the latest transaction data from state
+        final latestTransaction =
+            paymentPageBloc.getTransactionById(transaction.transactionId) ??
+            transaction;
+
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
-          const SizedBox(height: 8),
-          ...transaction.details.map(
-            (detail) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '${detail.quantity}x',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 16,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      detail.nameProduct,
-                      style: const TextStyle(fontSize: 13),
+                  Text(
+                    'Detail Pesanan:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                      fontSize: 14,
                     ),
                   ),
-                  Text(
-                    idrFormat(detail.quantity * detail.price),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddItemToTransactionDialog(
+                          transaction: latestTransaction,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    label: const Text('Edit'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 8),
+              ...latestTransaction.details.map(
+                (detail) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '${detail.quantity}x',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              detail.nameProduct,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          Text(
+                            idrFormat(detail.quantity * detail.price),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

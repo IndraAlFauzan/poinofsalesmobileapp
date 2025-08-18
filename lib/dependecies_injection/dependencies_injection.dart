@@ -3,6 +3,7 @@ import 'package:posmobile/data/repository/auth_repository.dart';
 import 'package:posmobile/data/repository/category_repository.dart';
 import 'package:posmobile/data/repository/flavor_repository.dart';
 import 'package:posmobile/data/repository/payment_method_repository.dart';
+import 'package:posmobile/data/repository/payment_repository.dart';
 import 'package:posmobile/data/repository/product_repository.dart';
 import 'package:posmobile/data/repository/spicy_level_repository.dart';
 import 'package:posmobile/data/repository/table_repository.dart';
@@ -45,5 +46,9 @@ void dependenciesInjection() {
 
   locator.registerLazySingleton(
     () => TableRepository(locator<ServiceHttpClient>()),
+  );
+
+  locator.registerLazySingleton(
+    () => PaymentRepository(locator<ServiceHttpClient>()),
   );
 }

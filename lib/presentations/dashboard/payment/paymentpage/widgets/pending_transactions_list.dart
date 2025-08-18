@@ -63,14 +63,42 @@ class PendingTransactionsList extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        IconButton(
-          onPressed: () {
-            context.read<PendingTransactionBloc>().add(
-              const PendingTransactionEvent.fetchPendingTransactions(),
+        BlocBuilder<PendingTransactionBloc, PendingTransactionState>(
+          builder: (context, state) {
+            final isRefreshing = state.maybeWhen(
+              loading: () => true,
+              orElse: () => false,
+            );
+            
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  onPressed: isRefreshing ? null : () {
+                    context.read<PendingTransactionBloc>().add(
+                      const PendingTransactionEvent.fetchPendingTransactions(),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.refresh_rounded, 
+                    color: isRefreshing ? Colors.grey : AppColors.primary,
+                  ),
+                  tooltip: 'Refresh Data',
+                ),
+                if (isRefreshing)
+                  Positioned(
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
-          icon: Icon(Icons.refresh_rounded, color: AppColors.primary),
-          tooltip: 'Refresh Data',
         ),
       ],
     );
@@ -86,6 +114,12 @@ class PendingTransactionsList extends StatelessWidget {
               PaymentPageEvent.updateTransactions(transactions: transactions),
             );
           },
+          transactionUpdated: (response) {
+            // Refresh transactions when a transaction is updated
+            context.read<PendingTransactionBloc>().add(
+              const PendingTransactionEvent.fetchPendingTransactions(),
+            );
+          },
         );
       },
       builder: (context, state) {
@@ -93,6 +127,13 @@ class PendingTransactionsList extends StatelessWidget {
           initial: () => _buildEmptyState('Belum ada pesanan pending'),
           loading: () => const Center(child: CircularProgressIndicator()),
           success: (transactions) {
+            // Always update PaymentPageBloc with fresh data
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<PaymentPageBloc>().add(
+                PaymentPageEvent.updateTransactions(transactions: transactions),
+              );
+            });
+
             return BlocBuilder<PaymentPageBloc, PaymentPageState>(
               builder: (context, paymentState) {
                 return paymentState.when(

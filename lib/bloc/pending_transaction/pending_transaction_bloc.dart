@@ -59,8 +59,11 @@ class PendingTransactionBloc
 
       result.fold(
         (error) => emit(PendingTransactionState.failure(error)),
-        (response) =>
-            emit(PendingTransactionState.success(transactions: response.data)),
+        (response) {
+          emit(PendingTransactionState.success(transactions: response.data));
+
+          // add(const PendingTransactionEvent.fetchPendingTransactions());
+        }, // Refresh after fetching
       );
     } catch (e) {
       emit(
@@ -98,7 +101,7 @@ class PendingTransactionBloc
     Emitter<PendingTransactionState> emit,
   ) async {
     try {
-      emit(const PendingTransactionState.loading());
+      // Don't emit loading state for edit to avoid UI flicker
       final result = await _transactionRepository.editTransaction(
         event.transactionId,
         event.request,

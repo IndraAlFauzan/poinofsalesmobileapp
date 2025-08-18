@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/data/model/response/product_model_response.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 
 class ProductCard extends StatelessWidget {
-  final String title;
-  final String? imageUrl; // Changed to nullable
-  final double price;
-  final bool available;
+  final Product product;
   final VoidCallback onTap;
+  final bool showAddButton;
+  final String? addButtonText;
 
   const ProductCard({
     super.key,
-    required this.title,
-    this.imageUrl, // Changed to optional
-    required this.price,
-    required this.available,
+    required this.product,
     required this.onTap,
+    this.showAddButton = true,
+    this.addButtonText,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Ini menggunakan AppThemes.light Anda
+    final theme = Theme.of(context);
+    final available = product.stock > 0;
+
     return InkWell(
       onTap: available ? onTap : null,
       borderRadius: BorderRadius.circular(16),
@@ -39,6 +40,7 @@ class ProductCard extends StatelessWidget {
         ),
         child: Column(
           children: [
+            // Product image
             Expanded(
               child: Stack(
                 children: [
@@ -53,21 +55,22 @@ class ProductCard extends StatelessWidget {
                   Positioned(
                     top: 10,
                     left: 10,
-                    child: AvailabilityPill(available: available),
+                    child: _buildAvailabilityPill(available),
                   ),
                 ],
               ),
             ),
+            // Product info
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    product.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -75,35 +78,32 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        idrFormat(price),
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        idrFormat(product.price),
+                        style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: AppColors
-                              .primary, // Menggunakan AppColors langsung
+                          color: AppColors.primary,
                         ),
                       ),
                       const Spacer(),
-                      FilledButton.icon(
-                        onPressed: available ? onTap : null,
-                        style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
+                      if (showAddButton)
+                        FilledButton.icon(
+                          onPressed: available ? onTap : null,
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                            backgroundColor: available
+                                ? AppColors.primary
+                                : AppColors.error.withValues(alpha: 0.5),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 0,
-                          backgroundColor: available
-                              ? AppColors
-                                    .primary // Menggunakan AppColors langsung
-                              : AppColors.error.withValues(
-                                  alpha: 0.5,
-                                ), // Not available
+                          icon: const Icon(Icons.add, size: 18),
+                          label: Text(addButtonText ?? 'Add'),
                         ),
-                        icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Add'),
-                      ),
                     ],
                   ),
                 ],
@@ -116,13 +116,12 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildProductImage(ThemeData theme) {
-    // Handle null or empty imageUrl
-    if (imageUrl == null || imageUrl!.trim().isEmpty) {
+    if (product.photoUrl == null || product.photoUrl!.trim().isEmpty) {
       return _buildPlaceholderImage(theme);
     }
 
     return Image.network(
-      imageUrl!,
+      product.photoUrl!,
       fit: BoxFit.cover,
       errorBuilder: (_, __, ___) => _buildPlaceholderImage(theme),
       loadingBuilder: (context, child, loadingProgress) {
@@ -148,39 +147,21 @@ class ProductCard extends StatelessWidget {
     return Container(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.image_not_supported_outlined,
-              size: 32,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'No Image',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 10,
-              ),
-            ),
-          ],
+        child: Icon(
+          Icons.fastfood,
+          size: 32,
+          color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
     );
   }
-}
 
-class AvailabilityPill extends StatelessWidget {
-  final bool available;
-  const AvailabilityPill({super.key, required this.available});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildAvailabilityPill(bool available) {
     final bg = available
-        ? AppColors.primary.withValues(alpha: 0.5) // Available: light green
-        : AppColors.error.withValues(alpha: 0.12); // Not available: light red
+        ? AppColors.primary.withValues(alpha: 0.5)
+        : AppColors.error.withValues(alpha: 0.12);
     final fg = available ? AppColors.textOnAccent : AppColors.error;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -189,10 +170,7 @@ class AvailabilityPill extends StatelessWidget {
       ),
       child: Text(
         available ? 'Tersedia' : 'Tidak Tersedia',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: fg,
-          fontWeight: FontWeight.w700,
-        ),
+        style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 10),
       ),
     );
   }

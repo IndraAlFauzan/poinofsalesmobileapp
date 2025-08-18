@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/shared/widgets/product_card.dart';
+import 'package:posmobile/shared/mixins/responsive_mixin.dart';
 
-class ProductGrid extends StatelessWidget {
+class ProductGrid extends StatelessWidget with ResponsiveMixin {
   final void Function(dynamic product) onTapProduct;
 
   const ProductGrid({super.key, required this.onTapProduct});
@@ -37,11 +38,11 @@ class ProductGrid extends StatelessWidget {
             }
             return GridView.builder(
               itemCount: products.length,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                childAspectRatio: .78,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: getResponsiveGridCount(context),
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.75, // Lebih tinggi untuk memberi ruang text
               ),
               itemBuilder: (_, i) {
                 final p = products[i];

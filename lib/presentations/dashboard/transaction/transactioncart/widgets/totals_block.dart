@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/mixins/responsive_mixin.dart';
 
-class TotalsBlock extends StatelessWidget {
+class TotalsBlock extends StatelessWidget with ResponsiveMixin {
   final int totalQty;
   final double totalPrice;
   final VoidCallback? onPay;
@@ -87,7 +88,7 @@ class TotalsBlock extends StatelessWidget {
             fontWeight: strong ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
-        Text(
+        priceText(
           value,
           style:
               (highlight
@@ -99,6 +100,7 @@ class TotalsBlock extends StatelessWidget {
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurface,
                   ),
+          context: context,
         ),
       ],
     );

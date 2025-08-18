@@ -7,6 +7,7 @@ import 'package:posmobile/data/model/request/payment_settle_request.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/mixins/responsive_mixin.dart';
 
 class PaymentForm extends StatefulWidget {
   const PaymentForm({super.key});
@@ -15,7 +16,7 @@ class PaymentForm extends StatefulWidget {
   State<PaymentForm> createState() => _PaymentFormState();
 }
 
-class _PaymentFormState extends State<PaymentForm> {
+class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
   int? _selectedPaymentMethodId;
   final _tenderedAmountController = TextEditingController();
   final _noteController = TextEditingController();
@@ -343,7 +344,7 @@ class _PaymentFormState extends State<PaymentForm> {
                             ),
                           ],
                         ),
-                        Text(
+                        priceText(
                           idrFormat(changeAmount.abs().toString()),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -352,6 +353,7 @@ class _PaymentFormState extends State<PaymentForm> {
                                 : Colors.red[600],
                             fontSize: 18,
                           ),
+                          context: context,
                         ),
                       ],
                     ),
@@ -454,7 +456,8 @@ class _PaymentFormState extends State<PaymentForm> {
   }
 }
 
-class _SelectedTransactionsSummary extends StatelessWidget {
+class _SelectedTransactionsSummary extends StatelessWidget
+    with ResponsiveMixin {
   const _SelectedTransactionsSummary();
 
   @override
@@ -530,12 +533,13 @@ class _SelectedTransactionsSummary extends StatelessWidget {
                                   style: const TextStyle(fontSize: 13),
                                 ),
                               ),
-                              Text(
+                              priceText(
                                 idrFormat(transaction.grandTotal),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 ),
+                                context: context,
                               ),
                             ],
                           ),
@@ -543,21 +547,25 @@ class _SelectedTransactionsSummary extends StatelessWidget {
                       ),
                       const Divider(height: 20),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Total Pembayaran:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          Expanded(
+                            child: Text(
+                              'Total Pembayaran:',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                          Text(
-                            idrFormat(totalAmount.toString()),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: AppColors.primary,
+                          Flexible(
+                            child: priceText(
+                              idrFormat(totalAmount.toString()),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: AppColors.primary,
+                              ),
+                              context: context,
                             ),
                           ),
                         ],

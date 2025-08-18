@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/presentations/dashboard/product/productmainpage/widgets/pruduct_card_widget.dart';
+import 'package:posmobile/shared/mixins/responsive_mixin.dart';
 
-class ProductGridMain extends StatelessWidget {
+class ProductGridMain extends StatelessWidget with ResponsiveMixin {
   const ProductGridMain({super.key});
 
   @override
@@ -35,11 +36,11 @@ class ProductGridMain extends StatelessWidget {
             }
             return GridView.builder(
               itemCount: products.length,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                childAspectRatio: 0.7,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: getResponsiveGridCount(context),
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.7, // Lebih tinggi untuk memberi ruang text
               ),
               itemBuilder: (_, i) {
                 final p = products[i];

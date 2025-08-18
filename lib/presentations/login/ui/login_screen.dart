@@ -147,50 +147,52 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
 
                 // Wide layout with side image
-                return Row(
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Kasir Warung Seblak',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryLight,
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxWidth: double.infinity,
-                                maxHeight: 400,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  'assets/images/login_image.jpg',
-                                  fit: BoxFit.cover,
+                return SingleChildScrollView(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Kasir Warung Seblak',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryLight,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 32),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: double.infinity,
+                                  maxHeight: 400,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    'assets/images/login_image.jpg',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      flex: 2,
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(32),
-                        child: form,
+                      const SizedBox(width: 32),
+                      Expanded(
+                        flex: 2,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(32),
+                          child: form,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),

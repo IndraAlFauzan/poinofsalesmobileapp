@@ -185,34 +185,43 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                                 height:
                                     46, // Sama dengan tinggi TopBar untuk alignment
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Rangkuman Pesanan',
-                                      style: theme.textTheme.titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: theme.colorScheme.primary,
-                                          ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.primary
-                                            .withValues(alpha: .07),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
+                                    Expanded(
                                       child: Text(
-                                        '#${DateTime.now().millisecondsSinceEpoch % 100000}',
-                                        style: theme.textTheme.labelLarge
+                                        'Rangkuman Pesanan',
+                                        style: theme.textTheme.titleLarge
                                             ?.copyWith(
+                                              fontWeight: FontWeight.w700,
                                               color: theme.colorScheme.primary,
-                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
                                             ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary
+                                              .withValues(alpha: .07),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '#${DateTime.now().millisecondsSinceEpoch % 100000}',
+                                          style: theme.textTheme.labelLarge
+                                              ?.copyWith(
+                                                color:
+                                                    theme.colorScheme.primary,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                   ],

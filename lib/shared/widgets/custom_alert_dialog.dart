@@ -61,8 +61,8 @@ class _CustomAlertDialogState extends State<CustomAlertDialog> {
         ? theme.colorScheme.error
         : theme.colorScheme.primary;
 
-    return WillPopScope(
-      onWillPop: () async => widget.dismissible && !_loading,
+    return PopScope(
+      canPop: widget.dismissible && !_loading,
       child: Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

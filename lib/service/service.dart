@@ -5,7 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceHttpClient {
-  final String baseUrl = "http://10.0.2.2:8000/api/";
+  // Force localhost for iPad Simulator
+  String get baseUrl => "http://127.0.0.1:8000/api/";
+
   final secureStorage = FlutterSecureStorage();
 
   Future<http.Response> post(String endPoint, Map<String, dynamic> body) async {
@@ -110,6 +112,7 @@ class ServiceHttpClient {
     http.Response response,
   ) {
     log("==== HTTP REQUEST ====");
+    log("Base URL: $baseUrl");
     log("Method: $method");
     log("URL: $url");
     if (body != null) log("Body: ${jsonEncode(body)}");

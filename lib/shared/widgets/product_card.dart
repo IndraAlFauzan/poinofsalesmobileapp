@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:posmobile/data/model/response/product_model_response.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/mixins/responsive_mixin.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatelessWidget with ResponsiveMixin {
   final Product product;
   final VoidCallback onTap;
   final bool showAddButton;
@@ -61,51 +62,63 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             // Product info
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            Container(
+              constraints: const BoxConstraints(
+                minHeight: 90, // Minimal tinggi untuk info produk
+              ),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     product.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        idrFormat(product.price),
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                  // Price row - always visible
+                  guaranteedPriceText(
+                    idrFormat(product.price),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                    ),
+                    context: context,
+                  ),
+                  if (showAddButton) ...[
+                    const SizedBox(height: 8),
+                    // Add button row
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: available ? onTap : null,
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                          backgroundColor: available
+                              ? AppColors.primary
+                              : AppColors.error.withValues(alpha: 0.5),
+                          minimumSize: const Size(0, 32),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        icon: const Icon(Icons.add, size: 16),
+                        label: Text(
+                          addButtonText ?? 'Add',
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ),
-                      const Spacer(),
-                      if (showAddButton)
-                        FilledButton.icon(
-                          onPressed: available ? onTap : null,
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 0,
-                            backgroundColor: available
-                                ? AppColors.primary
-                                : AppColors.error.withValues(alpha: 0.5),
-                          ),
-                          icon: const Icon(Icons.add, size: 18),
-                          label: Text(addButtonText ?? 'Add'),
-                        ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ],
               ),
             ),

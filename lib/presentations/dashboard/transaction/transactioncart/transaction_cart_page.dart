@@ -235,7 +235,7 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                               child: ListView.separated(
                                 controller: _cartScroll,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
+                                  horizontal: 14,
                                   vertical: 8,
                                 ),
                                 itemCount: items.length,

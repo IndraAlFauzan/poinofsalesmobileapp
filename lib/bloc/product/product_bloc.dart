@@ -111,9 +111,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (_selectedCategoryId != 0) {
       list = list.where((p) {
         // Jika kategori yang dipilih adalah "prasmanan",
-        // tambahkan juga produk dari kategori "topping"
+        // tampilkan produk prasmanan DAN topping
         if (_isPrasmananCategory(_selectedCategoryId)) {
-          return p.categoryId == _selectedCategoryId ||
+          return _isPrasmananCategory(p.categoryId) ||
               _isToppingCategory(p.categoryId);
         }
         return p.categoryId == _selectedCategoryId;
@@ -125,6 +125,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       list = list.where((p) => p.name.toLowerCase().contains(q));
     }
 
+    // Jika kategori yang dipilih adalah prasmanan, urutkan: prasmanan dulu, lalu topping
+    if (_selectedCategoryId != 0 && _isPrasmananCategory(_selectedCategoryId)) {
+      final productList = List<Product>.from(list);
+      final prasmananProducts = productList
+          .where((p) => _isPrasmananCategory(p.categoryId))
+          .toList();
+      final toppingProducts = productList
+          .where((p) => _isToppingCategory(p.categoryId))
+          .toList();
+
+      return [...prasmananProducts, ...toppingProducts];
+    }
+
     return List<Product>.from(list);
   }
 
@@ -132,8 +145,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   bool _isPrasmananCategory(int categoryId) {
     if (_all.isEmpty) return false;
     try {
-      final product = _all.firstWhere((p) => p.categoryId == categoryId);
-      return product.category.toLowerCase().contains('prasmanan');
+      // Cari semua produk dengan categoryId yang sama
+      final productsInCategory = _all.where((p) => p.categoryId == categoryId);
+      if (productsInCategory.isEmpty) return false;
+
+      // Ambil category name dari produk pertama yang ditemukan
+      final categoryName = productsInCategory.first.category.toLowerCase();
+      return categoryName.contains('prasmanan');
     } catch (e) {
       return false;
     }
@@ -143,8 +161,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   bool _isToppingCategory(int categoryId) {
     if (_all.isEmpty) return false;
     try {
-      final product = _all.firstWhere((p) => p.categoryId == categoryId);
-      return product.category.toLowerCase().contains('toping');
+      // Cari semua produk dengan categoryId yang sama
+      final productsInCategory = _all.where((p) => p.categoryId == categoryId);
+      if (productsInCategory.isEmpty) return false;
+
+      // Ambil category name dari produk pertama yang ditemukan
+      final categoryName = productsInCategory.first.category.toLowerCase();
+      return categoryName.contains('toping');
     } catch (e) {
       return false;
     }

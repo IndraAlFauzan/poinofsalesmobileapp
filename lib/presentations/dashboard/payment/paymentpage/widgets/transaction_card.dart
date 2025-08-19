@@ -7,6 +7,7 @@ import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/ad
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentTransactionPendingCard extends StatelessWidget {
   final PendingTransaction transaction;
@@ -37,16 +38,26 @@ class PaymentTransactionPendingCard extends StatelessWidget {
           );
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: EdgeInsets.only(bottom: context.spacing.sm),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.primary.withValues(alpha: 0.05)
-                  : Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
+                  ? context.colorScheme.primary.withValues(alpha: 0.05)
+                  : context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(context.radius.sm),
+              boxShadow: [
+                BoxShadow(
+                  color: isSelected
+                      ? context.colorScheme.primary.withValues(alpha: 0.1)
+                      : context.colorScheme.shadow.withValues(alpha: 0.1),
+                  blurRadius: 3,
+                  offset: const Offset(0, 2),
+                  spreadRadius: 1,
+                ),
+              ],
               border: Border.all(
                 color: isSelected
-                    ? AppColors.primary.withValues(alpha: 0.3)
-                    : Colors.grey.withValues(alpha: 0.2),
+                    ? context.colorScheme.primary.withValues(alpha: 0.3)
+                    : context.colorScheme.outline,
                 width: isSelected ? 2 : 1,
               ),
             ),

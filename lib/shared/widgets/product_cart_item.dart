@@ -9,6 +9,7 @@ import 'package:posmobile/data/model/response/spicy_level_model_response.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/mixins/responsive_mixin.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class ProductCartItem extends StatefulWidget {
   final CartItemModel item;
@@ -61,16 +62,17 @@ class _ProductCartItemState extends State<ProductCartItem>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: context.spacing.sm),
+      padding: EdgeInsets.all(context.spacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: context.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(context.radius.md),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
+            color: context.colorScheme.shadow.withValues(alpha: 0.12),
+            blurRadius: 8,
             offset: const Offset(0, 2),
+            spreadRadius: 1,
           ),
         ],
       ),
@@ -134,12 +136,14 @@ class _ProductCartItemState extends State<ProductCartItem>
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(6),
+                      color: context.colorScheme.errorContainer.withValues(
+                        alpha: 0.2,
+                      ),
+                      borderRadius: BorderRadius.circular(context.radius.sm),
                     ),
                     child: Icon(
                       Icons.delete_outline,
-                      color: Colors.red.shade400,
+                      color: context.colorScheme.error,
                       size: 18,
                     ),
                   ),
@@ -167,37 +171,47 @@ class _ProductCartItemState extends State<ProductCartItem>
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Rasa:',
-                                  style: TextStyle(
+                                  style: context.textTheme.labelSmall?.copyWith(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.grey,
+                                    color: context.colorScheme.onSurfaceVariant,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: context.spacing.xs),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: context.spacing.sm,
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Colors.grey.shade300,
+                                      color: context.colorScheme.outline,
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(
+                                      context.radius.sm,
+                                    ),
                                   ),
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<Flavor>(
                                       isExpanded: true,
                                       value: widget.item.selectedFlavor,
-                                      hint: const Text(
+                                      hint: Text(
                                         'Pilih Rasa',
-                                        style: TextStyle(fontSize: 12),
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
+                                              fontSize: 12,
+                                              color: context
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
                                       ),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
+                                      style: context.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontSize: 12,
+                                            color:
+                                                context.colorScheme.onSurface,
+                                          ),
                                       items: flavors.map((flavor) {
                                         return DropdownMenuItem<Flavor>(
                                           value: flavor,
@@ -237,37 +251,47 @@ class _ProductCartItemState extends State<ProductCartItem>
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Level:',
-                                  style: TextStyle(
+                                  style: context.textTheme.labelSmall?.copyWith(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.grey,
+                                    color: context.colorScheme.onSurfaceVariant,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: context.spacing.xs),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: context.spacing.sm,
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Colors.grey.shade300,
+                                      color: context.colorScheme.outline,
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(
+                                      context.radius.sm,
+                                    ),
                                   ),
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<SpicyLevel>(
                                       isExpanded: true,
                                       value: widget.item.selectedSpicyLevel,
-                                      hint: const Text(
+                                      hint: Text(
                                         'Pilih Level',
-                                        style: TextStyle(fontSize: 12),
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
+                                              fontSize: 12,
+                                              color: context
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
                                       ),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
+                                      style: context.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontSize: 12,
+                                            color:
+                                                context.colorScheme.onSurface,
+                                          ),
                                       items: level.map((level) {
                                         return DropdownMenuItem<SpicyLevel>(
                                           value: level,
@@ -297,47 +321,52 @@ class _ProductCartItemState extends State<ProductCartItem>
                 ],
               ),
             ),
-          const SizedBox(height: 18),
+          SizedBox(height: context.spacing.lg),
           // Kalau Toping
           if (widget.item.product.category != 'Toping')
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Catatan:',
-                  style: TextStyle(
+                  style: context.textTheme.labelSmall?.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey,
+                    color: context.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: context.spacing.xs),
                 TextField(
                   controller: _noteController,
-                  style: const TextStyle(fontSize: 12),
+                  style: context.textTheme.bodySmall?.copyWith(fontSize: 12),
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     hintText: 'Tambahkan catatan...',
-                    hintStyle: TextStyle(
+                    hintStyle: context.textTheme.bodySmall?.copyWith(
                       fontSize: 12,
-                      color: Colors.grey.shade500,
+                      color: context.colorScheme.onSurfaceVariant,
                     ),
-
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(context.radius.sm),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.outline,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(context.radius.sm),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.outline,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(context.radius.sm),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.primary,
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: context.spacing.sm,
+                      vertical: context.spacing.xs,
                     ),
                   ),
                   maxLines: 2,
@@ -375,21 +404,23 @@ class _ProductCartItemState extends State<ProductCartItem>
                         );
                       }
                     },
+
+                    // style on tap
                     child: Container(
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(6),
+                        color: context.colorScheme.error.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(context.radius.sm),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.remove,
                         size: 16,
-                        color: Colors.black54,
+                        color: context.colorScheme.surface,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: context.spacing.sm),
                   // Quantity input field
                   SizedBox(
                     width: 50,
@@ -398,26 +429,36 @@ class _ProductCartItemState extends State<ProductCartItem>
                       controller: _quantityController,
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
-                      style: const TextStyle(
+                      style: context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(
+                            context.radius.sm,
+                          ),
+                          borderSide: BorderSide(
+                            color: context.colorScheme.outline,
                           ),
                         ),
-                        contentPadding: const EdgeInsets.all(4),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            context.radius.sm,
+                          ),
+                          borderSide: BorderSide(
+                            color: context.colorScheme.outline,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            context.radius.sm,
+                          ),
+                          borderSide: BorderSide(
+                            color: context.colorScheme.primary,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.all(context.spacing.xs),
                       ),
                       onChanged: (value) {
                         final newQty = int.tryParse(value) ?? 1;
@@ -445,7 +486,7 @@ class _ProductCartItemState extends State<ProductCartItem>
                       },
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: context.spacing.sm),
                   GestureDetector(
                     onTap: () {
                       final newQty = widget.item.quantity + 1;
@@ -463,13 +504,13 @@ class _ProductCartItemState extends State<ProductCartItem>
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(6),
+                        color: context.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(context.radius.sm),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.add,
                         size: 16,
-                        color: Colors.white,
+                        color: context.colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -513,19 +554,25 @@ class _ProductCartItemState extends State<ProductCartItem>
     return Container(
       width: 60,
       height: 60,
-      color: Colors.grey[300],
+      decoration: BoxDecoration(
+        color: context.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(context.radius.sm),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.image_not_supported_outlined,
             size: 20,
-            color: Colors.grey[600],
+            color: context.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 2),
           Text(
             'No Image',
-            style: TextStyle(fontSize: 8, color: Colors.grey[600]),
+            style: context.textTheme.labelSmall?.copyWith(
+              fontSize: 8,
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

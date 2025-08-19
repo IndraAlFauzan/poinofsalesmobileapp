@@ -120,7 +120,7 @@ mixin ResponsiveMixin {
   int getResponsiveGridCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    if (width > 1200) return 5; // Desktop large
+    if (width > 1200) return 4; // Desktop large
     if (width > 900) return 4; // Desktop medium
     if (width > 600) return 3; // Tablet landscape
     if (width > 400) return 2; // Tablet portrait

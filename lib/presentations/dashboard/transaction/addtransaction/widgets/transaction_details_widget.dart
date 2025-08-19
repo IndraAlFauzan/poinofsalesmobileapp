@@ -3,6 +3,7 @@ import 'package:posmobile/presentations/dashboard/transaction/addtransaction/wid
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_summary_widget.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/create_transaction_button_widget.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class TransactionDetailsWidget extends StatefulWidget {
   const TransactionDetailsWidget({super.key});
@@ -31,17 +32,18 @@ class _TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: context.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(context.radius.md),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: context.colorScheme.shadow.withValues(alpha: 0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+            spreadRadius: 1,
           ),
         ],
       ),
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(context.spacing.md),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -70,7 +72,7 @@ class _TransactionDetailsWidgetState extends State<TransactionDetailsWidget> {
                   const SizedBox(width: 12),
                   Text(
                     'Detail Pesanan',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),

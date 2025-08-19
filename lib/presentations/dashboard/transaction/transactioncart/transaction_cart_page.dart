@@ -8,6 +8,7 @@ import 'package:posmobile/bloc/product/product_bloc.dart';
 import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/add_transaction_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 import 'widgets/widgets.dart';
 
 class TransactionCartPage extends StatefulWidget {
@@ -66,9 +67,8 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         bottom: false,
         child: Row(
@@ -77,12 +77,7 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
             Expanded(
               flex: 5,
               child: Padding(
-                padding: const EdgeInsets.only(
-                  // left: 28,
-                  // right: 28,
-                  // top: 10, // Sejajar dengan logo SideMenu
-                  bottom: 20,
-                ),
+                padding: EdgeInsets.only(bottom: context.spacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -93,10 +88,10 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(context.spacing.sm),
                         child: Column(
                           children: [
-                            const SizedBox(height: 18),
+                            SizedBox(height: context.spacing.md),
                             CategoryChips(onChipCleared: () {}),
                             const SizedBox(height: 18),
                             Expanded(
@@ -121,18 +116,12 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
               flex: 2,
               child: Container(
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  // borderRadius: const BorderRadius.only(
-                  //   topLeft: Radius.circular(24),
-                  //   bottomLeft: Radius.circular(24),
-                  // ),
+                  color: context.colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.05,
-                      ),
-                      blurRadius: 18,
-                      offset: const Offset(-8, 0),
+                      color: context.colorScheme.shadow.withValues(alpha: 0.1),
+                      blurRadius: 16,
+                      offset: const Offset(-4, 0),
                     ),
                   ],
                 ),
@@ -189,10 +178,11 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                                     Expanded(
                                       child: Text(
                                         'Rangkuman Pesanan',
-                                        style: theme.textTheme.titleLarge
+                                        style: context.textTheme.titleLarge
                                             ?.copyWith(
                                               fontWeight: FontWeight.w700,
-                                              color: theme.colorScheme.primary,
+                                              color:
+                                                  context.colorScheme.primary,
                                               fontSize: 16,
                                             ),
                                         overflow: TextOverflow.ellipsis,
@@ -200,23 +190,23 @@ class _TransactionCartPageState extends State<TransactionCartPage> {
                                     ),
                                     Flexible(
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 6,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: context.spacing.sm,
+                                          vertical: context.spacing.xs,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: theme.colorScheme.primary
+                                          color: context.colorScheme.primary
                                               .withValues(alpha: .07),
                                           borderRadius: BorderRadius.circular(
-                                            10,
+                                            context.radius.sm,
                                           ),
                                         ),
                                         child: Text(
                                           '#${DateTime.now().millisecondsSinceEpoch % 100000}',
-                                          style: theme.textTheme.labelLarge
+                                          style: context.textTheme.labelLarge
                                               ?.copyWith(
                                                 color:
-                                                    theme.colorScheme.primary,
+                                                    context.colorScheme.primary,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 12,
                                               ),

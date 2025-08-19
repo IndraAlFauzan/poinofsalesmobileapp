@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/presentations/dashboard/product/productmainpage/product_main_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/transactioncart/transaction_cart_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/history_transaction_screen.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/payment_page.dart';
-import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
+import 'package:posmobile/shared/widgets/adaptive_widgets.dart';
+import 'package:posmobile/shared/cubit/theme_cubit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainPage extends StatefulWidget {
@@ -32,49 +35,44 @@ class _MainPageState extends State<MainPage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colorScheme.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
           ),
-          elevation: 10,
+          elevation: 8,
           contentPadding: EdgeInsets.zero,
           content: Container(
             width: 320,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.1),
-                ],
+              borderRadius: BorderRadius.circular(24),
+              color: context.colorScheme.surface,
+              border: Border.all(
+                color: context.colorScheme.outline.withValues(alpha: 0.2),
+                width: 1,
               ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header dengan icon
+                // Header dengan gradient
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(context.spacing.lg),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
                     ),
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primary],
-                    ),
+                    gradient: context.customColors.gradientPrimary,
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 12),
-                      const Text(
+                      Icon(Icons.logout_rounded, size: 32, color: Colors.white),
+                      SizedBox(height: context.spacing.sm),
+                      Text(
                         'Konfirmasi Logout',
-                        style: TextStyle(
+                        style: context.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
-                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -84,42 +82,30 @@ class _MainPageState extends State<MainPage> {
 
                 // Content
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(context.spacing.lg),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Apakah Anda yakin ingin keluar dari aplikasi?',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: context.colorScheme.onSurface,
+                        ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: context.spacing.lg),
 
                       // Buttons
                       Row(
                         children: [
                           Expanded(
-                            child: ElevatedButton(
+                            child: OutlinedButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade300,
-                                foregroundColor: Colors.black87,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                'Batal',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
+                              child: const Text('Batal'),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: context.spacing.sm),
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
@@ -129,21 +115,7 @@ class _MainPageState extends State<MainPage> {
                                   (route) => false,
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                elevation: 2,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                'Keluar',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              child: const Text('Keluar'),
                             ),
                           ),
                         ],
@@ -195,7 +167,7 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
     );
   }
 }
@@ -229,12 +201,12 @@ class _SideMenuState extends State<SideMenu> {
     return Container(
       width: 100,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
+        gradient: context.customColors.gradientPrimary,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.2),
+            color: context.colorScheme.shadow.withValues(alpha: 0.2),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: const Offset(2, 0),
           ),
         ],
       ),
@@ -246,7 +218,7 @@ class _SideMenuState extends State<SideMenu> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 30),
+                  SizedBox(height: context.spacing.xl),
                   _buildMenuItem(
                     label: 'Pesanan',
                     icon: Icons.restaurant_menu,
@@ -267,17 +239,15 @@ class _SideMenuState extends State<SideMenu> {
                     icon: Icons.history_rounded,
                     page: MainPageTab.history,
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                  ), // Replace Spacer with SizedBox
-                  const Divider(
-                    height: 1,
-                    color: Colors.white24,
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+                  AdaptiveDivider(
+                    color: Colors.white.withValues(alpha: 0.3),
                     indent: 20,
                     endIndent: 20,
                   ),
+                  _buildThemeToggle(),
                   _buildLogoutButton(),
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.spacing.md),
                 ],
               ),
             ),
@@ -289,22 +259,27 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _buildLogo() {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 10,
-      ), // Kembali ke 10 seperti permintaan
+      padding: EdgeInsets.only(top: context.spacing.sm),
       child: Column(
         children: [
-          SvgPicture.asset(
-            'assets/images/food_logo.svg',
-            clipBehavior: Clip.hardEdge,
+          Container(
+            padding: EdgeInsets.all(context.spacing.sm),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(context.radius.md),
+            ),
+            child: SvgPicture.asset(
+              'assets/images/food_logo.svg',
+              height: 40,
+              width: 40,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          const Divider(
-            height: 2,
-            color: AppColors.textSecondary,
-            // indent: 20,
-            // endIndent: 20,
-          ),
+          SizedBox(height: context.spacing.sm),
+          AdaptiveDivider(color: Colors.white.withValues(alpha: 0.3)),
         ],
       ),
     );
@@ -318,37 +293,46 @@ class _SideMenuState extends State<SideMenu> {
     final bool isActive = widget.pageActive == page;
     final bool isHover = _hoveredItem == page;
     final bgColor = isActive
-        ? Colors.white24
+        ? Colors.white.withValues(alpha: 0.3)
         : isHover
-        ? Colors.white12
+        ? Colors.white.withValues(alpha: 0.2)
         : Colors.transparent;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hoveredItem = page),
       onExit: (_) => setState(() => _hoveredItem = null),
       child: GestureDetector(
         onTap: () => widget.onPageSelected(page),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          duration: const Duration(milliseconds: 200),
+          margin: EdgeInsets.symmetric(
+            horizontal: context.spacing.sm,
+            vertical: context.spacing.xs,
+          ),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(context.radius.md),
+            border: isActive
+                ? Border.all(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    width: 1,
+                  )
+                : null,
           ),
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(vertical: context.spacing.sm),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, color: Colors.white, size: 24),
-              const SizedBox(height: 5),
+              SizedBox(height: context.spacing.xs),
               Text(
                 label,
-                style: const TextStyle(
+                style: context.textTheme.labelSmall?.copyWith(
                   color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -359,28 +343,78 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
+  Widget _buildThemeToggle() {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return GestureDetector(
+          onTap: () {
+            context.read<ThemeCubit>().toggleTheme();
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: context.spacing.sm),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(context.radius.md),
+            ),
+            padding: EdgeInsets.symmetric(vertical: context.spacing.sm),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(context.spacing.sm),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    context.read<ThemeCubit>().themeIcon,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(height: context.spacing.xs),
+                Text(
+                  "Tema",
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildLogoutButton() {
     return GestureDetector(
       onTap: widget.onLogout,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
+        margin: EdgeInsets.symmetric(horizontal: context.spacing.sm),
         decoration: BoxDecoration(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(context.radius.md),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: context.spacing.sm),
         child: Column(
-          children: const [
-            CircleAvatar(
-              backgroundColor: Colors.white54,
-              child: Icon(
-                Icons.logout_outlined,
-                color: AppColors.primary,
-                size: 24,
+          children: [
+            Container(
+              padding: EdgeInsets.all(context.spacing.sm),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.logout_outlined, color: Colors.white, size: 24),
+            ),
+            SizedBox(height: context.spacing.xs),
+            Text(
+              "Keluar",
+              style: context.textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 5),
-            Text("Keluar", style: TextStyle(color: Colors.white, fontSize: 11)),
           ],
         ),
       ),

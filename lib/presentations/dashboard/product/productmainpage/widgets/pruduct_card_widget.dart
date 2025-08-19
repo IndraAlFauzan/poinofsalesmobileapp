@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class ProductCardWidget extends StatelessWidget {
   final String title;
@@ -24,155 +24,173 @@ class ProductCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-              spreadRadius: 0,
-            ),
-            BoxShadow(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-              spreadRadius: 0,
-            ),
-          ],
-          border: Border.all(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: BorderRadius.circular(context.radius.xl),
+        boxShadow: [
+          BoxShadow(
+            color: context.colorScheme.shadow.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+            spreadRadius: 0,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image Section with overlay info
-            Expanded(
-              flex: 3,
-              child: Stack(
-                children: [
-                  // Main Image
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      child: _buildProductImage(theme),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(context.radius.xl),
+        child: InkWell(
+          onTap: available ? onTap : null,
+          borderRadius: BorderRadius.circular(context.radius.xl),
+          child: Container(
+            padding: EdgeInsets.all(context.spacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image with modern styling
+                Expanded(
+                  flex: 6,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(context.radius.lg),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.colorScheme.shadow.withValues(
+                            alpha: 0.1,
+                          ),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        // Main image
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              context.radius.lg,
+                            ),
+                            child: _buildProductImage(context),
+                          ),
+                        ),
+
+                        // Gradient overlay
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                context.radius.lg,
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.3),
+                                ],
+                                stops: const [0.6, 1.0],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Availability status only
+                        Positioned(
+                          top: context.spacing.sm,
+                          right: context.spacing.sm,
+                          child: _buildStatusBadge(context),
+                        ),
+                      ],
                     ),
                   ),
+                ),
 
-                  // Top badges
+                SizedBox(height: context.spacing.md),
 
-                  // Stock indicator (bottom right of image)
-
-                  // Gradient overlay for better text readability
-                ],
-              ),
-            ),
-
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IntrinsicHeight(
+                // Content section
+                Expanded(
+                  flex: 4,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Name: ",
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.3,
-                                  fontSize: 12,
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      // Product Name
+                      _buildInfoRow(
+                        context,
+                        'Nama',
+                        title,
+                        isTitle: true,
+                        maxLines: 2,
                       ),
-                      const SizedBox(height: 4),
-                      Flexible(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Harga: ",
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                idrFormat(price),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+
+                      SizedBox(height: context.spacing.sm),
+
+                      // Price
+                      _buildInfoRow(
+                        context,
+                        'Harga',
+                        idrFormat(price),
+                        isPrimary: true,
                       ),
-                      if (category != null)
-                        Flexible(child: CategoryBadge(category: category!)),
-                      if (stock != null)
-                        Flexible(child: StockIndicator(stock: stock!)),
+
+                      SizedBox(height: context.spacing.sm),
+
+                      // Category and Stock row
+                      Row(
+                        children: [
+                          if (category != null)
+                            Expanded(
+                              child: _buildInfoRow(
+                                context,
+                                'Kategori',
+                                category!,
+                                isCompact: true,
+                              ),
+                            ),
+
+                          if (category != null && stock != null)
+                            SizedBox(width: context.spacing.md),
+
+                          if (stock != null)
+                            Expanded(
+                              child: _buildInfoRow(
+                                context,
+                                'Stok',
+                                '$stock',
+                                isCompact: true,
+                                stockValue: stock,
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProductImage(ThemeData theme) {
-    // Handle null or empty imageUrl
+  Widget _buildProductImage(BuildContext context) {
     if (imageUrl == null || imageUrl!.trim().isEmpty) {
-      return _buildPlaceholderImage(theme);
+      return _buildPlaceholderImage(context);
     }
 
     return Image.network(
       imageUrl!,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _buildPlaceholderImage(theme),
+      errorBuilder: (_, __, ___) => _buildPlaceholderImage(context),
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
         return Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
+            color: context.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(context.radius.lg),
           ),
           child: Center(
             child: CircularProgressIndicator(
@@ -180,8 +198,8 @@ class ProductCardWidget extends StatelessWidget {
                   ? loadingProgress.cumulativeBytesLoaded /
                         loadingProgress.expectedTotalBytes!
                   : null,
-              strokeWidth: 2,
-              color: AppColors.primary,
+              strokeWidth: 3,
+              color: context.colorScheme.primary,
             ),
           ),
         );
@@ -189,15 +207,16 @@ class ProductCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholderImage(ThemeData theme) {
+  Widget _buildPlaceholderImage(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(context.radius.lg),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.surfaceContainerHighest,
-            theme.colorScheme.surfaceContainerHigh,
+            context.colorScheme.primaryContainer.withValues(alpha: 0.1),
+            context.colorScheme.secondaryContainer.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -205,16 +224,25 @@ class ProductCardWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.image_not_supported_outlined,
-              size: 48,
-              color: theme.colorScheme.onSurfaceVariant,
+            Container(
+              padding: EdgeInsets.all(context.spacing.lg),
+              decoration: BoxDecoration(
+                color: context.colorScheme.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.restaurant_menu,
+                size: 32,
+                color: context.colorScheme.primary.withValues(alpha: 0.7),
+              ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.spacing.sm),
             Text(
               'No Image',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: context.textTheme.labelMedium?.copyWith(
+                color: context.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.6,
+                ),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -223,125 +251,133 @@ class ProductCardWidget extends StatelessWidget {
       ),
     );
   }
-}
 
-class CategoryBadge extends StatelessWidget {
-  final String category;
-  const CategoryBadge({super.key, required this.category});
-
-  // Fungsi untuk format warna kategori
-  Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'makanan':
-        return Colors.blue.withValues(alpha: 0.1);
-      case 'minuman':
-        return Colors.pink.withValues(alpha: 0.1);
-      case 'topping':
-        return Colors.green.withValues(alpha: 0.1);
-      // case 'books':
-      //   return Colors.orange.withValues(alpha: 0.1);
-      default:
-        return Colors.grey.withValues(alpha: 0.1);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-      children: [
-        Text(
-          "Kategori: ",
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
+  Widget _buildStatusBadge(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm,
+        vertical: context.spacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: available
+            ? context.colorScheme.primary
+            : context.colorScheme.error,
+        borderRadius: BorderRadius.circular(context.radius.lg),
+        boxShadow: [
+          BoxShadow(
+            color:
+                (available
+                        ? context.colorScheme.primary
+                        : context.colorScheme.error)
+                    .withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-
-          decoration: BoxDecoration(
-            color: _getCategoryColor(category),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              width: 1,
-            ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            available ? Icons.check_circle : Icons.cancel,
+            size: 14,
+            color: Colors.white,
           ),
-          child: Text(
-            category,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: AppColors.primary,
+          SizedBox(width: context.spacing.xs),
+          Text(
+            available ? 'Available' : 'Sold Out',
+            style: context.textTheme.labelSmall?.copyWith(
+              color: Colors.white,
               fontWeight: FontWeight.w600,
-              fontSize: 9,
+              fontSize: 10,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
-}
 
-class StockIndicator extends StatelessWidget {
-  final int stock;
-  const StockIndicator({super.key, required this.stock});
+  Widget _buildInfoRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isTitle = false,
+    bool isPrimary = false,
+    bool isCompact = false,
+    int maxLines = 1,
+    int? stockValue,
+  }) {
+    // Determine colors based on stock for stock info
+    Color? valueColor;
+    if (stockValue != null) {
+      if (stockValue == 0) {
+        valueColor = context.colorScheme.error;
+      } else if (stockValue <= 10) {
+        valueColor = Colors.orange;
+      } else {
+        valueColor = Colors.green;
+      }
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isLowStock = stock <= 10;
-    final stockColor = isLowStock ? AppColors.warning : AppColors.success;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
+        // Label
         Text(
-          "Stok: ",
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: AppColors.primary,
+          '$label:',
+          style: context.textTheme.labelMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w600,
-            fontSize: 12,
+            fontSize: isCompact ? 11 : 12,
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+        SizedBox(height: context.spacing.xs),
+
+        // Value
+        if (isPrimary)
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.sm,
+              vertical: context.spacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: available
+                  ? context.colorScheme.primaryContainer
+                  : context.colorScheme.errorContainer,
+              borderRadius: BorderRadius.circular(context.radius.sm),
+            ),
+            child: Text(
+              value,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                fontSize: isCompact ? 14 : 16,
+                color: available
+                    ? context.colorScheme.onPrimaryContainer
+                    : context.colorScheme.onErrorContainer,
               ),
-            ],
+              maxLines: maxLines,
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
+        else
+          Text(
+            value,
+            style: isTitle
+                ? context.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colorScheme.onSurface,
+                    height: 1.1,
+                  )
+                : context.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? context.colorScheme.onSurface,
+                    fontSize: isCompact ? 18 : 20,
+                  ),
+            maxLines: maxLines,
+
+            overflow: TextOverflow.ellipsis,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isLowStock
-                    ? Icons.inventory_2_outlined
-                    : Icons.inventory_outlined,
-                size: 12,
-                color: stockColor,
-              ),
-              const SizedBox(width: 2),
-              Text(
-                '$stock',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: stockColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

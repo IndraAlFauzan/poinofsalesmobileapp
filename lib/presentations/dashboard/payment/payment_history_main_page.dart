@@ -4,6 +4,7 @@ import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentHistoryMainPage extends StatefulWidget {
   const PaymentHistoryMainPage({super.key});
@@ -26,9 +27,9 @@ class _PaymentHistoryMainPageState extends State<PaymentHistoryMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(context.spacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -38,7 +39,7 @@ class _PaymentHistoryMainPageState extends State<PaymentHistoryMainPage> {
               children: [
                 Text(
                   'Riwayat Pembayaran',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  style: context.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
                   ),
@@ -202,9 +203,7 @@ class _PaymentHistoryMainPageState extends State<PaymentHistoryMainPage> {
                                   if (payment.transactions.isNotEmpty) ...[
                                     Text(
                                       'Transaksi yang Dibayar:',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
+                                      style: context.textTheme.titleMedium
                                           ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),

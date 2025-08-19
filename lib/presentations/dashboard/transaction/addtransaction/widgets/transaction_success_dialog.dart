@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/receipt_preview_dialog.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class TransactionSuccessDialog extends StatefulWidget {
   final dynamic transactionResponse;
@@ -135,16 +136,15 @@ class _TransactionSuccessDialogState extends State<TransactionSuccessDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Dialog(
       backgroundColor: Colors.transparent,
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(context.spacing.lg),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(context.radius.lg),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.1),

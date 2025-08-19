@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/config/theme_extensions.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        Text(
-          'Selamat Datang!',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
+        // App Logo/Icon
+        Container(
+          padding: EdgeInsets.all(context.spacing.md),
+          decoration: BoxDecoration(
+            gradient: context.customColors.gradientPrimary,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.restaurant_menu_rounded,
+            size: 48,
+            color: Colors.white,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: context.spacing.lg),
+
+        Text(
+          'Selamat Datang!',
+          style: context.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: context.colorScheme.onSurface,
+          ),
+        ),
+        SizedBox(height: context.spacing.sm),
         Text(
           'Silakan masuk untuk melanjutkan',
-          style: TextStyle(fontSize: 16),
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+          ),
+          textAlign: TextAlign.center,
         ),
       ],
     );

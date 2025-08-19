@@ -8,6 +8,8 @@ import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payme
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/mixins/responsive_mixin.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
+import 'package:posmobile/shared/widgets/adaptive_widgets.dart';
 
 class PaymentForm extends StatefulWidget {
   const PaymentForm({super.key});
@@ -146,36 +148,25 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
           },
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      child: AdaptiveCard(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(context.spacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildHeader(),
-              const SizedBox(height: 20),
+              SizedBox(height: context.spacing.lg),
               const _SelectedTransactionsSummary(),
-              const SizedBox(height: 20),
+              SizedBox(height: context.spacing.lg),
               _buildPaymentMethodSelection(),
               if (_selectedPaymentMethodId == 1) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: context.spacing.md),
                 _buildCashAmountField(),
               ],
-              const SizedBox(height: 16),
+              SizedBox(height: context.spacing.md),
               _buildNoteField(),
-              const SizedBox(height: 20),
+              SizedBox(height: context.spacing.lg),
               _buildPaymentButton(),
             ],
           ),
@@ -188,21 +179,21 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(context.spacing.sm),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            color: context.colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(context.radius.sm),
           ),
           child: Icon(
             Icons.payment_rounded,
-            color: AppColors.primary,
+            color: context.colorScheme.primary,
             size: 20,
           ),
         ),
         const SizedBox(width: 12),
         Text(
           'Form Pembayaran',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
           ),

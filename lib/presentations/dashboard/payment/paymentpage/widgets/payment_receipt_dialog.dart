@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentReceiptDialog extends StatelessWidget {
   final int paymentId;
@@ -134,7 +135,6 @@ class PaymentReceiptDialog extends StatelessWidget {
   }
 
   Widget _buildReceiptContent(BuildContext context) {
-    final theme = Theme.of(context);
     final now = DateTime.now();
 
     return SizedBox(
@@ -145,7 +145,7 @@ class PaymentReceiptDialog extends StatelessWidget {
           // Store Header
           Text(
             'POS MOBILE',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            style: context.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 22,
             ),
@@ -153,13 +153,13 @@ class PaymentReceiptDialog extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Jl. Contoh No. 123, Jakarta Selatan',
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
           ),
           Text(
             'Telp: (021) 123-4567',
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
           ),
@@ -169,16 +169,16 @@ class PaymentReceiptDialog extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Payment Info
-          _buildInfoRow(theme, 'Payment ID:', paymentId.toString()),
+          _buildInfoRow(context, 'Payment ID:', paymentId.toString()),
           const SizedBox(height: 8),
           _buildInfoRow(
-            theme,
+            context,
             'Tanggal:',
             '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}',
           ),
           const SizedBox(height: 8),
           _buildInfoRow(
-            theme,
+            context,
             'Waktu:',
             '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
           ),
@@ -190,7 +190,7 @@ class PaymentReceiptDialog extends StatelessWidget {
           // Transactions Header
           Text(
             'PESANAN YANG DIBAYAR',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -199,7 +199,7 @@ class PaymentReceiptDialog extends StatelessWidget {
 
           // Transactions List
           ...paidTransactions.map(
-            (transaction) => _buildTransactionItem(theme, transaction),
+            (transaction) => _buildTransactionItem(context, transaction),
           ),
 
           const SizedBox(height: 16),
@@ -208,7 +208,7 @@ class PaymentReceiptDialog extends StatelessWidget {
 
           // Totals
           _buildInfoRow(
-            theme,
+            context,
             'Jumlah Transaksi:',
             '${paidTransactions.length} pesanan',
           ),
@@ -224,14 +224,14 @@ class PaymentReceiptDialog extends StatelessWidget {
               children: [
                 Text(
                   'TOTAL PEMBAYARAN:',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
                   ),
                 ),
                 Text(
                   idrFormat(totalAmount),
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
                     fontSize: 18,
@@ -246,16 +246,16 @@ class PaymentReceiptDialog extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Payment Info
-          _buildInfoRow(theme, 'Metode Bayar:', paymentMethod),
+          _buildInfoRow(context, 'Metode Bayar:', paymentMethod),
 
           if (tenderedAmount != null) ...[
             const SizedBox(height: 8),
-            _buildInfoRow(theme, 'Bayar:', idrFormat(tenderedAmount!)),
+            _buildInfoRow(context, 'Bayar:', idrFormat(tenderedAmount!)),
           ],
 
           if (changeAmount != null && changeAmount! > 0) ...[
             const SizedBox(height: 8),
-            _buildInfoRow(theme, 'Kembalian:', idrFormat(changeAmount!)),
+            _buildInfoRow(context, 'Kembalian:', idrFormat(changeAmount!)),
           ],
 
           const SizedBox(height: 24),
@@ -265,7 +265,7 @@ class PaymentReceiptDialog extends StatelessWidget {
           // Footer
           Text(
             'Terima kasih atas kunjungan Anda!',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
@@ -273,13 +273,17 @@ class PaymentReceiptDialog extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Barang yang sudah dibeli tidak dapat dikembalikan',
-            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: Colors.grey[600],
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             'Simpan struk ini sebagai bukti pembayaran',
-            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: Colors.grey[600],
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -287,17 +291,19 @@ class PaymentReceiptDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(ThemeData theme, String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: Colors.grey[600],
+          ),
         ),
         Text(
           value,
-          style: theme.textTheme.bodyMedium?.copyWith(
+          style: context.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -306,7 +312,7 @@ class PaymentReceiptDialog extends StatelessWidget {
   }
 
   Widget _buildTransactionItem(
-    ThemeData theme,
+    BuildContext context,
     PendingTransaction transaction,
   ) {
     return Container(
@@ -329,13 +335,13 @@ class PaymentReceiptDialog extends StatelessWidget {
                   children: [
                     Text(
                       transaction.orderNo,
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       'Meja ${transaction.tableNo} - ${transaction.customerName}',
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: context.textTheme.bodySmall?.copyWith(
                         color: Colors.grey[600],
                       ),
                     ),
@@ -344,7 +350,7 @@ class PaymentReceiptDialog extends StatelessWidget {
               ),
               Text(
                 idrFormat(double.parse(transaction.grandTotal)),
-                style: theme.textTheme.bodyMedium?.copyWith(
+                style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
                 ),
@@ -356,7 +362,7 @@ class PaymentReceiptDialog extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Detail Pesanan:',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: context.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.grey[700],
             ),

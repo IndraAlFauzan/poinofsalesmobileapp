@@ -17,6 +17,7 @@ import 'package:posmobile/data/repository/transaction_repository.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/bloc/add_transaction_bloc.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/bloc/history_transaction_bloc.dart';
 import 'package:posmobile/shared/config/app_themes.dart';
+import 'package:posmobile/shared/cubit/theme_cubit.dart';
 import 'package:posmobile/data/repository/auth_repository.dart';
 import 'package:posmobile/data/repository/category_repository.dart';
 import 'package:posmobile/data/repository/flavor_repository.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => LoginBloc(locator<AuthRepository>())),
         BlocProvider(create: (context) => CartBloc()),
         BlocProvider(
@@ -78,17 +80,20 @@ class MyApp extends StatelessWidget {
           create: (context) => TableBloc(locator<TableRepository>()),
         ),
       ],
-      child: MaterialApp(
-        title: 'POS',
-        debugShowCheckedModeBanner: false,
-        theme: AppThemes.light,
-        darkTheme: AppThemes.light,
-        themeMode: ThemeMode.system,
-
-        initialRoute: '/login',
-        routes: {
-          '/login': (context) => LoginScreen(),
-          '/main': (context) => MainPage(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            title: 'POS Mobile',
+            debugShowCheckedModeBanner: false,
+            theme: AppThemes.light,
+            darkTheme: AppThemes.dark,
+            themeMode: themeMode,
+            initialRoute: '/login',
+            routes: {
+              '/login': (context) => const LoginScreen(),
+              '/main': (context) => const MainPage(),
+            },
+          );
         },
       ),
     );

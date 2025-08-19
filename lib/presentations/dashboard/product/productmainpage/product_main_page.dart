@@ -8,6 +8,7 @@ import 'package:posmobile/bloc/spicylevel/spicy_level_bloc.dart';
 import 'package:posmobile/presentations/dashboard/product/productmainpage/widgets/product_grid.dart';
 import 'package:posmobile/shared/widgets/category_chips.dart';
 import 'package:posmobile/shared/widgets/top_bar.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class ProductMainPage extends StatefulWidget {
   const ProductMainPage({super.key});
@@ -62,13 +63,12 @@ class _ProductMainPageState extends State<ProductMainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.only(bottom: context.spacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,12 +79,12 @@ class _ProductMainPageState extends State<ProductMainPage> {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(context.spacing.sm),
                   child: Column(
                     children: [
-                      const SizedBox(height: 18),
+                      SizedBox(height: context.spacing.md),
                       CategoryChips(onChipCleared: () {}),
-                      const SizedBox(height: 18),
+                      SizedBox(height: context.spacing.md),
                       Expanded(child: ProductGridMain()),
                     ],
                   ),

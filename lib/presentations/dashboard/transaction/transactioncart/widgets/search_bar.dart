@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class SearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -12,13 +13,15 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return TextField(
       controller: controller,
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: 'Search menu…',
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: Icon(
+          Icons.search,
+          color: context.colorScheme.onSurfaceVariant,
+        ),
         suffixIcon: controller.text.isEmpty
             ? null
             : IconButton(
@@ -26,17 +29,30 @@ class SearchBar extends StatelessWidget {
                   controller.clear();
                   onChanged('');
                 },
-                icon: const Icon(Icons.close_rounded),
+                icon: Icon(
+                  Icons.close_rounded,
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
               ),
         filled: true,
-        fillColor: theme.colorScheme.surface,
+        fillColor: context.colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(context.radius.md),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 16,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(context.radius.md),
+          borderSide: BorderSide(
+            color: context.colorScheme.outline.withValues(alpha: 0.2),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(context.radius.md),
+          borderSide: BorderSide(color: context.colorScheme.primary, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: context.spacing.md,
+          horizontal: context.spacing.md,
         ),
       ),
     );

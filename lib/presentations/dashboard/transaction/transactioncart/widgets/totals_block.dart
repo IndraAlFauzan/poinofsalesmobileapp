@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/mixins/responsive_mixin.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class TotalsBlock extends StatelessWidget with ResponsiveMixin {
   final int totalQty;
@@ -17,26 +17,26 @@ class TotalsBlock extends StatelessWidget with ResponsiveMixin {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+      padding: EdgeInsets.fromLTRB(
+        context.spacing.lg,
+        context.spacing.md,
+        context.spacing.lg,
+        context.spacing.lg,
+      ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: .05),
+        color: context.colorScheme.primaryContainer.withValues(alpha: 0.1),
         border: Border(
-          top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+          top: BorderSide(
+            color: context.colorScheme.outline.withValues(alpha: 0.3),
+          ),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _totalRow(context, 'Total Item ', '$totalQty'),
-          const SizedBox(height: 6),
-          // _totalRow(context, 'Taxes', idrFormat(0)),
-          // const SizedBox(height: 6),
-          // _totalRow(context, 'Discount', '- ${idrFormat(0)}'),
-          // const SizedBox(height: 12),
-          // Divider(color: theme.dividerColor.withValues(alpha: 0.6)),
-          // const SizedBox(height: 12),
+          SizedBox(height: context.spacing.xs),
           _totalRow(
             context,
             'Total Harga',
@@ -44,7 +44,7 @@ class TotalsBlock extends StatelessWidget with ResponsiveMixin {
             strong: true,
             highlight: true,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: context.spacing.md),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -58,8 +58,8 @@ class TotalsBlock extends StatelessWidget with ResponsiveMixin {
               ),
               child: Text(
                 'Confirm Payment',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onPrimary,
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: context.colorScheme.onPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -77,14 +77,13 @@ class TotalsBlock extends StatelessWidget with ResponsiveMixin {
     bool strong = false,
     bool highlight = false,
   }) {
-    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurface.withValues(alpha: 0.75),
             fontWeight: strong ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
@@ -92,13 +91,13 @@ class TotalsBlock extends StatelessWidget with ResponsiveMixin {
           value,
           style:
               (highlight
-                      ? theme.textTheme.titleLarge
-                      : theme.textTheme.titleMedium)
+                      ? context.textTheme.titleLarge
+                      : context.textTheme.titleMedium)
                   ?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: highlight
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface,
+                        ? context.colorScheme.primary
+                        : context.colorScheme.onSurface,
                   ),
           context: context,
         ),

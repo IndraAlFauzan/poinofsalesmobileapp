@@ -9,6 +9,7 @@ import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/pe
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_form.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
 import 'package:posmobile/shared/widgets/top_bar.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentPage extends StatelessWidget {
   const PaymentPage({super.key});
@@ -48,7 +49,7 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
     return SafeArea(
       bottom: false,
       child: Scaffold(
-        backgroundColor: Colors.blueGrey[50],
+        backgroundColor: context.colorScheme.surface,
         resizeToAvoidBottomInset: true, // Penting untuk handle keyboard
         body: BlocListener<PaymentSettlementBloc, PaymentSettlementState>(
           listener: _handlePaymentSettlement,
@@ -57,7 +58,7 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
               TopBar(hintText: 'Cari Pesanan...'),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(context.spacing.md),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight:
@@ -75,7 +76,7 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                             child: const PendingTransactionsList(),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: context.spacing.md),
                         // Right side - Payment form
                         BlocBuilder<PaymentPageBloc, PaymentPageState>(
                           builder: (context, state) {

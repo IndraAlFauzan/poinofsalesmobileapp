@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.symmetric(
+        vertical: context.spacing.sm,
+        horizontal: context.spacing.md,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: context.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -36,9 +39,9 @@ class CustomAppBar extends StatelessWidget {
           ),
           Text(
             'Halaman Detail Pesanan',
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: theme.colorScheme.primary,
+              color: context.colorScheme.primary,
             ),
           ),
           const SizedBox(width: 16),
@@ -106,9 +109,9 @@ class CustomAppBar extends StatelessWidget {
               children: [
                 Text(
                   'Rangkuman Pesanan',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.primary,
+                    color: context.colorScheme.primary,
                   ),
                 ),
                 Container(
@@ -118,13 +121,13 @@ class CustomAppBar extends StatelessWidget {
                   ),
                   margin: const EdgeInsets.only(left: 8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: .07),
-                    borderRadius: BorderRadius.circular(10),
+                    color: context.colorScheme.primary.withValues(alpha: .07),
+                    borderRadius: BorderRadius.circular(context.radius.md),
                   ),
                   child: Text(
                     '#${DateTime.now().millisecondsSinceEpoch % 100000}',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
+                    style: context.textTheme.labelLarge?.copyWith(
+                      color: context.colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

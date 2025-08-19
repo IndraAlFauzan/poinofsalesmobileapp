@@ -5,33 +5,24 @@ import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payme
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/table_filter_dropdown.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/transaction_card.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
+import 'package:posmobile/shared/widgets/adaptive_widgets.dart';
 
 class PendingTransactionsList extends StatelessWidget {
   const PendingTransactionsList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return AdaptiveCard(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(context.spacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(context),
-            const SizedBox(height: 16),
+            SizedBox(height: context.spacing.md),
             const TableFilterDropdown(),
-            const SizedBox(height: 16),
+            SizedBox(height: context.spacing.md),
             Expanded(child: _buildTransactionsList()),
           ],
         ),
@@ -43,10 +34,10 @@ class PendingTransactionsList extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(context.spacing.sm),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            color: context.colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(context.radius.sm),
           ),
           child: Icon(
             Icons.pending_actions_rounded,
@@ -57,7 +48,7 @@ class PendingTransactionsList extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           'Pesanan Pending',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
           ),

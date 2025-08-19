@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/presentations/login/bloc/login_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/config/app_fonts.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class TopBar extends StatefulWidget {
   final TextEditingController? searchController;
@@ -65,16 +66,19 @@ class _TopBarState extends State<TopBar> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: context.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm,
+        vertical: context.spacing.sm,
+      ),
       child: Column(
         children: [
           Row(
@@ -85,8 +89,8 @@ class _TopBarState extends State<TopBar> {
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundColor: AppColors.primary.withValues(
-                        alpha: 0.08,
+                      backgroundColor: context.colorScheme.primary.withValues(
+                        alpha: 0.1,
                       ),
                       child: BlocBuilder<LoginBloc, LoginState>(
                         builder: (context, state) {
@@ -96,49 +100,43 @@ class _TopBarState extends State<TopBar> {
                           );
                           return Text(
                             name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                            style: AppFonts.defaultTextTheme.labelLarge
-                                ?.copyWith(color: AppColors.primary),
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: context.colorScheme.primary,
+                            ),
                           );
                         },
                       ),
                     ),
 
-                    const SizedBox(width: 10),
+                    SizedBox(width: context.spacing.sm),
                     BlocBuilder<LoginBloc, LoginState>(
                       builder: (context, state) {
                         final name = state.maybeWhen(
                           success: (res) => res.data.user,
                           orElse: () => 'Pengguna',
                         );
-                        //rich text
                         return RichText(
                           text: TextSpan(
                             text: 'Hallo, ',
-                            style: AppFonts.defaultTextTheme.labelLarge
-                                ?.copyWith(color: AppColors.primary),
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: context.colorScheme.primary,
+                            ),
                             children: [
                               TextSpan(
                                 text: name.isNotEmpty
                                     ? name.toUpperCase()
                                     : 'U',
-                                style: AppFonts.defaultTextTheme.labelLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
-                                    ),
+                                style: context.textTheme.labelLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: context.colorScheme.primary,
+                                ),
                               ),
                             ],
                           ),
                         );
-                        // return Text(
-                        //   'Hallo, ${name.isNotEmpty ? name.toUpperCase() : 'U'}',
-                        //   style: AppFonts.defaultTextTheme.labelLarge?.copyWith(
-                        //     color: AppColors.primary,
-                        //   ),
-                        // );
                       },
                     ),
-                    const SizedBox(width: 24),
+                    SizedBox(width: context.spacing.lg),
                     if (widget.searchController != null &&
                         widget.onSearchChanged != null)
                       Expanded(

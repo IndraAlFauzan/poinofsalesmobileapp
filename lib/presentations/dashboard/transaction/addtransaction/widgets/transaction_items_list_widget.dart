@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class TransactionItemsListWidget extends StatelessWidget {
   const TransactionItemsListWidget({super.key});
@@ -10,14 +11,16 @@ class TransactionItemsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         return state.when(
-          initial: () => const Center(
+          initial: () => Center(
             child: Text(
               'Belum ada item dipilih',
-              style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
           updated: (items, totalPrice, totalQty) {

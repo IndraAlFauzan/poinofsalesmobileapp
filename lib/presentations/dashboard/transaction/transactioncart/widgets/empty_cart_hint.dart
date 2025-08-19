@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class EmptyCartHint extends StatelessWidget {
   const EmptyCartHint({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10), // Sejajar dengan padding atas yang lain
+        SizedBox(height: context.spacing.sm),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.sm),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.md,
+              vertical: context.spacing.sm,
+            ),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
+              color: context.colorScheme.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(context.radius.sm),
             ),
             height: 46, // Sama dengan tinggi TopBar untuk alignment
             child: Row(
@@ -25,24 +28,24 @@ class EmptyCartHint extends StatelessWidget {
               children: [
                 Text(
                   'Rangkuman Pesanan',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: context.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.primary,
+                    color: context.colorScheme.primary,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.spacing.sm,
+                    vertical: context.spacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(10),
+                    color: context.colorScheme.primary.withValues(alpha: 0.07),
+                    borderRadius: BorderRadius.circular(context.radius.sm),
                   ),
                   child: Text(
                     '#',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
+                    style: context.textTheme.labelLarge?.copyWith(
+                      color: context.colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -62,21 +65,21 @@ class EmptyCartHint extends StatelessWidget {
                 Icon(
                   Icons.shopping_cart_outlined,
                   size: 72,
-                  color: theme.hintColor.withValues(alpha: 0.5),
+                  color: context.colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: context.spacing.md),
                 Text(
                   'Pesanan masih kosong',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.hintColor,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: context.spacing.sm),
                 Text(
                   'Tambakan item untuk memesan!',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.hintColor.withValues(alpha: 0.7),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
                   textAlign: TextAlign.center,
                 ),

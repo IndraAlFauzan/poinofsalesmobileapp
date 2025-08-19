@@ -4,6 +4,7 @@ import 'package:posmobile/presentations/dashboard/transaction/historytransaction
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/widgets/transaction_search_bar.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/widgets/transaction_header.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/widgets/transaction_content.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class HistoryTransactionScreen extends StatefulWidget {
   const HistoryTransactionScreen({super.key});
@@ -24,25 +25,24 @@ class _HistoryTransactionScreenState extends State<HistoryTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.only(bottom: context.spacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const TransactionSearchBar(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(context.spacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const TransactionHeader(),
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.spacing.md),
                       const Expanded(child: TransactionContent()),
                     ],
                   ),

@@ -10,6 +10,7 @@ import 'package:posmobile/data/model/request/create_transaction_request.dart';
 import 'package:posmobile/presentations/dashboard/transaction/addtransaction/widgets/transaction_success_dialog.dart';
 import 'package:posmobile/presentations/dashboard/main_page.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
+import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class CreateTransactionButtonWidget extends StatefulWidget {
   final Function(String?)? onValidationError;
@@ -312,9 +313,7 @@ class _CreateTransactionButtonWidgetState
                                   const SizedBox(width: 8),
                                   Text(
                                     'Buat Pesanan',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
+                                    style: context.textTheme.titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.textOnPrimary,
@@ -329,7 +328,7 @@ class _CreateTransactionButtonWidgetState
             // const SizedBox(height: 8),
             // Text(
             //   'Pesanan akan disimpan sebagai pending dan dapat dibayar di tab Pembayaran',
-            //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            //   style: context.textTheme.bodySmall?.copyWith(
             //     color: AppColors.accent,
             //     fontStyle: FontStyle.italic,
             //   ),

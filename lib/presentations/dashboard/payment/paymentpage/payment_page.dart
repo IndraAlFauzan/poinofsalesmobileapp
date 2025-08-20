@@ -31,6 +31,7 @@ class _PaymentPageView extends StatefulWidget {
 }
 
 class _PaymentPageViewState extends State<_PaymentPageView> {
+  bool _isPaymentCancelled = false; // Track if current payment was cancelled
   @override
   void initState() {
     super.initState();
@@ -187,35 +188,73 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
         );
       },
       paymentCompleted: (payment) {
-        // Payment gateway completed successfully
-        // First clear selections
+        // Only show success if payment wasn't cancelled
+        if (!_isPaymentCancelled) {
+          // Payment gateway completed successfully
+          // First clear selections
+          context.read<PaymentPageBloc>().add(
+            const PaymentPageEvent.clearSelections(),
+          );
+
+          // Then refresh pending transactions
+          context.read<PendingTransactionBloc>().add(
+            const PendingTransactionEvent.fetchPendingTransactions(),
+          );
+
+          // Finally refresh payments list after a short delay
+          Future.delayed(const Duration(milliseconds: 500), () {
+            context.read<PaymentSettlementBloc>().add(
+              const PaymentSettlementEvent.fetchPayments(),
+            );
+          });
+
+          // Show success snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  const Text('Payment completed successfully!'),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+        // Reset the cancellation flag for next payment
+        _isPaymentCancelled = false;
+      },
+      paymentCancelled: (message) {
+        // Mark payment as cancelled to prevent success message
+        _isPaymentCancelled = true;
+
+        // Payment was cancelled by user
+        // Clear selections
         context.read<PaymentPageBloc>().add(
           const PaymentPageEvent.clearSelections(),
         );
 
-        // Then refresh pending transactions
+        // Refresh pending transactions
         context.read<PendingTransactionBloc>().add(
           const PendingTransactionEvent.fetchPendingTransactions(),
         );
 
-        // Finally refresh payments list after a short delay
-        Future.delayed(const Duration(milliseconds: 500), () {
-          context.read<PaymentSettlementBloc>().add(
-            const PaymentSettlementEvent.fetchPayments(),
-          );
-        });
-
-        // Show success snackbar
+        // Show cancelled snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white),
+                const Icon(Icons.cancel_outlined, color: Colors.white),
                 const SizedBox(width: 8),
-                const Text('Payment completed successfully!'),
+                const Text('Payment cancelled'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

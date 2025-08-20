@@ -20,6 +20,7 @@ class PaymentGatewayWebView extends StatefulWidget {
 class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  bool _isCancelled = false; // Flag to track if payment was cancelled
 
   @override
   void initState() {
@@ -72,40 +73,6 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
       ..loadRequest(Uri.parse(widget.checkoutUrl));
   }
 
-  void _showPaymentStatusDialog({
-    required String title,
-    required String message,
-    required IconData icon,
-    required Color color,
-    List<Widget>? actions,
-  }) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(width: 8),
-            Text(title),
-          ],
-        ),
-        content: Text(message),
-        actions:
-            actions ??
-            [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                  Navigator.of(context).pop(); // Close webview
-                },
-                child: const Text('OK'),
-              ),
-            ],
-      ),
-    );
-  }
-
   void _showRetryDialog() {
     showDialog(
       context: context,
@@ -125,6 +92,7 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
+              _isCancelled = true; // Mark as cancelled
               context.read<PaymentSettlementBloc>().add(
                 PaymentSettlementEvent.cancelPayment(
                   paymentId: widget.paymentId,
@@ -173,6 +141,7 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(); // Close dialog
+                      _isCancelled = true; // Mark as cancelled
                       context.read<PaymentSettlementBloc>().add(
                         PaymentSettlementEvent.cancelPayment(
                           paymentId: widget.paymentId,
@@ -192,23 +161,12 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
         listener: (context, state) {
           state.whenOrNull(
             paymentCompleted: (payment) {
-              // Auto-close webview and show success message
-              Navigator.of(context).pop(); // Close webview immediately
-
-              // Show success snackbar instead of dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text('Payment completed successfully!'),
-                    ],
-                  ),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 3),
-                ),
-              );
+              // Only close webview if not already cancelled
+              if (!_isCancelled) {
+                // Auto-close webview only, let parent page handle the success message
+                Navigator.of(context).pop(); // Close webview immediately
+                // Don't show snackbar here to avoid conflict with parent page
+              }
             },
             paymentFailed: (payment, reason) {
               _showRetryDialog();
@@ -221,12 +179,11 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
               _controller.loadRequest(Uri.parse(response.checkoutUrl));
             },
             paymentCancelled: (response) {
-              _showPaymentStatusDialog(
-                title: 'Payment Cancelled',
-                message: 'The payment has been cancelled.',
-                icon: Icons.cancel,
-                color: Colors.red,
-              );
+              // Mark as cancelled to prevent success handler from running
+              _isCancelled = true;
+              // Auto-close webview immediately
+              Navigator.of(context).pop(); // Close webview
+              // Let parent page handle the cancellation message
             },
             failure: (message) {
               ScaffoldMessenger.of(context).showSnackBar(

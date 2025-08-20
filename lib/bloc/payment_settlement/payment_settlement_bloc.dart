@@ -148,6 +148,10 @@ class PaymentSettlementBloc
               break;
             case 'failed':
               log('[PaymentPolling] Payment failed!');
+
+              // Check if this is a cancellation based on certain conditions
+              // We could check the response message or other indicators
+              // For now, we'll emit as failed but could enhance later
               emit(
                 PaymentSettlementState.paymentFailed(
                   payment: payment,
@@ -158,6 +162,18 @@ class PaymentSettlementBloc
             case 'expired':
               log('[PaymentPolling] Payment expired!');
               emit(PaymentSettlementState.paymentExpired(payment: payment));
+              break;
+            case 'cancelled':
+              log('[PaymentPolling] Payment was cancelled!');
+              emit(
+                PaymentSettlementState.paymentCancelled(
+                  response: PaymentCancelResponse(
+                    success: true,
+                    message: 'Payment was cancelled',
+                    data: payment, // Use the payment data from polling
+                  ),
+                ),
+              );
               break;
             case 'pending':
               log(

@@ -9,7 +9,7 @@ String transactionResponseToJson(TransactionResponse data) =>
 class TransactionResponse {
   final bool success;
   final String message;
-  final TransactionData data;
+  final List<TransactionData> data;
 
   TransactionResponse({
     required this.success,
@@ -21,13 +21,15 @@ class TransactionResponse {
       TransactionResponse(
         success: json["success"],
         message: json["message"],
-        data: TransactionData.fromJson(json["data"]),
+        data: List<TransactionData>.from(
+          json["data"].map((x) => TransactionData.fromJson(x)),
+        ),
       );
 
   Map<String, dynamic> toJson() => {
     "success": success,
     "message": message,
-    "data": data.toJson(),
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
 
@@ -35,8 +37,8 @@ class TransactionData {
   final int transactionId;
   final String orderNo;
   final DateTime createdAt;
-  final int tableId;
-  final String tableNo;
+  final DateTime updatedAt;
+  final String? tableNo;
   final String customerName;
   final int userId;
   final String serviceType;
@@ -44,14 +46,15 @@ class TransactionData {
   final String grandTotal;
   final String paidTotal;
   final String balanceDue;
+  final DateTime? paidAt;
   final List<TransactionDetailData> details;
 
   TransactionData({
     required this.transactionId,
     required this.orderNo,
     required this.createdAt,
-    required this.tableId,
-    required this.tableNo,
+    required this.updatedAt,
+    this.tableNo,
     required this.customerName,
     required this.userId,
     required this.serviceType,
@@ -59,6 +62,7 @@ class TransactionData {
     required this.grandTotal,
     required this.paidTotal,
     required this.balanceDue,
+    this.paidAt,
     required this.details,
   });
 
@@ -67,15 +71,18 @@ class TransactionData {
         transactionId: json["transaction_id"],
         orderNo: json["order_no"],
         createdAt: DateTime.parse(json["created_at"]),
-        tableId: json["table_id"],
-        tableNo: json["table_no"],
+        updatedAt: DateTime.parse(json["updated_at"]),
+        tableNo: json["table_no"]?.toString(),
         customerName: json["customer_name"],
         userId: json["user_id"],
         serviceType: json["service_type"],
         status: json["status"],
-        grandTotal: json["grand_total"],
-        paidTotal: json["paid_total"],
-        balanceDue: json["balance_due"],
+        grandTotal: json["grand_total"]?.toString() ?? "0",
+        paidTotal: json["paid_total"]?.toString() ?? "0",
+        balanceDue: json["balance_due"]?.toString() ?? "0",
+        paidAt: json["paid_at"] != null
+            ? DateTime.parse(json["paid_at"])
+            : null,
         details: List<TransactionDetailData>.from(
           json["details"].map((x) => TransactionDetailData.fromJson(x)),
         ),
@@ -85,7 +92,7 @@ class TransactionData {
     "transaction_id": transactionId,
     "order_no": orderNo,
     "created_at": createdAt.toIso8601String(),
-    "table_id": tableId,
+    "updated_at": updatedAt.toIso8601String(),
     "table_no": tableNo,
     "customer_name": customerName,
     "user_id": userId,
@@ -94,31 +101,28 @@ class TransactionData {
     "grand_total": grandTotal,
     "paid_total": paidTotal,
     "balance_due": balanceDue,
+    "paid_at": paidAt?.toIso8601String(),
     "details": List<dynamic>.from(details.map((x) => x.toJson())),
   };
 }
 
 class TransactionDetailData {
   final int id;
-  final int productId;
-  final String nameProduct;
+  final int? productId;
+  final String productName;
   final int quantity;
-  final int? flavorId;
   final String? flavor;
-  final int? spicyLevelId;
   final String? spicyLevel;
   final String? note;
-  final int price;
-  final int subtotal;
+  final String price;
+  final String subtotal;
 
   TransactionDetailData({
     required this.id,
-    required this.productId,
-    required this.nameProduct,
+    this.productId,
+    required this.productName,
     required this.quantity,
-    this.flavorId,
     this.flavor,
-    this.spicyLevelId,
     this.spicyLevel,
     this.note,
     required this.price,
@@ -129,25 +133,21 @@ class TransactionDetailData {
       TransactionDetailData(
         id: json["id"],
         productId: json["product_id"],
-        nameProduct: json["name_product"],
+        productName: json["product_name"],
         quantity: json["quantity"],
-        flavorId: json["flavor_id"],
         flavor: json["flavor"],
-        spicyLevelId: json["spicy_level_id"],
         spicyLevel: json["spicy_level"],
         note: json["note"],
-        price: json["price"],
-        subtotal: json["subtotal"],
+        price: json["price"].toString(),
+        subtotal: json["subtotal"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "product_id": productId,
-    "name_product": nameProduct,
+    "product_name": productName,
     "quantity": quantity,
-    "flavor_id": flavorId,
     "flavor": flavor,
-    "spicy_level_id": spicyLevelId,
     "spicy_level": spicyLevel,
     "note": note,
     "price": price,

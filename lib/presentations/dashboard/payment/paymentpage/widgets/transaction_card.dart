@@ -204,7 +204,7 @@ class _TransactionInfo extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              'Meja ${transaction.tableNo}',
+              'Meja ${transaction.tableNo ?? 'N/A'}',
               style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
             const SizedBox(width: 12),
@@ -443,12 +443,12 @@ class _TransactionDetails extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          detail.nameProduct,
+                          detail.productName,
                           style: const TextStyle(fontSize: 13),
                         ),
                       ),
                       Text(
-                        idrFormat(detail.quantity * detail.price),
+                        idrFormat(detail.subtotal),
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 13,

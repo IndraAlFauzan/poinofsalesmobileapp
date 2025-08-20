@@ -170,11 +170,12 @@ class HistoryTransactionBloc
         final customerName = transaction.customerName.toLowerCase();
         final status = transaction.status.toLowerCase();
         final grandTotal = transaction.grandTotal;
-        final date = transaction.createdAtFormatted.toLowerCase();
+        final date = transaction.createdAt;
 
         // Search in product names and details
         final hasMatchingProduct = transaction.details.any((detail) {
-          final productName = detail.nameProduct.toLowerCase();
+          final productName = detail.productName.toLowerCase();
+          detail.productName.toLowerCase();
           final flavor = detail.flavor?.toLowerCase() ?? '';
           final spicyLevel = detail.spicyLevel?.toLowerCase() ?? '';
           final note = detail.note?.toLowerCase() ?? '';
@@ -190,7 +191,7 @@ class HistoryTransactionBloc
             customerName.contains(_currentSearchQuery) ||
             status.contains(_currentSearchQuery) ||
             grandTotal.contains(_currentSearchQuery) ||
-            date.contains(_currentSearchQuery) ||
+            date.toString().toLowerCase().contains(_currentSearchQuery) ||
             hasMatchingProduct;
       }).toList();
     }

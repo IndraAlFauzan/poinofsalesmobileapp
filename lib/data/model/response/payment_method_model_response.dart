@@ -34,11 +34,39 @@ class PaymentMethodModelResponse {
 class Payment {
   int id;
   String name;
+  String type;
+  String? provider;
+  String channel;
+  String code;
+  dynamic active;
 
-  Payment({required this.id, required this.name});
+  Payment({
+    required this.id,
+    required this.name,
+    required this.type,
+    this.provider,
+    required this.channel,
+    required this.code,
+    this.active,
+  });
 
-  factory Payment.fromJson(Map<String, dynamic> json) =>
-      Payment(id: json["id"], name: json["name"]);
+  factory Payment.fromJson(Map<String, dynamic> json) => Payment(
+    id: json["id"],
+    name: json["name"],
+    type: json["type"],
+    provider: json["provider"],
+    channel: json["channel"],
+    code: json["code"],
+    active: json["active"],
+  );
 
-  Map<String, dynamic> toJson() => {"id": id, "name": name};
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "type": type,
+    "provider": provider,
+    "channel": channel,
+    "code": code,
+    "active": active,
+  };
 }

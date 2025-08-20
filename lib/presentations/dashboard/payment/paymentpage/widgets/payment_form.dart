@@ -5,6 +5,7 @@ import 'package:posmobile/bloc/payment_method/payment_method_bloc.dart';
 import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/data/model/request/payment_settle_request.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
+import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_gateway_webview.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/mixins/responsive_mixin.dart';
@@ -134,6 +135,29 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
     });
   }
 
+  void _showPaymentSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green),
+            SizedBox(width: 8),
+            Text('Payment Successful'),
+          ],
+        ),
+        content: const Text('Cash payment has been processed successfully!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PaymentSettlementBloc, PaymentSettlementState>(
@@ -145,6 +169,30 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
             context.read<PaymentPageBloc>().add(
               const PaymentPageEvent.clearSelections(),
             );
+
+            // Check if payment has checkout URL (payment gateway)
+            if (response.checkoutUrl != null) {
+              // Navigate to webview for payment gateway
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => PaymentGatewayWebView(
+                    checkoutUrl: response.checkoutUrl!,
+                    paymentId: response.data.paymentId,
+                  ),
+                ),
+              );
+            } else {
+              // Show success dialog for cash payment
+              _showPaymentSuccessDialog();
+            }
+          },
+          failure: (message) {
+            Flushbar(
+              message: 'Payment failed: $message',
+              duration: const Duration(seconds: 3),
+              backgroundColor: Colors.red,
+              flushbarStyle: FlushbarStyle.GROUNDED,
+            ).show(context);
           },
         );
       },

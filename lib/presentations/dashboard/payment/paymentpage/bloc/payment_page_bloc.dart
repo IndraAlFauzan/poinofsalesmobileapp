@@ -170,7 +170,11 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
   }
 
   List<String> _getAvailableTables(List<PendingTransaction> transactions) {
-    final tables = transactions.map((t) => t.tableNo).toSet().toList();
+    final tables = transactions
+        .where((t) => t.tableNo != null)
+        .map((t) => t.tableNo!)
+        .toSet()
+        .toList();
     tables.sort(
       (a, b) =>
           int.tryParse(a)?.compareTo(int.tryParse(b) ?? 0) ?? a.compareTo(b),

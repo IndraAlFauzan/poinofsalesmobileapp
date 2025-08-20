@@ -374,9 +374,9 @@ class PaymentReceiptDialog extends StatelessWidget {
               child: Row(
                 children: [
                   Text('${detail.quantity}x '),
-                  Expanded(child: Text(detail.nameProduct)),
+                  Expanded(child: Text(detail.productName)),
                   Text(
-                    idrFormat((detail.quantity * detail.price).toString()),
+                    idrFormat(detail.subtotal),
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -530,9 +530,8 @@ Waktu: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2,
           'Total: ${idrFormat(double.parse(transaction.grandTotal))}\n\n';
 
       for (var detail in transaction.details) {
-        receipt += '${detail.nameProduct.padRight(20)} ${detail.quantity}x\n';
-        receipt +=
-            '${' ' * 20} ${idrFormat((detail.quantity * detail.price).toString())}\n';
+        receipt += '${detail.productName.padRight(20)} ${detail.quantity}x\n';
+        receipt += '${' ' * 20} ${idrFormat(detail.subtotal)}\n';
       }
       receipt += '\n';
     }

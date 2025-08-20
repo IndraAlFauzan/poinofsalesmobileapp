@@ -186,6 +186,43 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
               },
         );
       },
+      paymentCompleted: (payment) {
+        // Payment gateway completed successfully
+        // First clear selections
+        context.read<PaymentPageBloc>().add(
+          const PaymentPageEvent.clearSelections(),
+        );
+
+        // Then refresh pending transactions
+        context.read<PendingTransactionBloc>().add(
+          const PendingTransactionEvent.fetchPendingTransactions(),
+        );
+
+        // Finally refresh payments list after a short delay
+        Future.delayed(const Duration(milliseconds: 500), () {
+          context.read<PaymentSettlementBloc>().add(
+            const PaymentSettlementEvent.fetchPayments(),
+          );
+        });
+
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                const Text('Payment completed successfully!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      },
       failure: (message) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

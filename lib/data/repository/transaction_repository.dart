@@ -7,6 +7,7 @@ import 'package:posmobile/data/model/request/edit_transaction_request.dart';
 
 import 'package:posmobile/data/model/response/transaction_mode_response.dart';
 import 'package:posmobile/data/model/response/transaction_response.dart';
+import 'package:posmobile/data/model/response/create_transaction_response.dart';
 import 'package:posmobile/data/model/response/pending_transactions_response.dart';
 
 import 'package:posmobile/service/service.dart';
@@ -60,7 +61,7 @@ class TransactionRepository {
   }
 
   // New transaction management methods
-  Future<Either<String, TransactionResponse>> createTransaction(
+  Future<Either<String, CreateTransactionResponse>> createTransaction(
     CreateTransactionRequest data,
   ) async {
     try {
@@ -71,7 +72,9 @@ class TransactionRepository {
 
       if (response.statusCode == 201) {
         final jsonResponse = json.decode(response.body);
-        final transactionResponse = TransactionResponse.fromJson(jsonResponse);
+        final transactionResponse = CreateTransactionResponse.fromJson(
+          jsonResponse,
+        );
         return Right(transactionResponse);
       } else {
         final jsonResponse = json.decode(response.body);

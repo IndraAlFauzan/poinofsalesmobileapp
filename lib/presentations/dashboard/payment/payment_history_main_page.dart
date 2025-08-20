@@ -309,6 +309,18 @@ class _PaymentHistoryMainPageState extends State<PaymentHistoryMainPage> {
                       );
                     },
                     paymentSettled: (_) => const SizedBox.shrink(),
+                    paymentPolling: (payment) =>
+                        const Center(child: CircularProgressIndicator()),
+                    paymentCompleted: (payment) =>
+                        const Center(child: Text('Payment completed')),
+                    paymentFailed: (payment, reason) =>
+                        Center(child: Text('Payment failed: $reason')),
+                    paymentExpired: (payment) =>
+                        const Center(child: Text('Payment expired')),
+                    paymentRetried: (response) =>
+                        const Center(child: Text('Payment retried')),
+                    paymentCancelled: (response) =>
+                        const Center(child: Text('Payment cancelled')),
                     failure: (message) => Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

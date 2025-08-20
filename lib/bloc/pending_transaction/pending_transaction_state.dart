@@ -9,7 +9,8 @@ class PendingTransactionState with _$PendingTransactionState {
   }) = _Success;
   const factory PendingTransactionState.failure(String message) = _Failure;
   const factory PendingTransactionState.transactionCreated({
-    required TransactionResponse response,
+    required dynamic
+    response, // Use dynamic to handle both CreateTransactionResponse and TransactionResponse
   }) = _TransactionCreated;
   const factory PendingTransactionState.transactionUpdated({
     required TransactionResponse response,

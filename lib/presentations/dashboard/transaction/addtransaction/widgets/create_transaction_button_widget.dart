@@ -143,17 +143,7 @@ class _CreateTransactionButtonWidgetState
       listener: (context, state) {
         state.whenOrNull(
           transactionCreated: (response) {
-            // Clear cart after successful order creation
-            context.read<CartBloc>().add(const CartEvent.clearCart());
-
-            // Clear form
-            _customerController.clear();
-            setState(() {
-              selectedTable = null;
-              selectedServiceType = null;
-            });
-
-            // Get cart data for dialog
+            // Get cart data for dialog BEFORE clearing
             final cartState = context.read<CartBloc>().state;
             List<Map<String, dynamic>> cartItems = [];
             double totalPrice = 0;
@@ -176,6 +166,16 @@ class _CreateTransactionButtonWidgetState
                     .toList();
               },
             );
+
+            // Clear cart after successful order creation
+            context.read<CartBloc>().add(const CartEvent.clearCart());
+
+            // Clear form
+            _customerController.clear();
+            setState(() {
+              selectedTable = null;
+              selectedServiceType = null;
+            });
 
             // Show success dialog
             showDialog(

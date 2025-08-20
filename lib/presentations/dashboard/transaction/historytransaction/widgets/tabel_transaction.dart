@@ -58,7 +58,7 @@ class TransactionTebelData extends DataGridSource {
                 ),
                 DataGridCell<String>(
                   columnName: 'Tanggal',
-                  value: transaction.createdAtFormatted,
+                  value: transaction.createdAt.toString(),
                 ),
                 DataGridCell<String>(
                   columnName: 'Person',
@@ -319,7 +319,7 @@ class TransactionTebelData extends DataGridSource {
                         _buildDetailItem('Order ID', transaction.orderNo),
                         _buildDetailItem(
                           'Date',
-                          transaction.createdAtFormatted,
+                          transaction.createdAt.toString(),
                         ),
                         _buildDetailItem('Customer', transaction.customerName),
                         _buildDetailItem('Table', transaction.tableNo),
@@ -392,7 +392,7 @@ class TransactionTebelData extends DataGridSource {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              detail.nameProduct,
+                                              detail.productName,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,

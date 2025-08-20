@@ -9,11 +9,13 @@ String paymentSettleResponseToJson(PaymentSettleResponse data) =>
 class PaymentSettleResponse {
   final bool success;
   final String message;
+  final String? checkoutUrl;
   final PaymentSettleData data;
 
   PaymentSettleResponse({
     required this.success,
     required this.message,
+    this.checkoutUrl,
     required this.data,
   });
 
@@ -21,12 +23,14 @@ class PaymentSettleResponse {
       PaymentSettleResponse(
         success: json["success"],
         message: json["message"],
+        checkoutUrl: json["checkout_url"],
         data: PaymentSettleData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
     "success": success,
     "message": message,
+    "checkout_url": checkoutUrl,
     "data": data.toJson(),
   };
 }
@@ -39,10 +43,15 @@ class PaymentSettleData {
   final String changeAmount;
   final DateTime receivedAt;
   final String? note;
+  final String status;
+  final String? providerRef;
+  final DateTime? expiresAt;
+  final String feeAmount;
+  final String netAmount;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String method;
-  final String cashier;
+  final String? cashier;
   final List<PaymentTransaction> transactions;
 
   PaymentSettleData({
@@ -53,10 +62,15 @@ class PaymentSettleData {
     required this.changeAmount,
     required this.receivedAt,
     this.note,
+    required this.status,
+    this.providerRef,
+    this.expiresAt,
+    required this.feeAmount,
+    required this.netAmount,
     required this.createdAt,
     required this.updatedAt,
     required this.method,
-    required this.cashier,
+    this.cashier,
     required this.transactions,
   });
 
@@ -69,6 +83,13 @@ class PaymentSettleData {
         changeAmount: json["change_amount"],
         receivedAt: DateTime.parse(json["received_at"]),
         note: json["note"],
+        status: json["status"],
+        providerRef: json["provider_ref"],
+        expiresAt: json["expires_at"] != null
+            ? DateTime.parse(json["expires_at"])
+            : null,
+        feeAmount: json["fee_amount"],
+        netAmount: json["net_amount"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         method: json["method"],
@@ -86,6 +107,11 @@ class PaymentSettleData {
     "change_amount": changeAmount,
     "received_at": receivedAt.toIso8601String(),
     "note": note,
+    "status": status,
+    "provider_ref": providerRef,
+    "expires_at": expiresAt?.toIso8601String(),
+    "fee_amount": feeAmount,
+    "net_amount": netAmount,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
     "method": method,
@@ -113,11 +139,13 @@ class PaymentsResponse {
 
   factory PaymentsResponse.fromJson(Map<String, dynamic> json) =>
       PaymentsResponse(
-        success: json["success"],
-        message: json["message"],
-        data: List<PaymentData>.from(
-          json["data"].map((x) => PaymentData.fromJson(x)),
-        ),
+        success: json["success"] ?? false,
+        message: json["message"] ?? "Unknown error",
+        data: json["data"] != null
+            ? List<PaymentData>.from(
+                json["data"].map((x) => PaymentData.fromJson(x)),
+              )
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -135,10 +163,15 @@ class PaymentData {
   final String changeAmount;
   final DateTime receivedAt;
   final String? note;
+  final String status;
+  final String? providerRef;
+  final DateTime? expiresAt;
+  final String feeAmount;
+  final String netAmount;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String method;
-  final String cashier;
+  final String? cashier;
   final List<PaymentTransaction> transactions;
 
   PaymentData({
@@ -149,27 +182,39 @@ class PaymentData {
     required this.changeAmount,
     required this.receivedAt,
     this.note,
+    required this.status,
+    this.providerRef,
+    this.expiresAt,
+    required this.feeAmount,
+    required this.netAmount,
     required this.createdAt,
     required this.updatedAt,
     required this.method,
-    required this.cashier,
+    this.cashier,
     required this.transactions,
   });
 
   factory PaymentData.fromJson(Map<String, dynamic> json) => PaymentData(
     id: json["id"],
     paymentMethodId: json["payment_method_id"],
-    amount: json["amount"],
-    tenderedAmount: json["tendered_amount"],
-    changeAmount: json["change_amount"],
+    amount: json["amount"]?.toString() ?? "0",
+    tenderedAmount: json["tendered_amount"]?.toString(),
+    changeAmount: json["change_amount"]?.toString() ?? "0",
     receivedAt: DateTime.parse(json["received_at"]),
     note: json["note"],
+    status: json["status"] ?? "unknown",
+    providerRef: json["provider_ref"],
+    expiresAt: json["expires_at"] != null
+        ? DateTime.parse(json["expires_at"])
+        : null,
+    feeAmount: json["fee_amount"]?.toString() ?? "0",
+    netAmount: json["net_amount"]?.toString() ?? "0",
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
-    method: json["method"],
+    method: json["method"] ?? "unknown",
     cashier: json["cashier"],
     transactions: List<PaymentTransaction>.from(
-      json["transactions"].map((x) => PaymentTransaction.fromJson(x)),
+      json["transactions"]?.map((x) => PaymentTransaction.fromJson(x)) ?? [],
     ),
   );
 
@@ -181,6 +226,11 @@ class PaymentData {
     "change_amount": changeAmount,
     "received_at": receivedAt.toIso8601String(),
     "note": note,
+    "status": status,
+    "provider_ref": providerRef,
+    "expires_at": expiresAt?.toIso8601String(),
+    "fee_amount": feeAmount,
+    "net_amount": netAmount,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
     "method": method,
@@ -191,46 +241,67 @@ class PaymentData {
 
 class PaymentTransaction {
   final int id;
+  final int? transactionId;
   final String orderNo;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? tableNo;
   final String customerName;
-  final String noTable;
+  final String? noTable;
+  final int? userId;
   final String serviceType;
   final String status;
   final String allocatedAmount;
   final String grandTotal;
   final String paidTotal;
   final String balanceDue;
-  final DateTime paidAt;
+  final DateTime? paidAt;
   final List<PaymentTransactionDetail> detailTransaction;
 
   PaymentTransaction({
     required this.id,
+    this.transactionId,
     required this.orderNo,
+    this.createdAt,
+    this.updatedAt,
+    this.tableNo,
     required this.customerName,
-    required this.noTable,
+    this.noTable,
+    this.userId,
     required this.serviceType,
     required this.status,
     required this.allocatedAmount,
     required this.grandTotal,
     required this.paidTotal,
     required this.balanceDue,
-    required this.paidAt,
+    this.paidAt,
     required this.detailTransaction,
   });
 
   factory PaymentTransaction.fromJson(Map<String, dynamic> json) =>
       PaymentTransaction(
-        id: json["id"],
+        id: json["id"] ?? json["transaction_id"],
+        transactionId: json["transaction_id"],
         orderNo: json["order_no"],
+        createdAt: json["created_at"] != null
+            ? DateTime.parse(json["created_at"])
+            : null,
+        updatedAt: json["updated_at"] != null
+            ? DateTime.parse(json["updated_at"])
+            : null,
+        tableNo: json["table_no"],
         customerName: json["customer_name"],
         noTable: json["no_table"],
+        userId: json["user_id"],
         serviceType: json["service_type"],
         status: json["status"],
         allocatedAmount: json["allocated_amount"],
         grandTotal: json["grand_total"],
         paidTotal: json["paid_total"],
         balanceDue: json["balance_due"],
-        paidAt: DateTime.parse(json["paid_at"]),
+        paidAt: json["paid_at"] != null
+            ? DateTime.parse(json["paid_at"])
+            : null,
         detailTransaction: List<PaymentTransactionDetail>.from(
           json["detail_transaction"].map(
             (x) => PaymentTransactionDetail.fromJson(x),
@@ -240,16 +311,21 @@ class PaymentTransaction {
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "transaction_id": transactionId,
     "order_no": orderNo,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "table_no": tableNo,
     "customer_name": customerName,
     "no_table": noTable,
+    "user_id": userId,
     "service_type": serviceType,
     "status": status,
     "allocated_amount": allocatedAmount,
     "grand_total": grandTotal,
     "paid_total": paidTotal,
     "balance_due": balanceDue,
-    "paid_at": paidAt.toIso8601String(),
+    "paid_at": paidAt?.toIso8601String(),
     "detail_transaction": List<dynamic>.from(
       detailTransaction.map((x) => x.toJson()),
     ),
@@ -258,18 +334,18 @@ class PaymentTransaction {
 
 class PaymentTransactionDetail {
   final int id;
-  final int productId;
+  final int? productId;
   final String productName;
   final int quantity;
-  final int price;
-  final int subtotal;
+  final String price;
+  final String subtotal;
   final String? flavor;
   final String? spicyLevel;
   final String? note;
 
   PaymentTransactionDetail({
     required this.id,
-    required this.productId,
+    this.productId,
     required this.productName,
     required this.quantity,
     required this.price,
@@ -285,8 +361,8 @@ class PaymentTransactionDetail {
         productId: json["product_id"],
         productName: json["product_name"],
         quantity: json["quantity"],
-        price: json["price"],
-        subtotal: json["subtotal"],
+        price: json["price"].toString(),
+        subtotal: json["subtotal"].toString(),
         flavor: json["flavor"],
         spicyLevel: json["spicy_level"],
         note: json["note"],

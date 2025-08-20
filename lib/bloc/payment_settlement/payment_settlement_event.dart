@@ -7,4 +7,12 @@ class PaymentSettlementEvent with _$PaymentSettlementEvent {
   const factory PaymentSettlementEvent.settlePayment({
     required PaymentSettleRequest request,
   }) = _SettlePayment;
+  const factory PaymentSettlementEvent.pollPaymentStatus({
+    required int paymentId,
+  }) = _PollPaymentStatus;
+  const factory PaymentSettlementEvent.retryPayment({required int paymentId}) =
+      _RetryPayment;
+  const factory PaymentSettlementEvent.cancelPayment({required int paymentId}) =
+      _CancelPayment;
+  const factory PaymentSettlementEvent.stopPolling() = _StopPolling;
 }

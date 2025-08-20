@@ -46,8 +46,8 @@ class PaymentSettleData {
   final String status;
   final String? providerRef;
   final DateTime? expiresAt;
-  final String feeAmount;
-  final String netAmount;
+  final String feeAmount; // Non-nullable with safe default "0"
+  final String netAmount; // Non-nullable with safe default "0"
   final DateTime createdAt;
   final DateTime updatedAt;
   final String method;
@@ -65,8 +65,8 @@ class PaymentSettleData {
     required this.status,
     this.providerRef,
     this.expiresAt,
-    required this.feeAmount,
-    required this.netAmount,
+    required this.feeAmount, // Made required with safe default
+    required this.netAmount, // Made required with safe default
     required this.createdAt,
     required this.updatedAt,
     required this.method,
@@ -88,8 +88,8 @@ class PaymentSettleData {
         expiresAt: json["expires_at"] != null
             ? DateTime.parse(json["expires_at"])
             : null,
-        feeAmount: json["fee_amount"],
-        netAmount: json["net_amount"],
+        feeAmount: json["fee_amount"]?.toString() ?? "0", // Safe handling
+        netAmount: json["net_amount"]?.toString() ?? "0", // Safe handling
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         method: json["method"],

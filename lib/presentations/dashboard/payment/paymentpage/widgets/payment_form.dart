@@ -135,28 +135,28 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
     });
   }
 
-  void _showPaymentSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
-            Text('Payment Successful'),
-          ],
-        ),
-        content: const Text('Cash payment has been processed successfully!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _showPaymentSuccessDialog() {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) => AlertDialog(
+  //       title: const Row(
+  //         children: [
+  //           Icon(Icons.check_circle, color: Colors.green),
+  //           SizedBox(width: 8),
+  //           Text('Payment Successful'),
+  //         ],
+  //       ),
+  //       content: const Text('Cash payment has been processed successfully!'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.of(context).pop(),
+  //           child: const Text('OK'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +183,7 @@ class _PaymentFormState extends State<PaymentForm> with ResponsiveMixin {
               );
             } else {
               // Show success dialog for cash payment
-              _showPaymentSuccessDialog();
+              // _showPaymentSuccessDialog();
             }
           },
           failure: (message) {

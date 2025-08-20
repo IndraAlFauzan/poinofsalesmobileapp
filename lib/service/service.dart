@@ -121,7 +121,7 @@ class ServiceHttpClient {
 
     try {
       final jsonResponse = json.decode(response.body);
-      log("Response: ${jsonResponse["message"]}");
+      log("Response: ${jsonEncode(jsonResponse)}");
     } catch (e) {
       log("Response: ${response.body}");
     }

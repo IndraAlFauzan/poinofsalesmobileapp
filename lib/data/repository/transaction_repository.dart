@@ -4,12 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:posmobile/data/model/request/transaction_model_request.dart';
 import 'package:posmobile/data/model/request/create_transaction_request.dart';
 import 'package:posmobile/data/model/request/edit_transaction_request.dart';
-
-import 'package:posmobile/data/model/response/transaction_mode_response.dart';
-import 'package:posmobile/data/model/response/transaction_response.dart';
-import 'package:posmobile/data/model/response/create_transaction_response.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
-
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/service/service.dart';
 
 class TransactionRepository {
@@ -61,7 +56,7 @@ class TransactionRepository {
   }
 
   // New transaction management methods
-  Future<Either<String, CreateTransactionResponse>> createTransaction(
+  Future<Either<String, SingleTransactionResponse>> createTransaction(
     CreateTransactionRequest data,
   ) async {
     try {
@@ -72,7 +67,7 @@ class TransactionRepository {
 
       if (response.statusCode == 201) {
         final jsonResponse = json.decode(response.body);
-        final transactionResponse = CreateTransactionResponse.fromJson(
+        final transactionResponse = SingleTransactionResponse.fromJson(
           jsonResponse,
         );
         return Right(transactionResponse);
@@ -108,15 +103,12 @@ class TransactionRepository {
     }
   }
 
-  Future<Either<String, PendingTransactionsResponse>>
-  fetchPendingTransactions() async {
+  Future<Either<String, TransactionResponse>> fetchPendingTransactions() async {
     try {
       final response = await _serviceHttpClient.get('transactions');
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final transactionResponse = PendingTransactionsResponse.fromJson(
-          jsonResponse,
-        );
+        final transactionResponse = TransactionResponse.fromJson(jsonResponse);
         return Right(transactionResponse);
       } else {
         final jsonResponse = json.decode(response.body);

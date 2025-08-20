@@ -134,7 +134,7 @@ return setPaymentInfo(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( List<PendingTransaction> transactions)?  updateTransactions,TResult Function( String? tableNo)?  selectTable,TResult Function( PendingTransaction transaction)?  toggleTransactionSelection,TResult Function()?  clearSelections,TResult Function()?  validateTableSelection,TResult Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)?  setPaymentInfo,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( List<Transaction> transactions)?  updateTransactions,TResult Function( String? tableNo)?  selectTable,TResult Function( Transaction transaction)?  toggleTransactionSelection,TResult Function()?  clearSelections,TResult Function()?  validateTableSelection,TResult Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)?  setPaymentInfo,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UpdateTransactions() when updateTransactions != null:
 return updateTransactions(_that.transactions);case _SelectTable() when selectTable != null:
@@ -160,7 +160,7 @@ return setPaymentInfo(_that.paymentMethodId,_that.paymentMethodName,_that.tender
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( List<PendingTransaction> transactions)  updateTransactions,required TResult Function( String? tableNo)  selectTable,required TResult Function( PendingTransaction transaction)  toggleTransactionSelection,required TResult Function()  clearSelections,required TResult Function()  validateTableSelection,required TResult Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)  setPaymentInfo,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( List<Transaction> transactions)  updateTransactions,required TResult Function( String? tableNo)  selectTable,required TResult Function( Transaction transaction)  toggleTransactionSelection,required TResult Function()  clearSelections,required TResult Function()  validateTableSelection,required TResult Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)  setPaymentInfo,}) {final _that = this;
 switch (_that) {
 case _UpdateTransactions():
 return updateTransactions(_that.transactions);case _SelectTable():
@@ -185,7 +185,7 @@ return setPaymentInfo(_that.paymentMethodId,_that.paymentMethodName,_that.tender
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( List<PendingTransaction> transactions)?  updateTransactions,TResult? Function( String? tableNo)?  selectTable,TResult? Function( PendingTransaction transaction)?  toggleTransactionSelection,TResult? Function()?  clearSelections,TResult? Function()?  validateTableSelection,TResult? Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)?  setPaymentInfo,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( List<Transaction> transactions)?  updateTransactions,TResult? Function( String? tableNo)?  selectTable,TResult? Function( Transaction transaction)?  toggleTransactionSelection,TResult? Function()?  clearSelections,TResult? Function()?  validateTableSelection,TResult? Function( int paymentMethodId,  String paymentMethodName,  double? tenderedAmount,  String? note)?  setPaymentInfo,}) {final _that = this;
 switch (_that) {
 case _UpdateTransactions() when updateTransactions != null:
 return updateTransactions(_that.transactions);case _SelectTable() when selectTable != null:
@@ -205,11 +205,11 @@ return setPaymentInfo(_that.paymentMethodId,_that.paymentMethodName,_that.tender
 
 
 class _UpdateTransactions implements PaymentPageEvent {
-  const _UpdateTransactions({required final  List<PendingTransaction> transactions}): _transactions = transactions;
+  const _UpdateTransactions({required final  List<Transaction> transactions}): _transactions = transactions;
   
 
- final  List<PendingTransaction> _transactions;
- List<PendingTransaction> get transactions {
+ final  List<Transaction> _transactions;
+ List<Transaction> get transactions {
   if (_transactions is EqualUnmodifiableListView) return _transactions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_transactions);
@@ -246,7 +246,7 @@ abstract mixin class _$UpdateTransactionsCopyWith<$Res> implements $PaymentPageE
   factory _$UpdateTransactionsCopyWith(_UpdateTransactions value, $Res Function(_UpdateTransactions) _then) = __$UpdateTransactionsCopyWithImpl;
 @useResult
 $Res call({
- List<PendingTransaction> transactions
+ List<Transaction> transactions
 });
 
 
@@ -266,7 +266,7 @@ class __$UpdateTransactionsCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? transactions = null,}) {
   return _then(_UpdateTransactions(
 transactions: null == transactions ? _self._transactions : transactions // ignore: cast_nullable_to_non_nullable
-as List<PendingTransaction>,
+as List<Transaction>,
   ));
 }
 
@@ -346,7 +346,7 @@ class _ToggleTransactionSelection implements PaymentPageEvent {
   const _ToggleTransactionSelection({required this.transaction});
   
 
- final  PendingTransaction transaction;
+ final  Transaction transaction;
 
 /// Create a copy of PaymentPageEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -378,7 +378,7 @@ abstract mixin class _$ToggleTransactionSelectionCopyWith<$Res> implements $Paym
   factory _$ToggleTransactionSelectionCopyWith(_ToggleTransactionSelection value, $Res Function(_ToggleTransactionSelection) _then) = __$ToggleTransactionSelectionCopyWithImpl;
 @useResult
 $Res call({
- PendingTransaction transaction
+ Transaction transaction
 });
 
 
@@ -398,7 +398,7 @@ class __$ToggleTransactionSelectionCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? transaction = null,}) {
   return _then(_ToggleTransactionSelection(
 transaction: null == transaction ? _self.transaction : transaction // ignore: cast_nullable_to_non_nullable
-as PendingTransaction,
+as Transaction,
   ));
 }
 
@@ -652,7 +652,7 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( List<PendingTransaction> allTransactions,  String? selectedTableNo,  List<PendingTransaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( List<Transaction> allTransactions,  String? selectedTableNo,  List<Transaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)?  loaded,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loaded() when loaded != null:
@@ -674,7 +674,7 @@ return loaded(_that.allTransactions,_that.selectedTableNo,_that.selectedTransact
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( List<PendingTransaction> allTransactions,  String? selectedTableNo,  List<PendingTransaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( List<Transaction> allTransactions,  String? selectedTableNo,  List<Transaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)  loaded,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loaded():
@@ -695,7 +695,7 @@ return loaded(_that.allTransactions,_that.selectedTableNo,_that.selectedTransact
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( List<PendingTransaction> allTransactions,  String? selectedTableNo,  List<PendingTransaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( List<Transaction> allTransactions,  String? selectedTableNo,  List<Transaction> selectedTransactions,  List<String> availableTables,  int? paymentMethodId,  String? paymentMethodName,  double? tenderedAmount,  String? note)?  loaded,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loaded() when loaded != null:
@@ -743,19 +743,19 @@ String toString() {
 
 
 class _Loaded implements PaymentPageState {
-  const _Loaded({required final  List<PendingTransaction> allTransactions, this.selectedTableNo, final  List<PendingTransaction> selectedTransactions = const [], final  List<String> availableTables = const [], this.paymentMethodId, this.paymentMethodName, this.tenderedAmount, this.note}): _allTransactions = allTransactions,_selectedTransactions = selectedTransactions,_availableTables = availableTables;
+  const _Loaded({required final  List<Transaction> allTransactions, this.selectedTableNo, final  List<Transaction> selectedTransactions = const [], final  List<String> availableTables = const [], this.paymentMethodId, this.paymentMethodName, this.tenderedAmount, this.note}): _allTransactions = allTransactions,_selectedTransactions = selectedTransactions,_availableTables = availableTables;
   
 
- final  List<PendingTransaction> _allTransactions;
- List<PendingTransaction> get allTransactions {
+ final  List<Transaction> _allTransactions;
+ List<Transaction> get allTransactions {
   if (_allTransactions is EqualUnmodifiableListView) return _allTransactions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_allTransactions);
 }
 
  final  String? selectedTableNo;
- final  List<PendingTransaction> _selectedTransactions;
-@JsonKey() List<PendingTransaction> get selectedTransactions {
+ final  List<Transaction> _selectedTransactions;
+@JsonKey() List<Transaction> get selectedTransactions {
   if (_selectedTransactions is EqualUnmodifiableListView) return _selectedTransactions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_selectedTransactions);
@@ -803,7 +803,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $PaymentPageStateCopyWith
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- List<PendingTransaction> allTransactions, String? selectedTableNo, List<PendingTransaction> selectedTransactions, List<String> availableTables, int? paymentMethodId, String? paymentMethodName, double? tenderedAmount, String? note
+ List<Transaction> allTransactions, String? selectedTableNo, List<Transaction> selectedTransactions, List<String> availableTables, int? paymentMethodId, String? paymentMethodName, double? tenderedAmount, String? note
 });
 
 
@@ -823,9 +823,9 @@ class __$LoadedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? allTransactions = null,Object? selectedTableNo = freezed,Object? selectedTransactions = null,Object? availableTables = null,Object? paymentMethodId = freezed,Object? paymentMethodName = freezed,Object? tenderedAmount = freezed,Object? note = freezed,}) {
   return _then(_Loaded(
 allTransactions: null == allTransactions ? _self._allTransactions : allTransactions // ignore: cast_nullable_to_non_nullable
-as List<PendingTransaction>,selectedTableNo: freezed == selectedTableNo ? _self.selectedTableNo : selectedTableNo // ignore: cast_nullable_to_non_nullable
+as List<Transaction>,selectedTableNo: freezed == selectedTableNo ? _self.selectedTableNo : selectedTableNo // ignore: cast_nullable_to_non_nullable
 as String?,selectedTransactions: null == selectedTransactions ? _self._selectedTransactions : selectedTransactions // ignore: cast_nullable_to_non_nullable
-as List<PendingTransaction>,availableTables: null == availableTables ? _self._availableTables : availableTables // ignore: cast_nullable_to_non_nullable
+as List<Transaction>,availableTables: null == availableTables ? _self._availableTables : availableTables // ignore: cast_nullable_to_non_nullable
 as List<String>,paymentMethodId: freezed == paymentMethodId ? _self.paymentMethodId : paymentMethodId // ignore: cast_nullable_to_non_nullable
 as int?,paymentMethodName: freezed == paymentMethodName ? _self.paymentMethodName : paymentMethodName // ignore: cast_nullable_to_non_nullable
 as String?,tenderedAmount: freezed == tenderedAmount ? _self.tenderedAmount : tenderedAmount // ignore: cast_nullable_to_non_nullable

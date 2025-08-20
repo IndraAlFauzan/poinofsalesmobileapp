@@ -5,12 +5,11 @@ class PendingTransactionState with _$PendingTransactionState {
   const factory PendingTransactionState.initial() = _Initial;
   const factory PendingTransactionState.loading() = _Loading;
   const factory PendingTransactionState.success({
-    required List<PendingTransaction> transactions,
+    required List<Transaction> transactions,
   }) = _Success;
   const factory PendingTransactionState.failure(String message) = _Failure;
   const factory PendingTransactionState.transactionCreated({
-    required dynamic
-    response, // Use dynamic to handle both CreateTransactionResponse and TransactionResponse
+    required SingleTransactionResponse response,
   }) = _TransactionCreated;
   const factory PendingTransactionState.transactionUpdated({
     required TransactionResponse response,

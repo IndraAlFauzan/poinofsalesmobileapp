@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/data/model/response/transaction_mode_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -322,7 +322,7 @@ class TransactionTebelData extends DataGridSource {
                           transaction.createdAt.toString(),
                         ),
                         _buildDetailItem('Customer', transaction.customerName),
-                        _buildDetailItem('Table', transaction.tableNo),
+                        _buildDetailItem('Table', transaction.tableNo ?? 'N/A'),
                         _buildDetailItem(
                           'Total Amount',
                           idrFormat(transaction.grandTotal),

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentReceiptDialog extends StatelessWidget {
   final int paymentId;
-  final List<PendingTransaction> paidTransactions;
+  final List<Transaction> paidTransactions;
   final double totalAmount;
   final String paymentMethod;
   final double? tenderedAmount;
@@ -311,10 +311,7 @@ class PaymentReceiptDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(
-    BuildContext context,
-    PendingTransaction transaction,
-  ) {
+  Widget _buildTransactionItem(BuildContext context, Transaction transaction) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),

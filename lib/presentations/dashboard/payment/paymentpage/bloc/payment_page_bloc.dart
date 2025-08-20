@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 
 part 'payment_page_bloc.freezed.dart';
 part 'payment_page_event.dart';
@@ -24,7 +24,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
 
     // Validate selected table still exists
     String? validatedSelectedTable;
-    List<PendingTransaction> validatedSelectedTransactions = [];
+    List<Transaction> validatedSelectedTransactions = [];
 
     if (state is _Loaded) {
       final currentState = state as _Loaded;
@@ -49,7 +49,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
             }
           })
           .where((t) => t != null)
-          .cast<PendingTransaction>()
+          .cast<Transaction>()
           .where(
             (t) =>
                 validatedSelectedTable == null ||
@@ -96,7 +96,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
   ) {
     final currentState = state;
     if (currentState is _Loaded) {
-      final selectedTransactions = List<PendingTransaction>.from(
+      final selectedTransactions = List<Transaction>.from(
         currentState.selectedTransactions,
       );
 
@@ -169,7 +169,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     }
   }
 
-  List<String> _getAvailableTables(List<PendingTransaction> transactions) {
+  List<String> _getAvailableTables(List<Transaction> transactions) {
     final tables = transactions
         .where((t) => t.tableNo != null)
         .map((t) => t.tableNo!)
@@ -183,12 +183,10 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
   }
 
   // Getters for business logic
-  List<PendingTransaction> getFilteredTransactions() {
+  List<Transaction> getFilteredTransactions() {
     final currentState = state;
     if (currentState is _Loaded) {
-      var filtered = List<PendingTransaction>.from(
-        currentState.allTransactions,
-      );
+      var filtered = List<Transaction>.from(currentState.allTransactions);
 
       // Filter by selected table if any
       if (currentState.selectedTableNo != null) {
@@ -216,7 +214,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     return 0.0;
   }
 
-  bool isTransactionSelected(PendingTransaction transaction) {
+  bool isTransactionSelected(Transaction transaction) {
     final currentState = state;
     if (currentState is _Loaded) {
       return currentState.selectedTransactions.any(
@@ -245,7 +243,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
     return difference.inMinutes > 30;
   }
 
-  PendingTransaction? getTransactionById(int transactionId) {
+  Transaction? getTransactionById(int transactionId) {
     final currentState = state;
     if (currentState is _Loaded) {
       try {
@@ -261,7 +259,7 @@ class PaymentPageBloc extends Bloc<PaymentPageEvent, PaymentPageState> {
   }
 
   // Helper method to get updated transaction data after changes
-  PendingTransaction getUpdatedTransaction(PendingTransaction original) {
+  Transaction getUpdatedTransaction(Transaction original) {
     final updated = getTransactionById(original.transactionId);
     return updated ?? original;
   }

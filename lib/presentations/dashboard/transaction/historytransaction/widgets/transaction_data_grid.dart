@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/data/model/response/transaction_mode_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/widgets/tabel_transaction.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/widgets/pagination_controls.dart';
 import 'package:posmobile/shared/config/app_colors.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
 import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/bloc/payment_method/payment_method_bloc.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_success_dialog.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/pending_transactions_list.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_form.dart';
@@ -148,7 +148,7 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                 final currentTotalAmount = paymentPageBloc.getTotalAmount();
 
                 // Store data for receipt
-                final paidTransactions = List<PendingTransaction>.from(
+                final paidTransactions = List<Transaction>.from(
                   selectedTransactions,
                 );
                 final currentPaymentMethod =

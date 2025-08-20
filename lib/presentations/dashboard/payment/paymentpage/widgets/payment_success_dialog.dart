@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_receipt_dialog.dart';
 
 class PaymentSuccessDialog extends StatelessWidget {
   final int paymentId;
-  final List<PendingTransaction> paidTransactions;
+  final List<Transaction> paidTransactions;
   final double totalAmount;
   final String paymentMethod;
   final double? tenderedAmount;

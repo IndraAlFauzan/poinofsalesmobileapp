@@ -548,7 +548,7 @@ return transactionUpdated(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<PendingTransaction> transactions)?  success,TResult Function( String message)?  failure,TResult Function( dynamic response)?  transactionCreated,TResult Function( TransactionResponse response)?  transactionUpdated,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Transaction> transactions)?  success,TResult Function( String message)?  failure,TResult Function( SingleTransactionResponse response)?  transactionCreated,TResult Function( TransactionResponse response)?  transactionUpdated,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -574,7 +574,7 @@ return transactionUpdated(_that.response);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<PendingTransaction> transactions)  success,required TResult Function( String message)  failure,required TResult Function( dynamic response)  transactionCreated,required TResult Function( TransactionResponse response)  transactionUpdated,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Transaction> transactions)  success,required TResult Function( String message)  failure,required TResult Function( SingleTransactionResponse response)  transactionCreated,required TResult Function( TransactionResponse response)  transactionUpdated,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
@@ -599,7 +599,7 @@ return transactionUpdated(_that.response);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<PendingTransaction> transactions)?  success,TResult? Function( String message)?  failure,TResult? Function( dynamic response)?  transactionCreated,TResult? Function( TransactionResponse response)?  transactionUpdated,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Transaction> transactions)?  success,TResult? Function( String message)?  failure,TResult? Function( SingleTransactionResponse response)?  transactionCreated,TResult? Function( TransactionResponse response)?  transactionUpdated,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -683,11 +683,11 @@ String toString() {
 
 
 class _Success implements PendingTransactionState {
-  const _Success({required final  List<PendingTransaction> transactions}): _transactions = transactions;
+  const _Success({required final  List<Transaction> transactions}): _transactions = transactions;
   
 
- final  List<PendingTransaction> _transactions;
- List<PendingTransaction> get transactions {
+ final  List<Transaction> _transactions;
+ List<Transaction> get transactions {
   if (_transactions is EqualUnmodifiableListView) return _transactions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_transactions);
@@ -724,7 +724,7 @@ abstract mixin class _$SuccessCopyWith<$Res> implements $PendingTransactionState
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
 @useResult
 $Res call({
- List<PendingTransaction> transactions
+ List<Transaction> transactions
 });
 
 
@@ -744,7 +744,7 @@ class __$SuccessCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? transactions = null,}) {
   return _then(_Success(
 transactions: null == transactions ? _self._transactions : transactions // ignore: cast_nullable_to_non_nullable
-as List<PendingTransaction>,
+as List<Transaction>,
   ));
 }
 
@@ -824,7 +824,7 @@ class _TransactionCreated implements PendingTransactionState {
   const _TransactionCreated({required this.response});
   
 
- final  dynamic response;
+ final  SingleTransactionResponse response;
 
 /// Create a copy of PendingTransactionState
 /// with the given fields replaced by the non-null parameter values.
@@ -836,12 +836,12 @@ _$TransactionCreatedCopyWith<_TransactionCreated> get copyWith => __$Transaction
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransactionCreated&&const DeepCollectionEquality().equals(other.response, response));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TransactionCreated&&(identical(other.response, response) || other.response == response));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(response));
+int get hashCode => Object.hash(runtimeType,response);
 
 @override
 String toString() {
@@ -856,7 +856,7 @@ abstract mixin class _$TransactionCreatedCopyWith<$Res> implements $PendingTrans
   factory _$TransactionCreatedCopyWith(_TransactionCreated value, $Res Function(_TransactionCreated) _then) = __$TransactionCreatedCopyWithImpl;
 @useResult
 $Res call({
- dynamic response
+ SingleTransactionResponse response
 });
 
 
@@ -873,10 +873,10 @@ class __$TransactionCreatedCopyWithImpl<$Res>
 
 /// Create a copy of PendingTransactionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? response = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? response = null,}) {
   return _then(_TransactionCreated(
-response: freezed == response ? _self.response : response // ignore: cast_nullable_to_non_nullable
-as dynamic,
+response: null == response ? _self.response : response // ignore: cast_nullable_to_non_nullable
+as SingleTransactionResponse,
   ));
 }
 

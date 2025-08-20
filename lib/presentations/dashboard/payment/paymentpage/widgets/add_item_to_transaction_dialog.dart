@@ -4,8 +4,9 @@ import 'package:posmobile/bloc/cart/cart_bloc.dart';
 import 'package:posmobile/bloc/category/category_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
 import 'package:posmobile/bloc/product/product_bloc.dart';
-import 'package:posmobile/data/model/request/edit_transaction_request.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/request/edit_transaction_request.dart'
+    as request;
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
 import 'package:posmobile/shared/widgets/product_cart_item.dart';
@@ -13,7 +14,7 @@ import 'package:posmobile/shared/widgets/category_chips.dart';
 import 'package:posmobile/presentations/dashboard/transaction/transactioncart/widgets/product_grid.dart';
 
 class AddItemToTransactionDialog extends StatefulWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const AddItemToTransactionDialog({super.key, required this.transaction});
 
@@ -376,7 +377,7 @@ class _AddItemToTransactionDialogState
         // Convert cart items to transaction details
         // Hanya kirim item baru saja, bukan gabungan dengan yang lama
         final newDetails = cartItems.map((cartItem) {
-          return TransactionDetail(
+          return request.TransactionDetail(
             productId: cartItem.product.id,
             quantity: cartItem.quantity,
             note: cartItem.note,
@@ -386,7 +387,7 @@ class _AddItemToTransactionDialogState
         }).toList();
 
         // Kirim hanya item baru yang akan ditambahkan
-        final editRequest = EditTransactionRequest(details: newDetails);
+        final editRequest = request.EditTransactionRequest(details: newDetails);
 
         context.read<PendingTransactionBloc>().add(
           PendingTransactionEvent.editTransaction(

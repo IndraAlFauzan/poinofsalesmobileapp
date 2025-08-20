@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:posmobile/data/model/request/create_transaction_request.dart';
 import 'package:posmobile/data/model/request/edit_transaction_request.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
-import 'package:posmobile/data/model/response/transaction_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/data/repository/transaction_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -57,20 +56,17 @@ class PendingTransactionBloc
       emit(const PendingTransactionState.loading());
       final result = await _transactionRepository.fetchPendingTransactions();
 
-      result.fold(
-        (error) => emit(PendingTransactionState.failure(error)),
-        (response) {
+      result.fold((error) => emit(PendingTransactionState.failure(error)), (
+        response,
+      ) {
+        if (response.success) {
           emit(PendingTransactionState.success(transactions: response.data));
-
-          // add(const PendingTransactionEvent.fetchPendingTransactions());
-        }, // Refresh after fetching
-      );
+        } else {
+          emit(PendingTransactionState.failure(response.message));
+        }
+      });
     } catch (e) {
-      emit(
-        PendingTransactionState.failure(
-          "Error fetching pending transactions: $e",
-        ),
-      );
+      emit(PendingTransactionState.failure(e.toString()));
     }
   }
 

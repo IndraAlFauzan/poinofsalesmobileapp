@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
-import 'package:posmobile/data/model/response/pending_transactions_response.dart';
+import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/bloc/payment_page_bloc.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/add_item_to_transaction_dialog.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
@@ -10,7 +10,7 @@ import 'package:posmobile/shared/widgets/fortmat_datetime.dart';
 import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentTransactionPendingCard extends StatelessWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const PaymentTransactionPendingCard({super.key, required this.transaction});
 
@@ -105,7 +105,7 @@ class PaymentTransactionPendingCard extends StatelessWidget {
 
   Widget _buildQuickActionButtons(
     BuildContext context,
-    PendingTransaction transaction,
+    Transaction transaction,
   ) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -179,7 +179,7 @@ class _SelectionCheckbox extends StatelessWidget {
 }
 
 class _TransactionInfo extends StatelessWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const _TransactionInfo({required this.transaction});
 
@@ -241,7 +241,7 @@ class _TransactionInfo extends StatelessWidget {
 }
 
 class _PriorityBadge extends StatelessWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const _PriorityBadge({required this.transaction});
 
@@ -281,7 +281,7 @@ class _PriorityBadge extends StatelessWidget {
 }
 
 class _TransactionAmount extends StatelessWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const _TransactionAmount({required this.transaction});
 
@@ -351,7 +351,7 @@ class _TransactionAmount extends StatelessWidget {
 }
 
 class _TransactionDetails extends StatelessWidget {
-  final PendingTransaction transaction;
+  final Transaction transaction;
 
   const _TransactionDetails({required this.transaction});
 

@@ -129,64 +129,64 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
     PaymentSettlementState state,
   ) {
     state.whenOrNull(
-      paymentSettled: (response) {
-        // Get selected transactions data before clearing
-        final paymentPageBloc = context.read<PaymentPageBloc>();
-        final paymentState = paymentPageBloc.state;
+      // paymentSettled: (response) {
+      //   // Get selected transactions data before clearing
+      //   final paymentPageBloc = context.read<PaymentPageBloc>();
+      //   final paymentState = paymentPageBloc.state;
 
-        paymentState.whenOrNull(
-          loaded:
-              (
-                allTransactions,
-                selectedTableNo,
-                selectedTransactions,
-                availableTables,
-                paymentMethodId,
-                paymentMethodName,
-                tenderedAmount,
-                note,
-              ) {
-                final currentTotalAmount = paymentPageBloc.getTotalAmount();
+      //   paymentState.whenOrNull(
+      //     loaded:
+      //         (
+      //           allTransactions,
+      //           selectedTableNo,
+      //           selectedTransactions,
+      //           availableTables,
+      //           paymentMethodId,
+      //           paymentMethodName,
+      //           tenderedAmount,
+      //           note,
+      //         ) {
+      //           final currentTotalAmount = paymentPageBloc.getTotalAmount();
 
-                // Store data for receipt
-                final paidTransactions = List<Transaction>.from(
-                  selectedTransactions,
-                );
-                final currentPaymentMethod =
-                    paymentMethodName ?? 'Unknown Payment Method';
-                final currentTenderedAmount = tenderedAmount;
-                final currentChangeAmount =
-                    currentTenderedAmount != null &&
-                        currentTenderedAmount > currentTotalAmount
-                    ? currentTenderedAmount - currentTotalAmount
-                    : null;
+      //           // Store data for receipt
+      //           final paidTransactions = List<Transaction>.from(
+      //             selectedTransactions,
+      //           );
+      //           final currentPaymentMethod =
+      //               paymentMethodName ?? 'Unknown Payment Method';
+      //           final currentTenderedAmount = tenderedAmount;
+      //           final currentChangeAmount =
+      //               currentTenderedAmount != null &&
+      //                   currentTenderedAmount > currentTotalAmount
+      //               ? currentTenderedAmount - currentTotalAmount
+      //               : null;
 
-                // Clear selections
-                context.read<PaymentPageBloc>().add(
-                  const PaymentPageEvent.clearSelections(),
-                );
+      //           // Clear selections
+      //           context.read<PaymentPageBloc>().add(
+      //             const PaymentPageEvent.clearSelections(),
+      //           );
 
-                // Refresh pending transactions
-                context.read<PendingTransactionBloc>().add(
-                  const PendingTransactionEvent.fetchPendingTransactions(),
-                );
+      //           // Refresh pending transactions
+      //           context.read<PendingTransactionBloc>().add(
+      //             const PendingTransactionEvent.fetchPendingTransactions(),
+      //           );
 
-                // Show success dialog
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => PaymentSuccessDialog(
-                    paymentId: response.data.paymentId,
-                    paidTransactions: paidTransactions,
-                    totalAmount: currentTotalAmount,
-                    paymentMethod: currentPaymentMethod,
-                    tenderedAmount: currentTenderedAmount,
-                    changeAmount: currentChangeAmount,
-                  ),
-                );
-              },
-        );
-      },
+      //           // Show success dialog
+      //           showDialog(
+      //             context: context,
+      //             barrierDismissible: false,
+      //             builder: (context) => PaymentSuccessDialog(
+      //               paymentId: response.data.paymentId,
+      //               paidTransactions: paidTransactions,
+      //               totalAmount: currentTotalAmount,
+      //               paymentMethod: currentPaymentMethod,
+      //               tenderedAmount: currentTenderedAmount,
+      //               changeAmount: currentChangeAmount,
+      //             ),
+      //           );
+      //         },
+      //   );
+      // },
       paymentCompleted: (payment) {
         // Only show success if payment wasn't cancelled
         if (!_isPaymentCancelled) {
@@ -208,24 +208,44 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
             );
           });
 
-          // Show success snackbar
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.white),
-                  const SizedBox(width: 8),
-                  const Text('Payment completed successfully!'),
-                ],
-              ),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
+          // Show temporary snackbar first (allows webview to close)
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Row(
+          //       children: [
+          //         const Icon(Icons.check_circle_outline, color: Colors.white),
+          //         const SizedBox(width: 8),
+          //         const Text('Payment completed successfully!'),
+          //       ],
+          //     ),
+          //     backgroundColor: Colors.green,
+          //     behavior: SnackBarBehavior.floating,
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     duration: const Duration(milliseconds: 1500), // Shorter duration
+          //   ),
+          // );
+
+          // Show success dialog after small delay to ensure webview is closed
+          Future.delayed(const Duration(milliseconds: 800), () {
+            if (mounted && !_isPaymentCancelled) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => PaymentSuccessDialog(
+                  paymentId: payment.id,
+                  paidTransactions: payment.transactions,
+                  totalAmount: payment.netAmount,
+                  paymentMethod: payment.method,
+                  tenderedAmount: payment.tenderedAmount,
+                  changeAmount: payment.changeAmount,
+                ),
+              );
+            }
+          });
         }
+
         // Reset the cancellation flag for next payment
         _isPaymentCancelled = false;
       },

@@ -182,7 +182,7 @@ class _PaymentGatewayWebViewState extends State<PaymentGatewayWebView> {
               // Mark as cancelled to prevent success handler from running
               _isCancelled = true;
               // Auto-close webview immediately
-              Navigator.of(context).pop(); // Close webview
+              // Navigator.of(context).pop(); // Close webview
               // Let parent page handle the cancellation message
             },
             failure: (message) {

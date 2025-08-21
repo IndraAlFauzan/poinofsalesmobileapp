@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:posmobile/data/model/response/payment_response.dart';
 import 'package:posmobile/shared/config/app_colors.dart';
 import 'package:posmobile/shared/widgets/idr_format.dart';
-import 'package:posmobile/data/model/response/transaction_model.dart';
+
 import 'package:posmobile/shared/config/theme_extensions.dart';
 
 class PaymentReceiptDialog extends StatelessWidget {
   final int paymentId;
-  final List<Transaction> paidTransactions;
-  final double totalAmount;
+  final List<PaymentTransaction> paidTransactions;
+  final String totalAmount;
   final String paymentMethod;
-  final double? tenderedAmount;
-  final double? changeAmount;
+  final String? tenderedAmount;
+  final String? changeAmount;
 
   const PaymentReceiptDialog({
     super.key,
@@ -253,7 +254,9 @@ class PaymentReceiptDialog extends StatelessWidget {
             _buildInfoRow(context, 'Bayar:', idrFormat(tenderedAmount!)),
           ],
 
-          if (changeAmount != null && changeAmount! > 0) ...[
+          if (changeAmount != null &&
+              double.tryParse(changeAmount!) != null &&
+              double.parse(changeAmount!) > 0) ...[
             const SizedBox(height: 8),
             _buildInfoRow(context, 'Kembalian:', idrFormat(changeAmount!)),
           ],
@@ -311,7 +314,10 @@ class PaymentReceiptDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(BuildContext context, Transaction transaction) {
+  Widget _buildTransactionItem(
+    BuildContext context,
+    PaymentTransaction transaction,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -365,7 +371,7 @@ class PaymentReceiptDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          ...transaction.details.map(
+          ...transaction.detailTransaction.map(
             (detail) => Padding(
               padding: const EdgeInsets.only(bottom: 2),
               child: Row(
@@ -526,7 +532,7 @@ Waktu: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2,
       receipt +=
           'Total: ${idrFormat(double.parse(transaction.grandTotal))}\n\n';
 
-      for (var detail in transaction.details) {
+      for (var detail in transaction.detailTransaction) {
         receipt += '${detail.productName.padRight(20)} ${detail.quantity}x\n';
         receipt += '${' ' * 20} ${idrFormat(detail.subtotal)}\n';
       }
@@ -546,7 +552,9 @@ Metode Bayar: $paymentMethod''';
       receipt += '\nBayar: ${idrFormat(tenderedAmount!)}';
     }
 
-    if (changeAmount != null && changeAmount! > 0) {
+    if (changeAmount != null &&
+        double.tryParse(changeAmount!) != null &&
+        double.parse(changeAmount!) > 0) {
       receipt += '\nKembalian: ${idrFormat(changeAmount!)}';
     }
 

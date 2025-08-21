@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posmobile/bloc/pending_transaction/pending_transaction_bloc.dart';
 import 'package:posmobile/bloc/payment_settlement/payment_settlement_bloc.dart';
 import 'package:posmobile/bloc/payment_method/payment_method_bloc.dart';
-import 'package:posmobile/data/model/response/transaction_model.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_success_dialog.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/pending_transactions_list.dart';
 import 'package:posmobile/presentations/dashboard/payment/paymentpage/widgets/payment_form.dart';
@@ -129,67 +128,77 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
     PaymentSettlementState state,
   ) {
     state.whenOrNull(
-      // paymentSettled: (response) {
-      //   // Get selected transactions data before clearing
-      //   final paymentPageBloc = context.read<PaymentPageBloc>();
-      //   final paymentState = paymentPageBloc.state;
+      paymentSettled: (response) {
+        // Only show success dialog for cash payments (no checkout URL)
+        if (response.checkoutUrl == null) {
+          // Get selected transactions data before clearing
+          final paymentPageBloc = context.read<PaymentPageBloc>();
+          final paymentState = paymentPageBloc.state;
 
-      //   paymentState.whenOrNull(
-      //     loaded:
-      //         (
-      //           allTransactions,
-      //           selectedTableNo,
-      //           selectedTransactions,
-      //           availableTables,
-      //           paymentMethodId,
-      //           paymentMethodName,
-      //           tenderedAmount,
-      //           note,
-      //         ) {
-      //           final currentTotalAmount = paymentPageBloc.getTotalAmount();
+          paymentState.whenOrNull(
+            loaded:
+                (
+                  allTransactions,
+                  selectedTableNo,
+                  selectedTransactions,
+                  availableTables,
+                  paymentMethodId,
+                  paymentMethodName,
+                  tenderedAmount,
+                  note,
+                ) {
+                  final currentTotalAmount = paymentPageBloc.getTotalAmount();
 
-      //           // Store data for receipt
-      //           final paidTransactions = List<Transaction>.from(
-      //             selectedTransactions,
-      //           );
-      //           final currentPaymentMethod =
-      //               paymentMethodName ?? 'Unknown Payment Method';
-      //           final currentTenderedAmount = tenderedAmount;
-      //           final currentChangeAmount =
-      //               currentTenderedAmount != null &&
-      //                   currentTenderedAmount > currentTotalAmount
-      //               ? currentTenderedAmount - currentTotalAmount
-      //               : null;
+                  // Store data for receipt
+                  final paidTransactions = selectedTransactions
+                      .map((t) => t.toPaymentTransaction())
+                      .toList();
+                  final currentPaymentMethod =
+                      paymentMethodName ?? 'Unknown Payment Method';
+                  final currentTenderedAmount = tenderedAmount;
+                  final currentChangeAmount =
+                      currentTenderedAmount != null &&
+                          currentTenderedAmount > currentTotalAmount
+                      ? currentTenderedAmount - currentTotalAmount
+                      : null;
 
-      //           // Clear selections
-      //           context.read<PaymentPageBloc>().add(
-      //             const PaymentPageEvent.clearSelections(),
-      //           );
+                  // Clear selections
+                  context.read<PaymentPageBloc>().add(
+                    const PaymentPageEvent.clearSelections(),
+                  );
 
-      //           // Refresh pending transactions
-      //           context.read<PendingTransactionBloc>().add(
-      //             const PendingTransactionEvent.fetchPendingTransactions(),
-      //           );
+                  // Refresh pending transactions
+                  context.read<PendingTransactionBloc>().add(
+                    const PendingTransactionEvent.fetchPendingTransactions(),
+                  );
 
-      //           // Show success dialog
-      //           showDialog(
-      //             context: context,
-      //             barrierDismissible: false,
-      //             builder: (context) => PaymentSuccessDialog(
-      //               paymentId: response.data.paymentId,
-      //               paidTransactions: paidTransactions,
-      //               totalAmount: currentTotalAmount,
-      //               paymentMethod: currentPaymentMethod,
-      //               tenderedAmount: currentTenderedAmount,
-      //               changeAmount: currentChangeAmount,
-      //             ),
-      //           );
-      //         },
-      //   );
-      // },
+                  // Show success dialog for cash payment
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => PaymentSuccessDialog(
+                      paymentId: response.data.paymentId,
+                      paidTransactions: paidTransactions,
+                      totalAmount: currentTotalAmount.toString(),
+                      paymentMethod: currentPaymentMethod,
+                      tenderedAmount: currentTenderedAmount?.toString(),
+                      changeAmount: currentChangeAmount?.toString(),
+                    ),
+                  );
+                },
+          );
+        }
+        // If has checkout URL, payment gateway webview will handle the flow
+      },
       paymentCompleted: (payment) {
+        print(
+          'Payment completed - checking cancellation flag: $_isPaymentCancelled',
+        ); // Debug
+
         // Only show success if payment wasn't cancelled
         if (!_isPaymentCancelled) {
+          print('Showing success dialog'); // Debug
+
           // Payment gateway completed successfully
           // First clear selections
           context.read<PaymentPageBloc>().add(
@@ -208,28 +217,10 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
             );
           });
 
-          // Show temporary snackbar first (allows webview to close)
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Row(
-          //       children: [
-          //         const Icon(Icons.check_circle_outline, color: Colors.white),
-          //         const SizedBox(width: 8),
-          //         const Text('Payment completed successfully!'),
-          //       ],
-          //     ),
-          //     backgroundColor: Colors.green,
-          //     behavior: SnackBarBehavior.floating,
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(10),
-          //     ),
-          //     duration: const Duration(milliseconds: 1500), // Shorter duration
-          //   ),
-          // );
-
           // Show success dialog after small delay to ensure webview is closed
           Future.delayed(const Duration(milliseconds: 800), () {
             if (mounted && !_isPaymentCancelled) {
+              print('Actually showing dialog - final check passed'); // Debug
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -242,16 +233,27 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
                   changeAmount: payment.changeAmount,
                 ),
               );
+            } else {
+              print('Dialog blocked - cancellation flag is true'); // Debug
             }
           });
+        } else {
+          print('Success blocked - payment was cancelled'); // Debug
         }
 
-        // Reset the cancellation flag for next payment
-        _isPaymentCancelled = false;
+        // Reset the cancellation flag for next payment only after delay
+        Future.delayed(const Duration(milliseconds: 2000), () {
+          if (_isPaymentCancelled) {
+            print('Resetting cancellation flag'); // Debug
+            _isPaymentCancelled = false;
+          }
+        });
       },
       paymentCancelled: (message) {
-        // Mark payment as cancelled to prevent success message
+        // IMMEDIATELY mark payment as cancelled to prevent any success message
         _isPaymentCancelled = true;
+
+        print('Payment cancelled - flag set to true'); // Debug
 
         // Payment was cancelled by user
         // Clear selections
@@ -281,6 +283,11 @@ class _PaymentPageViewState extends State<_PaymentPageView> {
             ),
           ),
         );
+
+        // Reset cancellation flag after longer delay
+        Future.delayed(const Duration(milliseconds: 3000), () {
+          _isPaymentCancelled = false;
+        });
       },
       failure: (message) {
         ScaffoldMessenger.of(context).showSnackBar(

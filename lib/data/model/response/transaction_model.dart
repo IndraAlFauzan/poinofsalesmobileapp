@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:posmobile/data/model/response/payment_response.dart';
 
 // Universal Transaction model untuk semua kasus penggunaan
 class Transaction {
@@ -77,6 +78,43 @@ class Transaction {
     "paid_at": paidAt?.toIso8601String(),
     "details": List<dynamic>.from(details.map((x) => x.toJson())),
   };
+
+  // Convert Transaction to PaymentTransaction for dialog
+  PaymentTransaction toPaymentTransaction() {
+    return PaymentTransaction(
+      id: transactionId,
+      transactionId: transactionId,
+      orderNo: orderNo,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      tableNo: tableNo,
+      customerName: customerName,
+      noTable: tableNo,
+      userId: userId,
+      serviceType: serviceType,
+      status: status,
+      allocatedAmount: grandTotal,
+      grandTotal: grandTotal,
+      paidTotal: paidTotal,
+      balanceDue: balanceDue,
+      paidAt: paidAt,
+      detailTransaction: details
+          .map(
+            (d) => PaymentTransactionDetail(
+              id: d.id,
+              productId: d.productId ?? 0,
+              productName: d.productName,
+              quantity: d.quantity,
+              price: d.price,
+              subtotal: d.subtotal,
+              flavor: d.flavor,
+              spicyLevel: d.spicyLevel,
+              note: d.note,
+            ),
+          )
+          .toList(),
+    );
+  }
 }
 
 // Universal Transaction Detail model

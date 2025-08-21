@@ -32,7 +32,7 @@ class AppThemes {
       // Surface colors
       surface: AppColors.lightSurface,
       onSurface: AppColors.lightOnSurface,
-      surfaceVariant: AppColors.lightSurfaceVariant,
+      surfaceContainerHighest: AppColors.lightSurfaceVariant,
       onSurfaceVariant: AppColors.lightOnSurfaceVariant,
 
       // Background
@@ -84,7 +84,7 @@ class AppThemes {
       // Surface colors
       surface: AppColors.darkSurface,
       onSurface: AppColors.darkOnSurface,
-      surfaceVariant: AppColors.darkSurfaceVariant,
+      surfaceContainerHighest: AppColors.darkSurfaceVariant,
       onSurfaceVariant: AppColors.darkOnSurfaceVariant,
 
       // Background
@@ -280,7 +280,7 @@ class AppThemes {
       // ========== INPUT FIELDS ==========
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceVariant,
+        fillColor: colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
@@ -446,7 +446,7 @@ class AppThemes {
           if (states.contains(WidgetState.selected)) {
             return colorScheme.primary;
           }
-          return colorScheme.surfaceVariant;
+          return colorScheme.surfaceContainerHighest;
         }),
         trackOutlineColor: WidgetStateProperty.resolveWith((states) {
           return colorScheme.outline;
@@ -481,7 +481,9 @@ class AppThemes {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
         ),
-        headingRowColor: WidgetStatePropertyAll(colorScheme.surfaceVariant),
+        headingRowColor: WidgetStatePropertyAll(
+          colorScheme.surfaceContainerHighest,
+        ),
         headingTextStyle: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 14,
@@ -517,7 +519,7 @@ class AppThemes {
 
       // ========== CHIP ==========
       chipTheme: ChipThemeData(
-        backgroundColor: colorScheme.surfaceVariant,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: colorScheme.secondaryContainer,
         disabledColor: colorScheme.onSurface.withValues(alpha: 0.12),
         labelStyle: TextStyle(
@@ -594,7 +596,7 @@ class AppThemes {
       // ========== SLIDER ==========
       sliderTheme: SliderThemeData(
         activeTrackColor: colorScheme.primary,
-        inactiveTrackColor: colorScheme.surfaceVariant,
+        inactiveTrackColor: colorScheme.surfaceContainerHighest,
         thumbColor: colorScheme.primary,
         overlayColor: colorScheme.primary.withValues(alpha: 0.12),
         valueIndicatorColor: colorScheme.primary,
@@ -608,8 +610,8 @@ class AppThemes {
       // ========== PROGRESS INDICATORS ==========
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: colorScheme.primary,
-        linearTrackColor: colorScheme.surfaceVariant,
-        circularTrackColor: colorScheme.surfaceVariant,
+        linearTrackColor: colorScheme.surfaceContainerHighest,
+        circularTrackColor: colorScheme.surfaceContainerHighest,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:posmobile/presentations/dashboard/payment/payment_history_page.dart';
 import 'package:posmobile/presentations/dashboard/product/productmainpage/product_main_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/transactioncart/transaction_cart_page.dart';
 import 'package:posmobile/presentations/dashboard/transaction/historytransaction/history_transaction_screen.dart';
@@ -160,6 +161,7 @@ class _MainPageState extends State<MainPage> {
                   TransactionCartPage(),
                   ProductMainPage(),
                   PaymentPage(),
+                  PaymentHistoryPage(),
                   HistoryTransactionScreen(),
                 ],
               ),
@@ -173,7 +175,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 // Enum untuk mengelola tab
-enum MainPageTab { home, menu, payment, history }
+enum MainPageTab { home, menu, payment, historyTransaction, hitoryPayment }
 
 // --- File: widgets/side_menu.dart ---
 
@@ -235,9 +237,14 @@ class _SideMenuState extends State<SideMenu> {
                     page: MainPageTab.payment,
                   ),
                   _buildMenuItem(
-                    label: 'Riwayat',
+                    label: 'Riwayat Pembayaran',
+                    icon: Icons.payment_rounded,
+                    page: MainPageTab.hitoryPayment,
+                  ),
+                  _buildMenuItem(
+                    label: 'Riwayat Transaksi',
                     icon: Icons.history_rounded,
-                    page: MainPageTab.history,
+                    page: MainPageTab.historyTransaction,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.15),
                   AdaptiveDivider(
@@ -258,30 +265,20 @@ class _SideMenuState extends State<SideMenu> {
   }
 
   Widget _buildLogo() {
-    return Padding(
-      padding: EdgeInsets.only(top: context.spacing.sm),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.spacing.sm),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(context.radius.md),
-            ),
-            child: SvgPicture.asset(
-              'assets/images/food_logo.svg',
-              height: 40,
-              width: 40,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
-                BlendMode.srcIn,
-              ),
-            ),
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(context.spacing.sm),
+
+          child: SvgPicture.asset(
+            'assets/images/food_logo.svg',
+            height: 40,
+            width: 40,
           ),
-          SizedBox(height: context.spacing.sm),
-          AdaptiveDivider(color: Colors.white.withValues(alpha: 0.3)),
-        ],
-      ),
+        ),
+        SizedBox(height: context.spacing.sm),
+        AdaptiveDivider(color: Colors.white.withValues(alpha: 0.3)),
+      ],
     );
   }
 
